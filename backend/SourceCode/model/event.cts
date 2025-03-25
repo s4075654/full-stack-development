@@ -3,7 +3,8 @@ function g_oEventFactory(a_oConnection) {
         m_bIsPublic: { type: Boolean, required: true },
         m_aInvitations: { type: Array.of(require("./invitation")) },
         m_aDiscussionBoard: { type: Array.of(require("./message")) },
-        m_aNotifications: { type: Array.of(require("./notification")) }
+        m_aNotifications: { type: Array.of(require("./notification")) },
+        m_organiser: { type: require("./user.cjs"), required: true }
     })
     
     l_coSchema.methods.m_nNumberOfInvitationsSent = () => this.m_aInvitations.size

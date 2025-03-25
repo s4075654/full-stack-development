@@ -5,8 +5,8 @@ function g_oUserFactory(a_oConnection) {
         m_sEmailAddress: { type: String, unique: true },
         m_aNotifications: { type: Array.of(require("./notification")) },
         m_aOrganisingEvents: { type: Array.of(require("./event")) },
-        m_oMaxNumberOfActiveEvents: { type: BigInt, required: true },
-        m_oMaxNumberOfInvitations: { type: BigInt, required: true }
+        m_oMaxNumberOfActiveEvents: { type: BigInt, required: true, default: 1 },
+        m_oMaxNumberOfInvitations: { type: BigInt, required: true, default: 1 }
     })
     return a_oConnection.model("User", l_coSchema)
 }
