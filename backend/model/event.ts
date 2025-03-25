@@ -1,18 +1,15 @@
-function g_oEventFactory(a_bIsPublic, a_oInvitations = new Map(), a_aDiscussionBoard = Array.of(), a_aNotifications = Array.of()) {
-    let m_bIsPublic = a_bIsPublic
-    let m_oInvitations = a_oInvitations
-    let m_aDiscussionBoard = a_aDiscussionBoard
-    let m_aNotifications = a_aNotifications
+function g_oEventFactory(a_oConnection) {
+    const l_coSchema = new a_oConnection.base.Schema({
+        m_bIsPublic: { type: Boolean, required: true },
+        m_oInvitations: { type: require("./invitation") },
+        m_aDiscussionBoard: { type: Array.of(require("./message")) },
+        m_aNotifications: { type: Array.of(require("./notification")) }
+    })
     
-    return {
-        function m_nNumberOfInvitationsSent() {
-            return m_oInvitations.size
-        }
-        function m_oListOfRecipients() {
-            return m_oInvitations.keys()
-        }
-        function m_oRsvpResponses() {
-            return m_oInvitations
-        }        
-    }
+    l_coSchema.methods.m_nNumberOfInvitationsSent = () => m_oInvitations.size
+    l_coSchema.methods.m_oListOfRecipients = () => m_oInvitations.keys()
+    l_coSchema.methods.m_oRsvpResponses = () => m_oInvitations
+        
+    return a_oConnection.model("Event", l_coSchema)
 }
+module.exports = g_oEventFactory
