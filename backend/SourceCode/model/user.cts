@@ -4,7 +4,9 @@ function g_oUserFactory(a_oConnection) {
         m_sPassword: { type: String },
         m_sEmailAddress: { type: String, unique: true },
         m_aNotifications: { type: Array.of(require("./notification")) },
-        m_aOrganisingEvents: { type: Array.of(require("./event")) }
+        m_aOrganisingEvents: { type: Array.of(require("./event")) },
+        m_oMaxNumberOfActiveEvents: { type: BigInt, required: true },
+        m_oMaxNumberOfInvitations: { type: BigInt, required: true }
     })
     return a_oConnection.model("User", l_coSchema)
 }

@@ -1,7 +1,7 @@
 function g_oInvitationFactory(a_oConnection) {
     const l_coSchema = new a_oConnection.base.Schema({
         m_sUser: { type: String, required: true },
-        m_sHasAccepted: { type: String, enum: { values: ["Yes", "Not responded", "No"] } }
+        m_sState: { type: String, enum: ["Accepted", "Not responded", "Declined"], required: true, default: "Not responded" }
     })
     return a_oConnection.model("Invitation", l_coSchema)
 }
