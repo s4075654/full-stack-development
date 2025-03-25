@@ -1,16 +1,6 @@
-const g_cExpress = require("express")
-const g_cPath = require("path")
 require("dotenv").config()
 const g_coMongoose = require("mongoose")
-
-const g_coApp = g_cExpress()
-
-g_coApp.use(g_cExpress.static(g_cPath.join(__dirname, "frontend")))
-g_coApp.get("/", (_, a_oResponse) => a_oResponse.redirect("/index.htm"))
-g_coApp.get("*", function(_, a_oResponse) {
-    a_oResponse.sendFile(g_cPath.join(__dirname, "frontend", "index.htm"),
-        a_oError => a_oError && a_oResponse.status(404).sendFile(g_cPath.join(__dirname, "frontend", "404.htm")))
-})
+const g_coApp = require("./endpoints.cjs")()
 
 console.log("Attempting MongoDB connection.")
 const g_coConnection = g_coMongoose.connect(

@@ -7,5 +7,5 @@
         "rootDir": "backend/SourceCode",
         "esModuleInterop": false
     },
-    "include": ["backend/SourceCode/*.cts", "backend/SourceCode/**/*.cts"]
+    "include": ["backend/SourceCode/**/*.cts"]
 }
