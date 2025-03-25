@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "outDir": "backend/output",
+        "rootDir": "backend/SourceCode",
+        "esModuleInterop": false
+    },
+    "include": ["backend/SourceCode/*.cts", "backend/SourceCode/**/*.cts"]
+}

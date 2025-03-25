@@ -7,4 +7,4 @@ function g_oNotificationFactory(a_oConnection) {
     })    
     return a_oConnection.model("Notification", l_coSchema)
 }
-export modules = g_oNotificationFactory
+module.exports = g_oNotificationFactory
