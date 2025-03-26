@@ -3,7 +3,7 @@ function g_oMakeConstantObject(a_o) {
     return Object.freeze(a_o)
 }
 function g_oMakeConstantMap(a_o) {
-    return Object.freeze(new Map(Array.from(a_o, ([a_oKey, a_oValue]) => Array.of(g_oMakeConstant(a_oKey), g_oMakeConstant(a_oValue))))))
+    return Object.freeze(new Map(Array.from(a_o, ([a_oKey, a_oValue]) => Array.of(g_oMakeConstant(a_oKey), g_oMakeConstant(a_oValue)))))
 }
 
 function g_oMakeConstant(a_v) {
