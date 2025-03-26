@@ -1,4 +1,4 @@
-const g_codes = require("./codes.cjs")
+const g_codes = require("../server/codes.cjs")
 const g_cUser = require("../model/user.cjs")
 
 module.exports = require("../system/immutable.cjs")(new Map(Array.of(
