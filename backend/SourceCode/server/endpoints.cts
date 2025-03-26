@@ -3,25 +3,29 @@ const g_cHash = require("./security.cjs")
 const g_cPath = require("path")
 const g_codes = require("./codes.cjs")
 
-const g_EventFunctions = require("../queries/EventFunctions.cjs")
-const g_InvitationFunctions = require("../queries/InvitationFunctions.cjs")
-const g_MessageFunctions = require("../queries/MessageFunctions.cjs")
-const g_NotificationFunctions = require("../queries/NotificationFunctions.cjs")
-const g_UserFunctions = require("../queries/UserFunctions.cjs")
+const g_coEventFunctions = require("../queries/EventFunctions.cjs")
+const g_coInvitationFunctions = require("../queries/InvitationFunctions.cjs")
+const g_coMessageFunctions = require("../queries/MessageFunctions.cjs")
+const g_coRequestFunctions = require("../queries/RequestFunctions.cjs")
+const g_coNotificationFunctions = require("../queries/NotificationFunctions.cjs")
+const g_coUserFunctions = require("../queries/UserFunctions.cjs")
 
-function g_oSetUp() {
+module.exports = function(a_oConnection) {
     const l_coApp = g_cExpress()
     l_coApp.use(function(a_oRequest, _, a_next) {
-        console.log("Request: " + a_oRequest)
+        console.log("Request received: " + a_oRequest)
         a_next()
     })
     l_coApp.use(g_cExpress.json())
 
-    l_coApp.post("/event", (a_oRequest, a_oResponse) => g_EventFunctions.l_CreateEvent())
-    l_coApp.get("/event/:id", (a_oRequest, a_oResponse) => )
-    l_coApp.get("/event/:organiser", (a_oRequest, a_oResponse) => )
-    l_coApp.get("/event", (a_oRequest, a_oResponse) => )
-    l_coApp.put("/event", (a_oRequest, a_oResponse) => )
+    l_coApp.post("/event", (a_oRequest, a_oResponse) => a_oResponse.sendStatus(g_coEventFunctions.l_nCreate(a_oRequest, a_oConnection)))
+    l_coApp.get("/event/:id", function(a_oRequest, a_oResponse) {
+        let l_oTemp = g_coEventFunctions.l_nReadOne(a_oRequest, a_oConnection)
+        return l_oTemp ? a_oResponse.status(g_codes.get("Success")).json(l_oTemp) : a_oResponse.sendStatus(g_codes.get("Not found"))
+    })
+    l_coApp.get("/event/:organiser", (a_oRequest, a_oResponse) => a_oResponse.status(g_codes.get("Success")).json(g_coEventFunctions.l_nReadOrganiser(a_oRequest, a_oConnection))
+    l_coApp.get("/event", (a_oRequest, a_oResponse) => a_oResponse.status(g_codes.get("Success")).json(g_coEventFunctions.l_nReadAll(a_oRequest, a_oConnection)))
+    l_coApp.put("/event", (a_oRequest, a_oResponse) => a_oResponse.sendStatus(g_coEventFunctions.l_nUpdate(a_oRequest, a_oConnection)))
     //l_coApp.delete("/event", (a_oRequest, a_oResponse) => )
 
     l_coApp.post("/invitation", (a_oRequest, a_oResponse) => )
@@ -44,6 +48,13 @@ function g_oSetUp() {
     l_coApp.get("/notification", (a_oRequest, a_oResponse) => )
     //l_coApp.put("/notification", (a_oRequest, a_oResponse) => )
     //l_coApp.delete("/notification", (a_oRequest, a_oResponse) => )
+    
+    l_coApp.post("/request", (a_oRequest, a_oResponse) => )
+    l_coApp.get("/request/:id", (a_oRequest, a_oResponse) => )
+    l_coApp.get("/request/:event", (a_oRequest, a_oResponse) => )
+    l_coApp.get("/request", (a_oRequest, a_oResponse) => )
+    //l_coApp.put("/request", (a_oRequest, a_oResponse) => )
+    //l_coApp.delete("/request", (a_oRequest, a_oResponse) => )
 
     l_coApp.post("/user", g_cHash, (a_oRequest, a_oResponse) => )
     l_coApp.get("/user/:username", g_cHash, (a_oRequest, a_oResponse) => )
@@ -63,4 +74,3 @@ function g_oSetUp() {
     })
     return l_coApp
 }
-module.exports = g_oSetUp

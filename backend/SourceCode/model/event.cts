@@ -1,9 +1,10 @@
-function g_oEventFactory(a_oConnection) {
+module.exports = function(a_oConnection) {
     const l_coSchema = new a_oConnection.base.Schema({
         m_bIsPublic: { type: Boolean, required: true },
-        m_aInvitations: { type: Array.of(require("./invitation")) },
-        m_aDiscussionBoard: { type: Array.of(require("./message")) },
-        m_aNotifications: { type: Array.of(require("./notification")) },
+        m_aInvitations: { type: Array.of(require("./invitation.cjs")) },
+        m_aRequests: { type: Array.of(require("./request.cjs")) },
+        m_aDiscussionBoard: { type: Array.of(require("./message.cjs")) },
+        m_aNotifications: { type: Array.of(require("./notification.cjs")) },
         m_organiser: { type: require("./user.cjs"), required: true }
     })
     
@@ -13,4 +14,3 @@ function g_oEventFactory(a_oConnection) {
         
     return a_oConnection.model("Event", l_coSchema)
 }
-module.exports = g_oEventFactory
