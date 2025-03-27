@@ -1,13 +1,18 @@
-function g_oMakeConstantObject(a_o) {
-    Object.keys(a_o).forEach(a_oKey => g_oMakeConstant(a_o.a_oKey))
-    return Object.freeze(a_o)
+function g_oMakeConstantObject(a_object) {
+    Object.keys(a_object).forEach(a_vKey => g_vMakeConstant(a_object.a_vKey))
+    return Object.freeze(a_object)
 }
-function g_oMakeConstantMap(a_o) {
-    return Object.freeze(new Map(Array.from(a_o, ([a_oKey, a_oValue]) => Array.of(g_oMakeConstant(a_oKey), g_oMakeConstant(a_oValue)))))
+function g_aMakeConstantArray(a_array) {
+    return Object.freeze(a_array.map(a_vElement => g_vMakeConstant(a_vElement)))
+}
+function g_oMakeConstantMap(a_oMap) {
+    return Object.freeze(new Map(Array.from(a_oMap, ([a_vKey, a_value]) => Array.of(g_vMakeConstant(a_vKey), g_vMakeConstant(a_value)))))
 }
 
-function g_oMakeConstant(a_v) {
-    switch (true) {        
+function g_vMakeConstant(a_v) {
+    switch (true) {
+        case Array.isArray(a_v):
+            return g_aMakeConstantArray(a_v)        
         case a_v instanceof Map:
             return g_oMakeConstantMap(a_v)
         case typeof a_v === "object" && a_v !== null:
@@ -16,4 +21,4 @@ function g_oMakeConstant(a_v) {
             return a_v
     }
 }
-module.exports = g_oMakeConstant
+module.exports = g_vMakeConstant
