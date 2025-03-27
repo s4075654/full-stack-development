@@ -1,6 +1,5 @@
 const g_cExpress = require("express")
 const g_cHash = require("./security.cjs")
-const g_cPath = require("path")
 const g_codes = require("./codes.cjs")
 const l_coInvitationFunctions = require("../queries/InvitationFunctions.cjs")
 
@@ -56,7 +55,7 @@ module.exports = function(a_oConnection) {
     //l_coApp.put("/user", g_cHash, async (a_oRequest, a_oResponse) => await )
     //l_coApp.delete("/user", async (a_oRequest, a_oResponse) => await )
 
-    l_coApp.use(g_cExpress.static(g_cPath.join(__dirname, "frontend"), { index: "HomePage.htm" }))
+    l_coApp.use(g_cExpress.static(require("path").join(__dirname, "frontend"), { index: "HomePage.htm" }))
     l_coApp.use((_, a_oResponse) => a_oResponse.sendStatus(g_codes.get("Not found")))
     l_coApp.use(function(a_oError, _, a_oResponse, __) {
         console.error("An error has occurred: ", a_oError)

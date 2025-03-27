@@ -3,9 +3,8 @@
         "target": "ESNext",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "outDir": "backend/output",
-        "rootDir": "backend/SourceCode",
+        "outDir": "prod/backend",
         "esModuleInterop": false
     },
-    "include": ["backend/SourceCode/**/*.cts"]
+    "include": ["code/backend/**/*.cts"]
 }

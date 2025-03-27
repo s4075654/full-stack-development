@@ -1,1 +1,1 @@
-rm -rf backend/output
+rm -rf prod
