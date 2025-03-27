@@ -59,7 +59,7 @@ module.exports = function(a_oConnection) {
     l_coApp.use((_, a_oResponse) => a_oResponse.sendStatus(g_codes.get("Not found")))
     l_coApp.use(function(a_oError, _, a_oResponse, __) {
         console.error("An error has occurred: ", a_oError)
-        a_oResponse.status(g_codes.get("Server error")).send("Internal server error occurred.")
+        return a_oResponse.status(g_codes.get("Server error")).send("Internal server error occurred.")
     })
     return l_coApp
 }
