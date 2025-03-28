@@ -13,9 +13,8 @@ let l_oProcessId = setInterval(require("../system/processing.cjs"), parseFloat(p
         console.log("\nConnected to database, current state: " + g_coMongoose.connection.readyState)
         
         const g_coDirectory = g_coPath.join(g_coPath.dirname(__dirname), "model")
-        require("fs").readSyncPath(g_coDirectory)
+        require("fs").readdirSync(g_coDirectory)
             .forEach(a_oFile => require(g_coPath.join(g_coDirectory, a_oFile)))
-        
         require("./controller.cjs")(require("./ops.cjs").get("Initialise")(require("./endpoints.cjs")()))
     })
     .catch(function(a_oError) {
