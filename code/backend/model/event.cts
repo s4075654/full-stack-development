@@ -6,6 +6,7 @@ const g_coSchema = new g_coMongoose.Schema({
     m_aRequests: Array.of({ type: g_coMongoose.Schema.Types.ObjectId, ref: "Request" }),
     m_aDiscussionBoard: Array.of({ type: g_coMongoose.Schema.Types.ObjectId, ref: "Message" }),
     m_aNotifications: Array.of({ type: g_coMongoose.Schema.Types.ObjectId, ref: "Notification" }),
+    m_aEventImages: Array.of({ type: g_coMongoose.Schema.Types.ObjectId, ref: "Image" }),
     m_organiser: { type: g_coMongoose.Schema.Types.ObjectId, ref: "User", required: true }
 })    
 g_coSchema.methods.m_nNumberOfInvitationsSent = function() {
