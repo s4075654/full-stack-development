@@ -8,6 +8,7 @@
 .. ts:function:: (a_oConnection)
 
     Logs the database connection state after a successful connection.
+    Registers the models in the database.
     Initialises the server.
 
     :param a_oConnection: The Mongoose connection.

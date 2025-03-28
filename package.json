@@ -1,7 +1,7 @@
 {
   "name": "GroupProject",
   "version": "1.0.0",
-  "main": "prod/backend/server/main.cjs",
+  "main": "prod/backend/server/db.cjs",
   "repository": "https://github.com/Group-tam/full-stack-development",
   "author": "Gr 8",
   "license": "MIT",

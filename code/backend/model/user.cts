@@ -1,12 +1,12 @@
-module.exports = function(a_oConnection) {
-    const l_coSchema = new a_oConnection.base.Schema({
-        m_sUsername: { type: String, required: true, unique: true },
-        m_sPassword: { type: String },
-        m_sEmailAddress: { type: String, unique: true },
-        m_aNotifications: { type: Array.of(require("./notification.cjs")) },
-        m_aOrganisingEvents: { type: Array.of(require("./event.cjs")) },
-        m_oMaxNumberOfActiveEvents: { type: BigInt, required: true, default: 1 },
-        m_oMaxNumberOfInvitations: { type: BigInt, required: true, default: 1 }
-    })
-    return a_oConnection.model("User", l_coSchema)
-}
+const g_coMongoose = require("mongoose")
+
+const g_coSchema = new g_coMongoose.Schema({
+    m_sUsername: { type: String, required: true, unique: true },
+    m_sPassword: { type: String },
+    m_sEmailAddress: { type: String, unique: true },
+    m_aNotifications: Array.of({ type: g_coMongoose.Schema.Types.ObjectId, ref: "Notification" }),
+    m_aOrganisingEvents: Array.of({ type: g_coMongoose.Schema.Types.ObjectId, ref: "Event" }),
+    m_oMaxNumberOfActiveEvents: { type: BigInt, required: true, default: 1 },
+    m_oMaxNumberOfInvitations: { type: BigInt, required: true, default: 1 }
+})
+module.exports = g_coMongoose.model("User", g_coSchema)

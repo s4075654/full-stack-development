@@ -1,8 +1,8 @@
-module.exports = function(a_oConnection) {
-    const l_coSchema = new a_oConnection.base.Schema({
-        m_sText: { type: String, default: String() },
-        m_oSender: { type: require("./user.cjs"), required: true },
-        m_oEvent: { type: require("./event.cjs"), required: true }
-    })
-    return a_oConnection.model("Message", l_coSchema)
-}
+const g_coMongoose = require("mongoose")
+
+const g_coSchema = new g_coMongoose.Schema({
+    m_sText: { type: String },
+    m_oSender: { type: g_coMongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    m_oEvent: { type: g_coMongoose.Schema.Types.ObjectId, ref: "Event", required: true }
+})
+module.exports = g_coMongoose.model("Message", g_coSchema)
