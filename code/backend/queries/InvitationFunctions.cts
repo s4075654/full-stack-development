@@ -1,6 +1,6 @@
-const g_coInvitation = require("../model/invitation.cjs")
+const g_coInvitation = require("../models/invitation.cjs")
 
-module.exports = require("../system/immutable.cjs")(Array.of(
+module.exports = require("../system/constant.cjs")(Array.of(
     async function l_oCreate(a_oRequest, a_oResponse) {
         
     },

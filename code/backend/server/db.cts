@@ -8,11 +8,11 @@ let l_oProcessId = setInterval(require("../system/processing.cjs"), parseFloat(p
     "mongodb://" + process.env.DB_HOST +
     ":" + process.env.DB_PORT +
     "/" + process.env.DB_NAME))()
-    .then(function(a_oConnection) {
+    .then(function() {
         clearInterval(l_oProcessId)
         console.log("\nConnected to database, current state: " + g_coMongoose.connection.readyState)
         
-        const g_coDirectory = g_coPath.join(g_coPath.dirname(__dirname), "model")
+        const g_coDirectory = g_coPath.join(g_coPath.dirname(__dirname), "models")
         require("fs").readdirSync(g_coDirectory)
             .forEach(a_oFile => require(g_coPath.join(g_coDirectory, a_oFile)))
         

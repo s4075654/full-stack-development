@@ -1,6 +1,6 @@
 const g_cProcessing = require("../system/processing.cjs")
 
-module.exports = require("../system/immutable.cjs")(new Map(Array.of(
+module.exports = require("../system/constant.cjs")(new Map(Array.of(
     ["Shut down", function(a_oServer) {
         let l_oProcessId = setInterval(g_cProcessing, parseFloat(process.env.INTERVAL))
         a_oServer.close(async function() {
