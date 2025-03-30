@@ -3,6 +3,13 @@ const g_codes = require("./codes.cjs")
 const g_cvMakeConstant = require("../system/constant.cjs")
 
 module.exports = g_cvMakeConstant(new Map(Array.of(
+    ["Check authentication", async function(a_oRequest, a_oResponse, a_Next) {
+        if (!a_oRequest.get("Session ID") && !require("../system/constant.cjs")(new Set(JSON.parse(process.env.WHITELIST)).has(a_oRequest.path))) {
+            return a_oResponse.redirect("/authenticate.htm")
+            
+        }
+        return a_Next()
+    }],
     ["Hash", async function(a_oRequest, a_oResponse, a_Next) {
         if (!a_oRequest.get("Password")) return a_oResponse.status(g_codes.get("Invalid")).text("No password found.")
         a_oRequest.body.m_sPassword = await require("bcrypt").hash(a_oRequest.body.m_sPassword, process.env.SALT_ROUNDS)

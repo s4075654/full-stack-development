@@ -1,7 +1,7 @@
 {
   "name": "GroupProject",
   "version": "1.0.0",
-  "main": "prod/backend/server/db.cjs",
+  "main": "prod/backend/server/main.cjs",
   "repository": "https://github.com/Group-tam/full-stack-development",
   "author": "Gr 8",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "dotenv": "latest",
     "express": "latest",
     "express-session": "latest",
-    "mongoose": "latest"
+    "mongodb": "latest"
   },
   "devDependencies": {
     "@types/node": "latest",

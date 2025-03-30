@@ -7,7 +7,7 @@ module.exports = function() {
         console.log("Request received: " + a_oRequest)
         return a_Next()
     })
-    require("../queries/auth.cjs")(l_coApp)
+    l_coApp.use(require("./security.cjs").get("Check authentication"))
 
     let [l_oCreate, l_oRead, l_oUpdate, l_oDelete] = require("../queries/EventFunctions.cjs")
     l_coApp.post("/event", g_cExpress.urlencoded(), async (a_oRequest, a_oResponse) => await l_oCreate(a_oRequest, a_oResponse))
@@ -38,6 +38,11 @@ module.exports = function() {
     l_coApp.get("/request", async (a_oRequest, a_oResponse) => await l_oRead(a_oRequest, a_oResponse))
     l_coApp.put("/request", g_cExpress.urlencoded(), async (a_oRequest, a_oResponse) => await l_oUpdate(a_oRequest, a_oResponse))
     l_coApp.delete("/request", async (a_oRequest, a_oResponse) => await l_oDelete(a_oRequest, a_oResponse));
+
+    [l_oCreate, l_oRead, l_oDelete] = require("../queries/SessionFunctions.cjs")
+    l_coApp.post("/session", async (a_oRequest, a_oResponse) => await l_oCreate(a_oRequest, a_oResponse))
+    l_coApp.get("/session", async (a_oRequest, a_oResponse) => await l_oRead(a_oRequest, a_oResponse))
+    l_coApp.delete("/session", async (a_oRequest, a_oResponse) => await l_oDelete(a_oRequest, a_oResponse));
 
     [l_oCreate, l_oRead, l_oUpdate, l_oDelete] = require("../queries/UserFunctions.cjs")
     l_coApp.post("/user", g_cExpress.urlencoded(), async (a_oRequest, a_oResponse) => await l_oCreate(a_oRequest, a_oResponse))
