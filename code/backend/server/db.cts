@@ -1,29 +1,18 @@
 require("dotenv").config()
-const { MongoClient } = require("mongodb")
-const g_coPath = require("path")
 
-module.exports = function() {
-    process.stdout.write("Attempting database connection.")
-    let l_oProcessId = setInterval(require("../system/processing.cjs"), parseFloat(process.env.INTERVAL))
-    const l_coClient = new MongoClient(
-        "mongodb://" + process.env.DB_HOST +
-        ":" + process.env.DB_PORT +
-        "/" + process.env.DB_NAME)
-    (async () => await l_coClient.connect(
-        )()
-        .then(function() {
-            clearInterval(l_oProcessId)
-            console.log("\nConnected to database, current state: " + g_coMongoose.connection.readyState)
-            
-            const g_coDirectory = g_coPath.join(g_coPath.dirname(__dirname), "models")
-            require("fs").readdirSync(g_coDirectory)
-                .forEach(a_oFile => require(g_coPath.join(g_coDirectory, a_oFile)))
-            
-            require("./controller.cjs")(require("./endpoints.cjs")())
-        })
-        .catch(function(a_oError) {
-            clearInterval(l_oProcessId)
-            console.error("\nUnable to connect to database due to: ", a_oError)
-            process.kill(process.pid, "SIGTERM")
-        })
-}
+process.stdout.write("Attempting database connection.")
+const g_coProcessId = setInterval(require("../system/processing.cjs"), parseFloat(process.env.INTERVAL))
+const g_coClient = new (require("mongodb").MongoClient)(
+    "mongodb://" + process.env.DB_HOST +
+    ":" + process.env.DB_PORT)
+g_coClient.connect(function(a_oError, a_oClient) {
+    clearInterval(g_coProcessId)
+    if (a_oError) {
+        console.error("Unable to connect to database due to: ", a_oError)
+        process.kill(process.pid)
+    }
+    const l_coDb = a_oClient.db(process.env.DB_NAME)
+    require("./props.cjs").get("Objects").entries().forEach(([a_sCollectionName, a_oValidator]) => l_coDb.createCollection(a_sCollectionName, a_oValidator))
+
+    module.exports = a_oClient
+})
