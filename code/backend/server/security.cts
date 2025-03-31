@@ -1,10 +1,9 @@
 require("dotenv").config()
 const g_codes = require("./codes.cjs")
-const g_cvMakeConstant = require("../system/constant.cjs")
 
-module.exports = g_cvMakeConstant(new Map(Array.of(
+module.exports = Object.freeze(new Map(Array.of(
     ["Check authentication", async function(a_oRequest, a_oResponse, a_Next) {
-        if (!a_oRequest.get("Session ID") && !require("../system/constant.cjs")(new Set(JSON.parse(process.env.WHITELIST)).has(a_oRequest.path))) {
+        if (!a_oRequest.get("Session ID") && !Object.freeze(new Set(JSON.parse(process.env.WHITELIST)).has(a_oRequest.path))) {
             return a_oResponse.redirect("/authenticate.htm")
             
         }

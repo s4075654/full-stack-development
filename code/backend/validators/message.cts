@@ -1,4 +1,4 @@
-module.exports = require("../system/constant.cjs")({
+module.exports = Object.freeze({
     validator: {
         $jsonSchema: {
             bsonType: "object",

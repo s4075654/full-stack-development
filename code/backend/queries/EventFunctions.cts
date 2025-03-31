@@ -1,7 +1,7 @@
 const g_codes = require("../server/codes.cjs")
 const g_coEvent = require("../models/event.cjs")
 
-module.exports = require("../system/constant.cjs")(Array.of(
+module.exports = Object.freeze(Array.of(
     async function l_oCreate(a_oRequest, a_oResponse) {
         try {
             await g_coEvent.create(a_oRequest.body)

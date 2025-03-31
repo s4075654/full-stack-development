@@ -1,7 +1,7 @@
 const g_coPath = require("path")
 const g_csModelsPath = g_coPath.join(__dirname, "../validators")
 
-module.exports = require("../system/constant.cjs")(new Map<any, any>(Array.of(
+module.exports = Object.freeze(new Map<any, any>(Array.of(
     ["Status codes", new Map(Array.of(
         ["Success", 200],
         ["Unauthenticated", 401],
@@ -15,6 +15,6 @@ module.exports = require("../system/constant.cjs")(new Map<any, any>(Array.of(
         ["SHUT DOWN", "Shut down the server."]
     ))],
     ["Collections", new Map(Array.from(
-        require("fs").readdirSync(g_csModelsPath).map(a_sFileName => a_sFileName.replace(".cj", String())), a_sObjectName => [a_sObjectName, require(g_coPath.join(g_csModelsPath, a_sObjectName))]
+        require("fs").readdirSync(g_csModelsPath).map(a_sFileName => a_sFileName.replace(".cj", "")), a_sObjectName => [a_sObjectName, require(g_coPath.join(g_csModelsPath, a_sObjectName))]
     ))]
 )))

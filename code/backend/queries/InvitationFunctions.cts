@@ -1,6 +1,6 @@
 const g_coInvitation = require("../models/invitation.cjs")
 
-module.exports = require("../system/constant.cjs")(Array.of(
+module.exports = Object.freeze(Array.of(
     async function l_oCreate(a_oRequest, a_oResponse) {
         
     },
