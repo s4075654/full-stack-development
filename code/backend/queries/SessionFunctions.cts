@@ -1,7 +1,7 @@
-const g_coUser = require("../models/user.cjs")
-const g_codes = require("./codes.cjs")
+const g_coUser = require("../validators/user.cjs")
+const g_codes = require("../server/pairs.cjs").get("Status codes")
 
-module.exports = Object.freeze(Array.of(
+module.exports = Array.of(
     async function l_oCreate(a_oRequest, a_oResponse) {
         const l_coUser = await require("../models/user.cjs").findOne({ m_sUsername: a_oRequest.get("Username") })
         if (!(l_coUser && await require("bcrypt").compare(a_oRequest.get("Password"), l_coUser.m_sPassword))) {
@@ -17,4 +17,4 @@ module.exports = Object.freeze(Array.of(
     async function l_oDelete(a_oRequest, a_oResponse) {
 
     }
-))
+)

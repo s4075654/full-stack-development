@@ -1,4 +1,4 @@
-module.exports = Object.freeze(Array.of(
+module.exports = Array.of(
     async function l_oCreate(a_oRequest, a_oResponse) {
         
     },
@@ -11,4 +11,4 @@ module.exports = Object.freeze(Array.of(
     async function l_oFindByAttendee(a_oRequest, a_oResponse) {
         
     }
-))
+)

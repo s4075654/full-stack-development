@@ -1,4 +1,4 @@
-module.exports = Object.freeze({
+module.exports = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
@@ -60,4 +60,4 @@ module.exports = Object.freeze({
             }
         }
     }
-})
+}

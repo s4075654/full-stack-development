@@ -1,9 +1,9 @@
 require("dotenv").config()
-const g_codes = require("./codes.cjs")
+const g_codes = require("./pairs.cjs").get("Status codes")
 
-module.exports = Object.freeze(new Map(Array.of(
+module.exports = new Map(Array.of(
     ["Check authentication", async function(a_oRequest, a_oResponse, a_Next) {
-        if (!a_oRequest.get("Session ID") && !Object.freeze(new Set(JSON.parse(process.env.WHITELIST)).has(a_oRequest.path))) {
+        if (!a_oRequest.get("Session ID") && !new Set(JSON.parse(process.env.WHITELIST)).has(a_oRequest.path)) {
             return a_oResponse.redirect("/authenticate.htm")
             
         }
@@ -14,4 +14,4 @@ module.exports = Object.freeze(new Map(Array.of(
         a_oRequest.body.m_sPassword = await require("bcrypt").hash(a_oRequest.body.m_sPassword, process.env.SALT_ROUNDS)
         return a_Next()
     }]
-)))
+))
