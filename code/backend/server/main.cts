@@ -24,15 +24,14 @@ module.exports = g_coEssentials;
 
 (async function() {
     try {
-        g_coEssentials.set("Database connection", await require("./db.cjs")(g_coEssentials.get("Database connection")))
+        await require("./db.cjs")(g_coEssentials.get("Database connection"))
     } catch (a_oError) {
         g_cToggleProcessing()
         console.error("Unable to connect to database due to: ", a_oError)
         return process.kill(process.pid)
     }
     g_cToggleProcessing("Attempting server start.")
-    g_coEssentials.set("Server", require("./endpoints.cjs")(g_coEssentials.get("Database connection")
-        .db(process.env.DB_NAME))
+    g_coEssentials.set("Server", require("./endpoints.cjs")
         .listen(process.env.PORT, function() {
             g_cToggleProcessing()
             console.log("Server started.")
