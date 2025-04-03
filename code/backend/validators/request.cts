@@ -12,6 +12,7 @@ module.exports = {
                 state: {
                     bsonType: "string",
                     enum: Array.of("Accepted", "Unanswered", "Rejected"),
+                    default: "Unanswered",
                     description: "The state of the request."
                 },
                 event: {

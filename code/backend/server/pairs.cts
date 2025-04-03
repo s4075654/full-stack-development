@@ -12,6 +12,5 @@ module.exports = new Map<any, any>(Array.of(
     ))],
     ["Objects", new Map(Array.from(
         require("fs").readdirSync(g_csModelsPath), (a_sObjectName: string) => [a_sObjectName.replace(".cj", ""), require(g_coPath.join(g_csModelsPath, a_sObjectName))]
-    ))],
-    ["Shut down", require("./ShutDown.cjs")]
+    ))]
 ))

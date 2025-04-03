@@ -7,11 +7,12 @@ module.exports = {
             properties: {
                 public: {
                     bsonType: "bool",
-                    description: "Whether or not the invitation is public."
+                    description: "Whether or not the event is public."
                 },
                 invitations: {
                     bsonType: "array",
                     description: "The invitations to the event.",
+                    default: Array.of(),
                     uniqueItems: true,
                     items: {
                         bsonType: "objectId",
@@ -21,6 +22,7 @@ module.exports = {
                 requests: {
                     bsonType: "array",
                     description: "The requests to join the event.",
+                    default: Array.of(),
                     uniqueItems: true,
                     items: {
                         bsonType: "objectId",
@@ -30,6 +32,7 @@ module.exports = {
                 DiscussionBoard: {
                     bsonType: "array",
                     description: "The discussion board of the event.",
+                    default: Array.of(),
                     uniqueItems: true,
                     items: {
                         bsonType: "objectId",
@@ -39,6 +42,7 @@ module.exports = {
                 notifications: {
                     bsonType: "array",
                     description: "Notifications for the event.",
+                    default: Array.of(),
                     uniqueItems: true,
                     items: {
                         bsonType: "objectId",
@@ -48,6 +52,7 @@ module.exports = {
                 images: {
                     bsonType: "array",
                     description: "Images of the event.",
+                    default: Array.of(),
                     items: {
                         bsonType: "binData",
                         description: "An image of the event."

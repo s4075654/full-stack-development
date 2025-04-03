@@ -7,7 +7,8 @@ module.exports = {
             properties: {
                 text: {
                     bsonType: "string",
-                    description: "The contents of the message."
+                    description: "The contents of the message.",
+                    default: ""
                 },
                 sender: {
                     bsonType: "objectId",
