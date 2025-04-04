@@ -8,15 +8,13 @@ g_coApp.use(function(a_oRequest, _, a_Next) {
     a_Next()
 })
 g_coApp.use(require("express-session")({ store: new (require("../queries/SessionOps.cjs"))() }))
+g_coApp.use(g_csRoot + "log", require("../queries/logging.cjs"))
 
-g_coApp.use(g_csRoot + "login", (a_oRequest, a_oResponse) => require("./pairs.cjs").get("Logging").at(0)())
-g_coApp.use(g_csRoot + "logout", (a_oRequest, a_oResponse) => require("./pairs.cjs").get("Logging").at(1)())
-
-g_coApp.use(g_csRoot + "event", require("../queries/EventOps.cjs"))
-g_coApp.use(g_csRoot + "inviation", require("../queries/InvitationOps.cjs"))
-g_coApp.use(g_csRoot + "message", require("../queries/MesOps.cjs"))
-g_coApp.use(g_csRoot + "request", require("../queries/RequestOps.cjs"))
-g_coApp.use(g_csRoot + "notification", require("../queries/NotifOps.cjs"))
+g_coApp.use(g_csRoot + "event", require("./auth.cjs"), require("../queries/EventOps.cjs"))
+g_coApp.use(g_csRoot + "inviation", require("./auth.cjs"), require("../queries/InvitationOps.cjs"))
+g_coApp.use(g_csRoot + "message", require("./auth.cjs"), require("../queries/MesOps.cjs"))
+g_coApp.use(g_csRoot + "request", require("./auth.cjs"), require("../queries/RequestOps.cjs"))
+g_coApp.use(g_csRoot + "notification", require("./auth.cjs"), require("../queries/NotifOps.cjs"))
 g_coApp.use(g_csRoot + "user", require("../queries/UserOps.cjs"))
 
 g_coApp.use(g_cExpress.static(require("path").join(__dirname, "prod/frontend"), { index: "HomePage.htm" }))
