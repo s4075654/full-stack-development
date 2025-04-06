@@ -9,6 +9,7 @@ module.exports = async function() {
 	for (const [l_csCollectionName, l_coValidator] of require("./pairs.cjs").get("Objects").entries()) {
 		await l_coDb.collection(l_csCollectionName).drop().catch(function(a_oError) {
 			if (a_oError.code !== 26) throw a_oError
+			console.log("No " + l_csCollectionName + " collection to drop.")
 		})
 		await l_coDb.createCollection(l_csCollectionName, l_coValidator)
 		console.log(l_csCollectionName + " created.")
