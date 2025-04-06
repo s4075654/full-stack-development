@@ -16,9 +16,9 @@ JSON.parse(process.env.SIGNALS).forEach(a_signal => process.on(a_signal, async f
 }))
 
 const g_coEssentials = new Map(Array.of(
-	["Database connection", new (require("mongodb").MongoClient)(
+	Array.of("Database connection", new (require("mongodb").MongoClient)(
 		"mongodb://" + process.env.DB_HOST +
-		":" + process.env.DB_PORT)]
+		":" + process.env.DB_PORT))
 ))
 module.exports = g_coEssentials;
 
