@@ -1,10 +1,10 @@
-const g_cToggleProcessing = require("../utilities/processing.cjs")
+const g_cToggleProcessing = require("../utilities/processing.cts")
 
 module.exports = Array.of(
 	async function() {
 		g_cToggleProcessing("Attempting to disconnect from database.")
 		try {
-			await require("./main.cjs").get("Database connection").close()
+			await require("./main.cts").get("Database connection").close()
 		} catch (a_oError) {
 			g_cToggleProcessing()
 			console.error("Unable to disconnect from database due to: ", a_oError)
@@ -14,7 +14,7 @@ module.exports = Array.of(
 		console.log("Successfully disconnected from database.")
 	},
 	async function() {
-		const g_coServer = require("./main.cjs").get("Server")
+		const g_coServer = require("./main.cts").get("Server")
 		if (g_coServer) {
 			g_cToggleProcessing("Attempting to stop the server.")
 			try {

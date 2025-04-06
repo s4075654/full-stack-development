@@ -1,7 +1,7 @@
 const g_coPath = require("path")
 const g_csModelsPath = g_coPath.join(__dirname, "../validators")
 
-module.exports = new Map<any, any>(Array.of(
+module.exports = new Map(Array.of(
 	["Status codes", new Map(Array.of(
 		["Success", 200],
 		["Unauthenticated", 401],

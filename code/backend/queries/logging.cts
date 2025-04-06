@@ -1,7 +1,7 @@
 const g_coRouter = require("express").Router()
-const g_csRoot = require("../utilities/root.cjs")
-const g_coUsers = require("../server/main.cjs").get("DB").collection("users")
-const g_codes = require("../server/pairs.cjs").get("Status codes")
+const g_csRoot = require("../utilities/root.cts")
+const g_coUsers = require("../server/main.cts").get("DB").collection("users")
+const g_codes = require("../server/data.cts").get("Status codes")
 
 g_coRouter.use(g_csRoot + "in", function(a_oRequest, a_oResponse) {
 	const { m_sUsername, m_sPassword } = a_oRequest.headers

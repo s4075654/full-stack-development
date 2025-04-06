@@ -1,7 +1,8 @@
 require("dotenv").config()
 const g_cExpress = require("express")
-const g_csRoot = require("../utilities/root.cjs")
-const g_codes = require("./pairs.cjs").get("Status codes")
+const g_csRoot = require("../utilities/root.cts")
+const g_cAuth = require("./auth.cts")
+const g_codes = require("./data.cts").get("Status codes")
 
 const g_coApp = g_cExpress()
 g_coApp.use(function(a_oRequest, _, a_Next) {
@@ -9,21 +10,23 @@ g_coApp.use(function(a_oRequest, _, a_Next) {
 	a_Next()
 })
 g_coApp.use(require("express-session")({
-	store: new (require("../queries/SessionOps.cjs"))(),
+	store: new (require("../queries/SessionOps.cts"))(),
 	resave: true,
 	saveUninitialized: true,
 	secret: process.env.SECRET
 }))
-g_coApp.use(g_csRoot + "log", require("../queries/logging.cjs"))
+g_coApp.use(g_csRoot + "log", require("../queries/logging.cts"))
 
-g_coApp.use(g_csRoot + "event", require("./auth.cjs"), require("../queries/EventOps.cjs"))
-g_coApp.use(g_csRoot + "inviation", require("./auth.cjs"), require("../queries/InvitationOps.cjs"))
-g_coApp.use(g_csRoot + "message", require("./auth.cjs"), require("../queries/MesOps.cjs"))
-g_coApp.use(g_csRoot + "request", require("./auth.cjs"), require("../queries/RequestOps.cjs"))
-g_coApp.use(g_csRoot + "notification", require("./auth.cjs"), require("../queries/NotifOps.cjs"))
-g_coApp.use(g_csRoot + "user", require("../queries/UserOps.cjs"))
+g_coApp.use(g_csRoot + "event", g_cAuth, require("../queries/EventOps.cts"))
+g_coApp.use(g_csRoot + "inviation", g_cAuth, require("../queries/InvitationOps.cts"))
+g_coApp.use(g_csRoot + "message", g_cAuth, require("../queries/MesOps.cts"))
+g_coApp.use(g_csRoot + "request", g_cAuth, require("../queries/RequestOps.cts"))
+g_coApp.use(g_csRoot + "notification", g_cAuth, require("../queries/NotifOps.cts"))
+g_coApp.use(g_csRoot + "user", require("../queries/UserOps.cts"))
 
-g_coApp.use(g_cExpress.static(require("path").join(__dirname, "prod/frontend"), { index: "HomePage.htm" }))
+g_coApp.use(g_cExpress.static(require("path").join(__dirname, "code/frontend"), { index: "HomePage.htm" }))
+g_coApp.use(g_cAuth, g_cExpress.static(require("path").join(__dirname, "code/frontend/auth"), { index: "DashBoard.htm" }))
+
 g_coApp.use((_, a_oResponse) => a_oResponse.sendStatus(g_codes.get("Not found")))
 g_coApp.use(function(a_oError, _, a_oResponse, __) {
 	console.error("An error has occurred: ", a_oError)
