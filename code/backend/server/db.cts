@@ -1,14 +1,18 @@
 require("dotenv").config()
 const g_cToggleProcessing = require("../utilities/processing.cjs")
 
-module.exports = (async function(a_oClient) {
+module.exports = async function() {
 	g_cToggleProcessing("Attempting database connection.")
-	const l_coDb = (await a_oClient.connect()).db(process.env.DB_NAME)
-	g_cToggleProcessing("Registering collections.")
-	await Promise.all(
-		Array.from(require("./pairs.cjs").get("Objects").entries())
-			.map(([a_sCollectionName, a_oValidator]) => l_coDb.createCollection(a_sCollectionName, a_oValidator))
-	)
+	const l_coDb = (await require("./main.cjs").get("Database connection").connect()).db(process.env.DB_NAME)
 	g_cToggleProcessing()
+	console.log("Database connected.")
+	for (const [l_csCollectionName, l_coValidator] of require("./pairs.cjs").get("Objects").entries()) {
+		await l_coDb.collection(l_csCollectionName).drop().catch(function(a_oError) {
+			if (a_oError.code !== 26) throw a_oError
+		})
+		await l_coDb.createCollection(l_csCollectionName, l_coValidator)
+		console.log(l_csCollectionName + " created.")
+	}
+	console.log("Collections registered.")
 	return l_coDb
-})()
+}

@@ -12,12 +12,10 @@ module.exports = {
 						active: {
 							bsonType: "bool",
 							description: "Whether the session is active.",
-							default: true
 						},
 						user: {
 							bsonType: "objectId",
 							description: "The user associated with the session.",
-							default: null
 						}
 					}
 				}

@@ -8,7 +8,6 @@ module.exports = {
 				text: {
 					bsonType: "string",
 					description: "The notification text.",
-					default: ""
 				},
 				reminder: {
 					bsonType: "bool",
@@ -17,7 +16,6 @@ module.exports = {
 				"Send time": {
 					bsonType: "timestamp",
 					description: "The time at which the notification is sent.",
-					default: new (require("mongodb").Timestamp)()
 				},
 				event: {
 					bsonType: "objectId",

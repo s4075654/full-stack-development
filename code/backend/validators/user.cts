@@ -20,7 +20,6 @@ module.exports = {
 				notifications: {
 					bsonType: "array",
 					description: "The notifications the user has received.",
-					default: Array.of(),
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
@@ -30,7 +29,6 @@ module.exports = {
 				"Organising events": {
 					bsonType: "array",
 					description: "The events the user is organising/has organised.",
-					default: Array.of(),
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
@@ -47,13 +45,11 @@ module.exports = {
 				},
 				admin: {
 					bsonType: "bool",
-					default: false,
 					description: "Whether the user is an admin."
 				},
 				sessions: {
 					bsonType: "array",
 					description: "The sessions of the user.",
-					default: Array.of(),
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",

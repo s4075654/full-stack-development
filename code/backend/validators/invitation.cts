@@ -12,7 +12,6 @@ module.exports = {
 				state: {
 					bsonType: "string",
 					enum: Array.of("Accepted", "Not responded", "Declined"),
-					default: "Not responded",
 					description: "The current state of the invitation."
 				},
 				event: {

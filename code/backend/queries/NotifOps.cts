@@ -1,6 +1,6 @@
 const g_coRouter = require("express").Router()
 const g_csRoot = require("../utilities/root.cjs")
-const g_coNotifications = require("../server/db.cjs").collection("notifications")
+const g_coNotifications = require("../server/main.cjs").get("DB").collection("notifications")
 const g_codes = require("../server/pairs.cjs").get("Status codes")
 
 g_coRouter.post(g_csRoot, function(a_oRequest, a_oResponse) {

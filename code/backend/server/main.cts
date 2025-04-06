@@ -24,7 +24,7 @@ module.exports = g_coEssentials;
 
 (async function() {
 	try {
-		await require("./db.cjs")(g_coEssentials.get("Database connection"))
+		g_coEssentials.set("DB", await require("./db.cjs")())
 	} catch (a_oError) {
 		g_cToggleProcessing()
 		console.error("Unable to connect to database due to: ", a_oError)

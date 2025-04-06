@@ -1,6 +1,5 @@
 *~
 #*#
-DEADJOE
 node_modules/
 yarn.lock
 prod/

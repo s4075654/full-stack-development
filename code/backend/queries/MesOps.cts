@@ -1,6 +1,6 @@
 const g_coRouter = require("express").Router()
 const g_csRoot = require("../utilities/root.cjs")
-const g_coMessages = require("../server/db.cjs").collection("messages")
+const g_coMessages = require("../server/main.cjs").get("DB").collection("messages")
 const g_codes = require("../server/pairs.cjs").get("Status codes")
 
 g_coRouter.post(g_csRoot, function(a_oRequest, a_oResponse) {

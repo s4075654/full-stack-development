@@ -12,17 +12,15 @@ module.exports = {
 				invitations: {
 					bsonType: "array",
 					description: "The invitations to the event.",
-					default: Array.of(),
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
-						desription: "An invitation to the event."
+						description: "An invitation to the event."
 					}
 				},
 				requests: {
 					bsonType: "array",
 					description: "The requests to join the event.",
-					default: Array.of(),
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
@@ -32,7 +30,6 @@ module.exports = {
 				DiscussionBoard: {
 					bsonType: "array",
 					description: "The discussion board of the event.",
-					default: Array.of(),
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
@@ -42,7 +39,6 @@ module.exports = {
 				notifications: {
 					bsonType: "array",
 					description: "Notifications for the event.",
-					default: Array.of(),
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
@@ -52,7 +48,6 @@ module.exports = {
 				images: {
 					bsonType: "array",
 					description: "Images of the event.",
-					default: Array.of(),
 					items: {
 						bsonType: "binData",
 						description: "An image of the event."

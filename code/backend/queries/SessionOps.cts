@@ -1,9 +1,9 @@
 const g_cStore = require("express-session").Store
 const g_convertStringToObjectId = require("../utilities/converter.cjs").get("String to object ID")
 
-function g_Store(a_oDb) {
+function g_Store() {
 	g_cStore.call(this)
-	this.m_oSessions = a_oDb.collection("sessions")
+	this.m_oSessions = require("../server/main.cjs").get("DB").collection("sessions")
 }
 g_Store.prototype = Object.create(g_cStore.prototype)
 
