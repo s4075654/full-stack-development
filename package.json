@@ -1,0 +1,15 @@
+{
+  "name": "GroupProject",
+  "version": "1.0.0",
+  "main": "code/backend/server/main.cts",
+  "repository": "https://github.com/Group-tam/full-stack-development",
+  "author": "Gr 8",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "express-session": "latest",
+    "mongodb": "latest"
+  }
+}
