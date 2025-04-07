@@ -3,13 +3,13 @@ module.exports = {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "An event.",
-			required: Array.of("public", "organiser"),
+			required: Array.of("Public", "Organiser"),
 			properties: {
-				public: {
+				Public: {
 					bsonType: "bool",
 					description: "Whether or not the event is public."
 				},
-				invitations: {
+				Invitations: {
 					bsonType: "array",
 					description: "The invitations to the event.",
 					uniqueItems: true,
@@ -18,7 +18,7 @@ module.exports = {
 						description: "An invitation to the event."
 					}
 				},
-				requests: {
+				Requests: {
 					bsonType: "array",
 					description: "The requests to join the event.",
 					uniqueItems: true,
@@ -27,7 +27,7 @@ module.exports = {
 						description: "A request to join the event."
 					}
 				},
-				DiscussionBoard: {
+				"Disscussion board": {
 					bsonType: "array",
 					description: "The discussion board of the event.",
 					uniqueItems: true,
@@ -36,7 +36,7 @@ module.exports = {
 						description: "A message in the discussion board."
 					}
 				},
-				notifications: {
+				Notifications: {
 					bsonType: "array",
 					description: "Notifications for the event.",
 					uniqueItems: true,
@@ -45,7 +45,7 @@ module.exports = {
 						description: "A notification for the event."
 					}
 				},
-				images: {
+				Images: {
 					bsonType: "array",
 					description: "Images of the event.",
 					items: {
@@ -53,7 +53,7 @@ module.exports = {
 						description: "An image of the event."
 					}
 				},
-				organiser: {
+				"Organiser ID": {
 					bsonType: "objectId",
 					description: "The organiser of the event."
 				}

@@ -3,13 +3,13 @@ module.exports = {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "A user.",
-			required: Array.of("username", "Maximum number of active events", "Maximum number of invitations to an event", "admin"),
+			required: Array.of("Username", "Maximum number of active events", "Maximum number of invitations to an event", "Admin"),
 			properties: {
-				username: {
+				Username: {
 					bsonType: "string",
 					description: "The username of a user."
 				},
-				password: {
+				Password: {
 					bsonType: "string",
 					description: "The hashed password of a user."
 				},
@@ -17,7 +17,7 @@ module.exports = {
 					bsonType: "string",
 					description: "The email address of a user."
 				},
-				notifications: {
+				Notifications: {
 					bsonType: "array",
 					description: "The notifications the user has received.",
 					uniqueItems: true,
@@ -43,11 +43,11 @@ module.exports = {
 					bsonType: "long",
 					description: "The maximum number of invitations to an event the user can send."
 				},
-				admin: {
+				Admin: {
 					bsonType: "bool",
 					description: "Whether the user is an admin."
 				},
-				sessions: {
+				Sessions: {
 					bsonType: "array",
 					description: "The sessions of the user.",
 					uniqueItems: true,

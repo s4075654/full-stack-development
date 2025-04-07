@@ -7,13 +7,13 @@ module.exports = {
 			properties: {
 				data: {
 					bsonType: "object",
-					required: Array.of("active"),
+					required: Array.of("Active"),
 					properties: {
-						active: {
+						Active: {
 							bsonType: "bool",
 							description: "Whether the session is active.",
 						},
-						user: {
+						"User ID": {
 							bsonType: "objectId",
 							description: "The user associated with the session.",
 						}

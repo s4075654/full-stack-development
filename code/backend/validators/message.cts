@@ -3,17 +3,17 @@ module.exports = {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "A message in the discussion board of an event.",
-			required: Array.of("sender, event"),
+			required: Array.of("Sender ID", "Event ID"),
 			properties: {
-				text: {
+				Text: {
 					bsonType: "string",
 					description: "The contents of the message.",
 				},
-				sender: {
+				"Sender ID": {
 					bsonType: "objectId",
 					description: "The user who sent the message."
 				},
-				event: {
+				"Event ID": {
 					bsonType: "objectId",
 					description: "The event whose discussion board contains the message."
 				}
