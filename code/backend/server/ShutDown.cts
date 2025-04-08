@@ -1,6 +1,6 @@
 const g_cToggleProcessing = require("../utilities/processing.cts")
 
-module.exports = Array.of(
+module.exports = new Set(Array.of(
 	async function() {
 		g_cToggleProcessing("Attempting to disconnect from database.")
 		try {
@@ -28,4 +28,4 @@ module.exports = Array.of(
 			console.log("Successfully shut down server.")
 		}
 	}
-)
+))

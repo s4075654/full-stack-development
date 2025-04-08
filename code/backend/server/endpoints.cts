@@ -1,6 +1,5 @@
 require("dotenv").config()
 const g_cExpress = require("express")
-const g_csRoot = require("../utilities/root.cts")
 const g_cAuth = require("./auth.cts")
 const g_codes = require("./data.cts").get("Status codes")
 
@@ -15,14 +14,14 @@ g_coApp.use(require("express-session")({
 	saveUninitialized: true,
 	secret: process.env.SECRET
 }))
-g_coApp.use(g_csRoot + "log", require("../queries/logging.cts"))
+g_coApp.use("/" + "log", require("../queries/logging.cts"))
 
-g_coApp.use(g_csRoot + "event", g_cAuth, require("../queries/EventOps.cts"))
-g_coApp.use(g_csRoot + "inviation", g_cAuth, require("../queries/InvitationOps.cts"))
-g_coApp.use(g_csRoot + "message", g_cAuth, require("../queries/MesOps.cts"))
-g_coApp.use(g_csRoot + "request", g_cAuth, require("../queries/RequestOps.cts"))
-g_coApp.use(g_csRoot + "notification", g_cAuth, require("../queries/NotifOps.cts"))
-g_coApp.use(g_csRoot + "user", require("../queries/UserOps.cts"))
+g_coApp.use("/" + "event", g_cAuth, require("../queries/EventOps.cts"))
+g_coApp.use("/" + "inviation", g_cAuth, require("../queries/InvitationOps.cts"))
+g_coApp.use("/" + "message", g_cAuth, require("../queries/MesOps.cts"))
+g_coApp.use("/" + "request", g_cAuth, require("../queries/RequestOps.cts"))
+g_coApp.use("/" + "notification", g_cAuth, require("../queries/NotifOps.cts"))
+g_coApp.use("/" + "user", require("../queries/UserOps.cts"))
 
 g_coApp.use(g_cExpress.static(require("path").join(__dirname, "code/frontend"), { index: "HomePage.htm" }))
 g_coApp.use(g_cAuth, g_cExpress.static(require("path").join(__dirname, "code/frontend/auth"), { index: "DashBoard.htm" }))

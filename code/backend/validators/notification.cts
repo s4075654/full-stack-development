@@ -3,13 +3,13 @@ module.exports = {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "The notification related to an event.",
-			required: Array.of("reminder", "event"),
+			required: Array.of("Reminder", "Event ID"),
 			properties: {
-				text: {
+				Text: {
 					bsonType: "string",
 					description: "The notification text.",
 				},
-				reminder: {
+				Reminder: {
 					bsonType: "bool",
 					description: "Whether or the notification is a reminder."
 				},
@@ -17,7 +17,7 @@ module.exports = {
 					bsonType: "timestamp",
 					description: "The time at which the notification is sent.",
 				},
-				event: {
+				"Event ID": {
 					bsonType: "objectId",
 					description: "The event."
 				}
