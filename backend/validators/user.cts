@@ -56,7 +56,8 @@ module.exports = {
 						description: "A session of the user."
 					}
 				}
-			}
+			},
+			additionalProperties: false
 		}
 	}
 }

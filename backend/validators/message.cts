@@ -17,7 +17,8 @@ module.exports = {
 					bsonType: "objectId",
 					description: "The event whose discussion board contains the message."
 				}
-			}
+			},
+			additionalProperties: false
 		}
 	}
 }

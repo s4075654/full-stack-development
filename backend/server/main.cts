@@ -1,4 +1,5 @@
 process.stdout.write("Hello world!\n")
+console.log(require("path").join(process.cwd(), "frontend/public"))
 require("dotenv").config()
 const g_cToggleProcessing = require("../utilities/processing.cts")
 
