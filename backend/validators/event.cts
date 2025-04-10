@@ -57,7 +57,8 @@ module.exports = {
 					bsonType: "objectId",
 					description: "The organiser of the event."
 				}
-			}
+			},
+			additionalProperties: false,
 		}
 	}
 }

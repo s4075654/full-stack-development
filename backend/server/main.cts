@@ -1,7 +1,6 @@
-import * as path from "node:path";
-
 process.stdout.write("Hello world!\n")
-require("dotenv").config({path: path.resolve(__dirname, '../../.env')})
+console.log(require("path").join(process.cwd(), "frontend/public"))
+require("dotenv").config()
 const g_cToggleProcessing = require("../utilities/processing.cts")
 
 let g_bShuttingDown = false

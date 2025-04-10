@@ -18,7 +18,8 @@ module.exports = {
 					bsonType: "objectId",
 					description: "The event."
 				}
-			}
+			},
+			additionalProperties: false
 		}
 	}
 }
