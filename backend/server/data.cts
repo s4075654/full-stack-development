@@ -11,5 +11,5 @@ module.exports = new Map(Array.of(
 		Array.of("Server error", 500)
 	))),
 	Array.of("Objects", new Map(Array.from(
-		require("fs").readdirSync(g_csModelsPath), (a_sObjectName: string) => Array.of(a_sObjectName.replace(".cj", ""), require(g_coPath.join(g_csModelsPath, a_sObjectName)))
+		require("fs").readdirSync(g_csModelsPath), a_sObjectName => Array.of(a_sObjectName.replace(".cj", ""), require(g_coPath.join(g_csModelsPath, a_sObjectName)))
 	)))))
