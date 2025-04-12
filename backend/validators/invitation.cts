@@ -1,3 +1,28 @@
+/* MongoDB JSON Schema Validator for Invitations Collection
+
+Key Features:
+- Requires essential fields: Receiver ID, State, Event ID
+- Defines invitation state lifecycle via enum
+- Uses MongoDB references (objectId) for relational data
+- Prevents undocumented fields (additionalProperties: false)
+
+Fields:
+1. Receiver ID (Required):
+   - Type: objectId
+   - Purpose: Reference to user receiving the invitation
+
+2. State (Required):
+   - Type: string
+   - Allowed Values: "Accepted", "Not responded", "Declined"
+   - Purpose: Tracks invitation response status
+
+3. Event ID (Required):
+   - Type: objectId
+   - Purpose: Reference to related event document
+
+ */
+
+
 module.exports = {
 	validator: {
 		$jsonSchema: {
