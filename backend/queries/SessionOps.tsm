@@ -1,23 +1,11 @@
-/* Custom MongoDB Session Store Implementation
-============================================
-Extends express-session.Store to persist sessions in MongoDB with active/inactive state management
-
-Key Features:
-- Inherits from express-session.Store base class
-- Uses 'sessions' collection for storage
-- Implements soft deletion via 'Active' flag
-- Maintains session data structure with metadata
----------------- */
-
-const g_cStore = require("express-session").Store
+import { Store } from "express-session"
+import g_coDb from "../server/db.tsm"
 
 function g_Store() {
-	g_cStore.call(this)
-	this.m_oSessions = require("../server/main.ts").get("DB").collection("sessions")
+	Store.call(this)
+	this.m_oSessions = g_coDb.collection("sessions")
 }
-g_Store.prototype = Object.create(g_cStore.prototype)
-/* Core Methods Implementation
----------------------------- */
+g_Store.prototype = Object.create(Store.prototype)
 
 // 1. get() - Retrieves active session by ID
 g_Store.prototype.get = function(a_sId, a_Callback) {
@@ -47,4 +35,4 @@ g_Store.prototype.destroy = function(a_sId, a_Callback) {
 		(a_oError) => a_Callback(a_oError || null))
 }
 
-module.exports = g_Store
+export default g_Store

@@ -1,27 +1,3 @@
-/* MongoDB JSON Schema Validator for Users Collection
-
-Key Features:
-- Requires core user metadata (Username, Admin status, event limits)
-- Tracks user activity via references to events/notifications/sessions
-- Defines administrative privileges and usage limits
-- Strict schema prevents undocumented fields
-
-Fields:
-1. Required Fields:
-   - Username (string): Unique identifier for login/display
-   - Max Active Events (long): Usage cap for concurrent events
-   - Max Invitations (long): Per-event invitation limit
-   - Admin (bool): Privilege flag
-
-2. Optional Fields:
-   - Password (string): Hashed credentials (should be required for security)
-   - Email (string): Contact information
-   - Notifications (objectId[]): User alerts
-   - Organizing Events (objectId[]): Managed events
-   - Sessions (objectId[]): Active logins
- */
-
-
 export default {
 	validator: {
 		$jsonSchema: {

@@ -9,86 +9,34 @@ process.stdout.write("Hello world!\n")
 
 // Take all the data from ".env"
 import "dotenv/config"
-import g_cToggleProcessing from "../utilities/processing.tsm"
+import g_coToggleProcessing from "../utilities/processing.tsm"
+import { MongoClient } from "mongodb"
+export const g_connection = new MongoClient("mongodb://" + process.env.DB_HOST + ":" + process.env.DB_PORT)
+import g_coExpress from "express"
+export const g_coApp = g_coExpress()
 
+import g_cseShutDown from "./ShutDown.tsm"
 let g_bShuttingDown = false // Shutdown state flag
 JSON.parse(process.env.SIGNALS).forEach(a_signal => process.on(a_signal, async function() {
 	console.log(a_signal + " received.")
 	// Prevent multiple shutdown triggers
 	if (!g_bShuttingDown) {
 		g_bShuttingDown = true
-		g_cToggleProcessing()
-		for (const l_cFunction of require("./ShutDown.ts")) {
+		g_coToggleProcessing()
+		for (const l_cFunction of g_cseShutDown) {
 			await l_cFunction()  // Run DB disconnect, server close etc
 		}
 		process.exit(Number(process.stdout.write("Absolute cinema\n")))
 	}
 }))
-// Essential Services Configuration
-// -------------------------------
-const g_coEssentials = new Map(Array.of(
-	// MongoDB Client Setup
-	Array.of("Database connection", new (require("mongodb").MongoClient)(
-		"mongodb://" + process.env.DB_HOST +
-		":" + process.env.DB_PORT))
-))
-module.exports = g_coEssentials;
 
-// Database Initialization
-/*
- * Purpose: Establishes database connection and initializes collections during application startup
-
-Key Operations:
-1. Calls './db.ts' module to:
-   - Connect to MongoDB
-   - Create collections with schema validations
-   - Perform any required database setup
-
-2. Stores active database connection in shared essentials Map
-   - Accessible via g_coEssentials.get("DB")
-
-Error Handling:
-- Immediately terminates process if DB connection fails
-
-Flow:
-Attempt DB Setup → Success → Continue Startup
-               ↓
-               Failure → Log Error → Force Kill Process */
-
-(async function() {
-	try {
-		// Database Connection
-		g_coEssentials.set("DB", await require("./db.ts")()) // Initialize collections
-	} catch (a_oError) {
-		g_cToggleProcessing()
-		console.error("Unable to connect to database due to: ", a_oError)
-		return process.kill(process.pid) // Force immediate termination
-	}
-	// HTTP Server Startup
-	/*Key Operations:
-		1. Requires Express application from './endpoints.ts'
-		2. Binds server to port from .env (process.env.PORT)
-		3. Stores server instance in shared essentials Map
-   		- Accessible via g_coEssentials.get("Server")
-	 */
-	g_cToggleProcessing("Attempting server start.")
-	g_coEssentials.set("Server", require("./endpoints.ts")
-		.listen(process.env.PORT, function() {
-			/*
-             On success:
-   	        Log startup confirmation
-			 */
-			g_cToggleProcessing()
-			console.log("Server started.")
-		}).on("error", function(a_oError) {
-			/*
-			 On error:
-   			- Hide indicator
-   			- Log error details
-   			- Force kill process
-			 */
-			g_cToggleProcessing()
-			console.error("Encountered server error: ", a_oError)
-			process.kill(process.pid)
-		}))
-})()
+import g_coServer from "./endpoints.tsm"
+g_coToggleProcessing("Attempting server start.")
+g_coServer.listen(process.env.PORT, function() {
+		g_coToggleProcessing()
+		console.log("Server started.")
+	}).on("error", function(a_oError) {
+		g_coToggleProcessing()
+		console.error("Encountered server error: ", a_oError)
+		process.kill(process.pid)
+	})

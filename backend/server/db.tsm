@@ -1,42 +1,27 @@
-require("dotenv").config()
-const g_cToggleProcessing = require("../utilities/processing.ts")
+import "dotenv/config"
+import g_coToggleProcessing from "../utilities/processing.tsm"
 
+import { g_connection } from "./main.tsm"
+g_coToggleProcessing("Attempting database connection.")
+const g_coDb = (await g_connection.connect()).db(process.env.DB_NAME)
+g_coToggleProcessing()
+console.log("Database successfully connected.")
 
-/*This code initializes a database connection and manages collection setup.
-It performs resetting of collections while applying schema validators,
-typically used for database schema initialization or recreation.
+import { readdir } from "fs/promises"
+import { join } from "path"
+const g_csModelPath = "../model";
 
-Key Operations:
-1. Establishes MongoDB connection
-2. Destroys existing collections (development-only behavior)
-3. Recreates collections with JSON schema validators
-4. Ensures clean schema setup for application data models*/
-
-module.exports = async function() {
-	/*Provides user-facing status updates and
-	Indicates connection success/failure*/
-	g_cToggleProcessing("Attempting database connection.")
-	/* Database Connection Process
-    ----------------------------
-    1. Retrieves pre-configured MongoDB client from main.ts
-    2. Connects using credentials from .env file
-    3. Selects database using DB_NAME environment variable */
-
-	/*Establishes connection via external configuration
-	Selects database using environment variable*/
-	const l_coDb = (await require("./main.ts").get("Database connection").connect()).db(process.env.DB_NAME)
-	g_cToggleProcessing()
-	console.log("Database connected.")
-	for (const [l_csCollectionName, l_coValidator] of require("./data.ts").get("Objects").entries()) {
-	//	Destructive Action: Deletes existing collections
-		await l_coDb.collection(l_csCollectionName).drop().catch(function(a_oError) {
-			if (a_oError.code !== 26) throw a_oError
-			console.log("No " + l_csCollectionName + " collection to drop.")
-		})
+for (const l_csFileName of await readdir(g_csModelPath)) {
+	const l_coMod = await import(join(g_csModelPath, l_csFileName))
+	const l_csCollectionName = l_csFileName.replace(".tsm", "s")
+	if ((await g_coDb.listCollections({ name: l_csCollectionName }).toArray()).length === 0) {
 		//	Validation Setup: Recreates collections with schema validators
-		await l_coDb.createCollection(l_csCollectionName, l_coValidator)
+		await g_coDb.createCollection(l_csCollectionName, l_coMod)
 		console.log(l_csCollectionName + " created.")
+	} else {
+		console.log("The \"" + l_csCollectionName + "\" collection already exists.")
 	}
-	console.log("Collections registered.")
-	return l_coDb
 }
+console.log("Collections registered.")
+
+export default g_coDb

@@ -1,17 +1,10 @@
-/*setting up an Express.js web server with
- API endpoints for various operations (events, users, messages, etc.)
-Authentication requirements for protected routes
-Session management
-Static frontend file serving
-Centralized logging and error handling
-*/
 import "dotenv/config"
-import g_coExpress from "express"
+import { g_coApp } from "./main.tsm"
 import g_coAuth from "./auth.tsm"
-import g_codes from "./data.tsm" .get("Status codes")
+import g_coExpress from "express"
+import g_codes from "./statuses.tsm"
 import g_coPath from "path"
 
-const g_coApp = g_cExpress()
 g_coApp.use(function(a_oRequest, _, a_Next) {
 	console.log("Request received: ")
 	console.log("Method: " + a_oRequest.method)
@@ -20,38 +13,32 @@ g_coApp.use(function(a_oRequest, _, a_Next) {
 	a_Next()
 })
 
-g_coApp.use(require("express-session")({ //// Creates Express instance
-	store: new (require("../queries/SessionOps.ts"))(), //// Custom session store
+import g_coExpressSession from "express-session"
+import g_coStore from "../queries/SessionOps.tsm"
+g_coApp.use(g_coExpressSession({ //// Creates Express instance
+	store: new g_coStore(), //// Custom session store
 	resave: false,
 	saveUninitialized: false,
 	secret: process.env.SECRET //// Encryption key from .env
 }), (_, __, a_Next) => a_Next())
-/*
- API Route Configuration
-	// ---------------------
-	// Defines protected and public API endpoints by mounting router modules:
-	// - Routes with 'g_cAuth' middleware require valid authentication
-	// - Routes without 'g_cAuth' are publicly accessible
-	//
-	// Endpoint Structure:
-	//   /log         → System logging (public)
-	//   /event       → Event management (authenticated)
-	//   /invitation  → Invitation operations (authenticated)
-	//   /message     → Messaging system (authenticated)
-	//   /request     → Connection requests (authenticated)
-	//   /notification→ User notifications (authenticated)
-	//   /user        → User account operations (mixed public/private)
- */
-g_coApp.use("/log", require("../queries/logging.ts"))
-g_coApp.use("/event", g_cAuth, require("../queries/EventOps.ts"))
-g_coApp.use("/invitation", g_cAuth, require("../queries/InvitationOps.ts"))
-g_coApp.use("/message", g_cAuth, require("../queries/MesOps.ts"))
-g_coApp.use("/request", g_cAuth, require("../queries/RequestOps.ts"))
-g_coApp.use("/notification", g_cAuth, require("../queries/NotifOps.ts"))
-g_coApp.use("/user", require("../queries/UserOps.ts"))
 
-g_coApp.use(g_cExpress.static(g_coPath.join(process.cwd(), "frontend/dist"), { index: "index.html" }))
+import g_coLogRouter from "../queries/logging.tsm"
+g_coApp.use("/log", g_coLogRouter)
+import g_coEventRouter from "../queries/EventOps.tsm"
+g_coApp.use("/event", g_coAuth, g_coEventRouter)
+import g_coInvitationRouter from "../queries/InvitationOps.tsm"
+g_coApp.use("/invitation", g_coAuth, g_coInvitationRouter)
+import g_coMesRouter from "../queries/MesOps.tsm"
+g_coApp.use("/message", g_coAuth, g_coMesRouter)
+import g_coRequestRouter from "../queries/RequestOps.tsm"
+g_coApp.use("/request", g_coAuth, g_coRequestRouter)
+import g_coNotifRouter from "../queries/NotifOps.tsm"
+g_coApp.use("/notification", g_coAuth, g_coNotifRouter)
+import g_coUserRouter from "../queries/UserOps.tsm"
+g_coApp.use("/user", g_coUserRouter)
+
+g_coApp.use(g_coExpress.static(g_coPath.join(process.cwd(), "frontend/dist"), { index: "index.html" }))
 g_coApp.use((_, a_oResponse) =>	a_oResponse.sendStatus(g_codes.get("Not found")))
 g_coApp.use((a_oError, _, a_oResponse, __) => a_oResponse.status(g_codes.get("Server error")).json(a_oError))
 
-module.exports = g_coApp
+export default g_coApp

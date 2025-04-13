@@ -1,25 +1,3 @@
-/* MongoDB JSON Schema Validator for Discussion Messages Collection
-
-Key Features:
-- Requires sender/event references ("Sender ID", "Event ID")
-- Allows optional text content ("Text" field)
-- Prevents undocumented fields (additionalProperties: false)
-
-Fields:
-1. Sender ID (Required):
-   - Type: objectId
-   - Purpose: Links to user who created the message
-
-2. Event ID (Required):
-   - Type: objectId
-   - Purpose: Associates message with parent event
-
-3. Text (Optional):
-   - Type: string
-   - Purpose: Message body/content
- */
-
-
 export default {
 	validator: {
 		$jsonSchema: {

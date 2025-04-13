@@ -1,7 +1,10 @@
-const g_coRouter = require("express").Router()
-const g_coNotifications = require("../server/main.ts").get("DB").collection("notifications")
-const g_codes = require("../server/data.ts").get("Status codes")
-// HTTP methods for the notification operations in this Express router
+import { Router } from "express"
+import g_coDb from "../server/db.tsm"
+const g_coNotifications = g_coDb.collection("notifications")
+import g_codes from "../server/statuses.tsm"
+
+const g_coRouter = Router()
+// HTTP methods for the event operations in this Express router
 g_coRouter.post("/", function(a_oRequest, a_oResponse) {
 	
 })
@@ -15,4 +18,4 @@ g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 	
 })
 
-module.exports = g_coRouter
+export default g_coRouter
