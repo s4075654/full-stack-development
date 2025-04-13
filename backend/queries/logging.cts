@@ -1,24 +1,45 @@
 const g_coRouter = require("express").Router()
 const g_coUsers = require("../server/main.cts").get("DB").collection("users")
 const g_codes = require("../server/data.cts").get("Status codes")
-
+//Handling user log in and log out activities
+// Authentication middleware
+// Handle login route (/in)
 g_coRouter.use("/in", function(a_oRequest, a_oResponse) {
+	// Extract credentials from headers using destructuring assignment
+    // Header format: { "m_susername": "...", "m_spassword": "..." }
+
 	const { m_sUsername, m_sPassword } = a_oRequest.headers
+	// Validate username presence using truthy check
+    // Returns 400-level status if validation fails
 	if (!m_sUsername) return a_oResponse.sendStatus(g_codes.get("Invalid"))
+	// Database query using MongoDB findOne() with projection
+    // Projection: { password: 1 } returns only _id and password fields
+	// Now we want to search for a user in the database
 	const l_coUser = g_coUsers.findOne({ username: m_sUsername }).project({ password: 1 })
+	// If the user does not exist then returns a "Not Found" status
 	if (!l_coUser) return a_oResponse.sendStatus(g_codes.get("Not found"))
+	// If the user is found
+	// Password comparison using bcrypt's async compare() method
+
 	require("bcrypt").compare(m_sPassword, l_coUser.password, function(a_oError, a_oResult) {
+		// If the password is incorrect
 		if (a_oError) return a_oResponse.sendStatus(g_codes.get("Invalid"))
+		// Otherwise we store user ID in session
 		if (a_oResult) {
 			a_oRequest.session.data.user = l_coUser._id
 			return a_oResponse.sendStatus(g_codes.get("Success"))
 		}
-		a_oResponse.status(g_codes.get("Invalid")).redirect("/Authentication.htm")
+		// If the authentication is fail then it will redirect to authentication.htm
+		a_oResponse.status(g_codes.get("Invalid")).redirect("/authentication.htm")
 	})
 })
+//When the user log out
 g_coRouter.use("/out", function(a_oRequest, a_oResponse) {
+	//Session Destruction Process
+	//session.destroy() removes session data from server-side store
 	a_oRequest.session.destroy(function(a_oError) {
 		if (a_oError) return a_oResponse.sendStatus(g_codes.get("Server error"))
+		//Remove client-side session ID cookie
 		a_oResponse.clearCookie("connect.sid")
 		a_oResponse.sendStatus(g_codes.get("Success"))
 	})

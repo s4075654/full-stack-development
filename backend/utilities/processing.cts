@@ -1,3 +1,15 @@
+//Manages a visual indicator (dots) for ongoing processes with configurable timing.
+/*
+ Key Features:
+- Starts/stops progress animation
+- Configurable interval via .env (INTERVAL)
+- Prevents multiple concurrent indicators
+
+Usage:
+  indicator("Processing data") → Starts dots
+  indicator() → Stops current animation
+ */
+
 require("dotenv").config()
 
 let g_oIntervalId

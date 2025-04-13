@@ -1,3 +1,26 @@
+/* MongoDB JSON Schema Validator for Event Join Requests Collection
+ Key Features:
+- Requires sender, event reference, and state fields
+- Defines allowed request states via enum
+- Uses MongoDB references (objectId) for relationships
+- Strict schema prevents undocumented fields
+
+Field Breakdown:
+1. Sender ID (Required):
+   - Type: objectId
+   - Purpose: References user making the request
+
+2. State (Required):
+   - Type: string
+   - Allowed Values: "Accepted", "Unanswered", "Rejected"
+   - Purpose: Tracks request resolution status
+
+3. Event ID (Required):
+   - Type: objectId
+   - Purpose: Links to target event document
+ */
+
+
 module.exports = {
 	validator: {
 		$jsonSchema: {
