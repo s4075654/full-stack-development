@@ -1,23 +1,44 @@
-import { Link } from "react-router-dom";
-import {useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {FormEvent, useState} from "react";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../../redux/store.ts";
+import {login} from "../../redux/authSlice.ts";
 
 export default function LoginCard() {
     const [show, setShow] = useState<boolean>(false);
+    const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+
+    const handleLogin = async (e: FormEvent) => {
+        e.preventDefault();
+
+        const resultAction = await dispatch(login({username, password}))
+        if (login.fulfilled.match(resultAction)) {
+            navigate("/");
+        } else {
+            alert("Login failed!")
+        }
+    }
 
     return (
         <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-lg my-20">
             <h2 className="font-bold text-3xl">#Here, log in...</h2>
             {/*Login Form*/}
-            <form className="space-y-4 mt-10">
-                {/*Email or Username input*/}
+            <form className="space-y-4 mt-10" onSubmit={handleLogin}>
+                {/*Username input*/}
                 <div>
-                    <label htmlFor="identifier" className="block text-sm font-medium text-gray-700 mb-1">
-                        Email or Username
+                    <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                        Username
                     </label>
                     <input
                         type="text"
-                        id="identifier"
-                        placeholder="you@example.com or yourusername"
+                        id="username"
+                        name="username"
+                        placeholder="Username"
+                        onChange={(e) => setUsername(e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"/>
                 </div>
                 {/*Password input*/}
@@ -28,7 +49,9 @@ export default function LoginCard() {
                     <input
                         type={show ? "text" : "password"}
                         id="password"
+                        name="password"
                         placeholder="••••••••"
+                        onChange={(e) => setPassword(e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button type="button"
