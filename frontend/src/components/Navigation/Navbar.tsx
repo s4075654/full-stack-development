@@ -16,7 +16,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
 
   // Function to navigate to createEventPage
   const handleClick = () => {
-      navigate('/'); // modify the path to createPage URI when used
+      navigate('/create-event'); // navigate to the create event page
     };
 
   return (
