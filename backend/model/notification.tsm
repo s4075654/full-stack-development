@@ -26,18 +26,18 @@ Fields:
  */
 
 
-module.exports = {
+export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "The notification related to an event.",
-			required: Array.of("Reminder", "Event ID"),
+			required: Array.of("reminder", "Event ID"),
 			properties: {
-				Text: {
+				text: {
 					bsonType: "string",
 					description: "The notification text.",
 				},
-				Reminder: {
+				reminder: {
 					bsonType: "bool",
 					description: "Whether or the notification is a reminder."
 				},

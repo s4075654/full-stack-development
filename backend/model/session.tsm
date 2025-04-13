@@ -12,16 +12,13 @@ Fields:
    - Example: "sess:AbCdEf123456"
 
 2. data (Required Object):
-   a. Active (Required):
-      - Type: boolean
-      - Purpose: Tracks session validity (false = logged out/expired)
    b. User ID (Optional):
       - Type: objectId
       - Purpose: Links to authenticated user document
 
  */
 
-module.exports = {
+export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
@@ -34,12 +31,7 @@ module.exports = {
 				},
 				data: {
 					bsonType: "object",
-					required: Array.of("Active"),
 					properties: {
-						Active: {
-							bsonType: "bool",
-							description: "Whether the session is active."
-						},
 						"User ID": {
 							bsonType: "objectId",
 							description: "The user associated with the session."

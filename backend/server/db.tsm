@@ -1,5 +1,5 @@
 require("dotenv").config()
-const g_cToggleProcessing = require("../utilities/processing.cts")
+const g_cToggleProcessing = require("../utilities/processing.ts")
 
 
 /*This code initializes a database connection and manages collection setup.
@@ -18,16 +18,16 @@ module.exports = async function() {
 	g_cToggleProcessing("Attempting database connection.")
 	/* Database Connection Process
     ----------------------------
-    1. Retrieves pre-configured MongoDB client from main.cts
+    1. Retrieves pre-configured MongoDB client from main.ts
     2. Connects using credentials from .env file
     3. Selects database using DB_NAME environment variable */
 
 	/*Establishes connection via external configuration
 	Selects database using environment variable*/
-	const l_coDb = (await require("./main.cts").get("Database connection").connect()).db(process.env.DB_NAME)
+	const l_coDb = (await require("./main.ts").get("Database connection").connect()).db(process.env.DB_NAME)
 	g_cToggleProcessing()
 	console.log("Database connected.")
-	for (const [l_csCollectionName, l_coValidator] of require("./data.cts").get("Objects").entries()) {
+	for (const [l_csCollectionName, l_coValidator] of require("./data.ts").get("Objects").entries()) {
 	//	Destructive Action: Deletes existing collections
 		await l_coDb.collection(l_csCollectionName).drop().catch(function(a_oError) {
 			if (a_oError.code !== 26) throw a_oError

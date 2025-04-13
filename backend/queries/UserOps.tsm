@@ -1,0 +1,35 @@
+require("dotenv").config()
+const g_coRouter = require("express").Router()
+const g_cAuth = require("../server/auth.ts")
+const g_coUsers = require("../server/main.ts").get("DB").collection("users")
+const g_coBcrypt = require("bcrypt")
+const g_codes = require("../server/data.ts").get("Status codes")
+// HTTP methods for the user operations in this Express router
+g_coRouter.post("/", (a_oRequest, a_oResponse) =>
+	g_coBcrypt.hash(a_oRequest.get("Password"), process.env.SALT_ROUNDS, function(a_oError, a_oResult) {
+	if (a_oError) return a_oResponse.status(g_codes.get("Server error")).json(a_oError)
+		g_coUsers.insertOne({
+			username: a_oRequest.get("Username"),
+			password: a_oResult,
+			"Email address": a_oRequest.get("Email address"),
+			notifications: Array.of(),
+			"Organising events": Array.of(),
+			"Maximum number of active events": a_oRequest.get("Maximum number of active events"),
+			"Maximum number of invitations to an event": a_oRequest.get("Maximum number of invitations to an event"),
+			admin: a_oRequest.get("Admin"),
+			sessions: Array.of()
+		}, a_oError =>
+			a_oError ? a_oResponse.status(g_codes.get("Invalid")).json(a_oError) : a_oResponse.sendStatus(g_codes.get("Success")))
+		}))
+
+g_coRouter.get("/", g_cAuth, function(a_oRequest, a_oResponse) {
+	
+})
+g_coRouter.put("/", g_cAuth, function(a_oRequest, a_oResponse) {
+	
+})
+g_coRouter.delete("/", g_cAuth, function(a_oRequest, a_oResponse) {
+	
+})
+
+module.exports = g_coRouter

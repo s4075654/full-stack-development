@@ -8,8 +8,8 @@ process.stdout.write("Hello world!\n")
 
 
 // Take all the data from ".env"
-require("dotenv").config()
-const g_cToggleProcessing = require("../utilities/processing.cts")
+import "dotenv/config"
+import g_cToggleProcessing from "../utilities/processing.tsm"
 
 let g_bShuttingDown = false // Shutdown state flag
 JSON.parse(process.env.SIGNALS).forEach(a_signal => process.on(a_signal, async function() {
@@ -18,7 +18,7 @@ JSON.parse(process.env.SIGNALS).forEach(a_signal => process.on(a_signal, async f
 	if (!g_bShuttingDown) {
 		g_bShuttingDown = true
 		g_cToggleProcessing()
-		for (const l_cFunction of require("./ShutDown.cts")) {
+		for (const l_cFunction of require("./ShutDown.ts")) {
 			await l_cFunction()  // Run DB disconnect, server close etc
 		}
 		process.exit(Number(process.stdout.write("Absolute cinema\n")))
@@ -39,7 +39,7 @@ module.exports = g_coEssentials;
  * Purpose: Establishes database connection and initializes collections during application startup
 
 Key Operations:
-1. Calls './db.cts' module to:
+1. Calls './db.ts' module to:
    - Connect to MongoDB
    - Create collections with schema validations
    - Perform any required database setup
@@ -58,7 +58,7 @@ Attempt DB Setup → Success → Continue Startup
 (async function() {
 	try {
 		// Database Connection
-		g_coEssentials.set("DB", await require("./db.cts")()) // Initialize collections
+		g_coEssentials.set("DB", await require("./db.ts")()) // Initialize collections
 	} catch (a_oError) {
 		g_cToggleProcessing()
 		console.error("Unable to connect to database due to: ", a_oError)
@@ -66,13 +66,13 @@ Attempt DB Setup → Success → Continue Startup
 	}
 	// HTTP Server Startup
 	/*Key Operations:
-		1. Requires Express application from './endpoints.cts'
+		1. Requires Express application from './endpoints.ts'
 		2. Binds server to port from .env (process.env.PORT)
 		3. Stores server instance in shared essentials Map
    		- Accessible via g_coEssentials.get("Server")
 	 */
 	g_cToggleProcessing("Attempting server start.")
-	g_coEssentials.set("Server", require("./endpoints.cts")
+	g_coEssentials.set("Server", require("./endpoints.ts")
 		.listen(process.env.PORT, function() {
 			/*
              On success:

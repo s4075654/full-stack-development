@@ -1,7 +1,8 @@
 const g_coRouter = require("express").Router()
-const g_coNotifications = require("../server/main.cts").get("DB").collection("notifications")
-const g_codes = require("../server/data.cts").get("Status codes")
-// HTTP methods for the notification operations in this Express router
+const g_coEvents = require("../server/main.ts").get("DB").collection("events")
+const g_codes = require("../server/data.ts").get("Status codes")
+
+// HTTP methods for the event operations in this Express router
 g_coRouter.post("/", function(a_oRequest, a_oResponse) {
 	
 })

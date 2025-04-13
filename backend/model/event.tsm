@@ -29,18 +29,18 @@ Fields:
 
 
 
-module.exports = {
+export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "An event.",
-			required: Array.of("Public", "Organiser"),
+			required: Array.of("public", "organiser"),
 			properties: {
-				Public: {
+				public: {
 					bsonType: "bool",
 					description: "Whether or not the event is public."
 				},
-				Invitations: {
+				invitations: {
 					bsonType: "array",
 					description: "The invitations to the event.",
 					uniqueItems: true,
@@ -49,7 +49,7 @@ module.exports = {
 						description: "An invitation to the event."
 					}
 				},
-				Requests: {
+				requests: {
 					bsonType: "array",
 					description: "The requests to join the event.",
 					uniqueItems: true,
@@ -67,7 +67,7 @@ module.exports = {
 						description: "A message in the discussion board."
 					}
 				},
-				Notifications: {
+				notifications: {
 					bsonType: "array",
 					description: "Notifications for the event.",
 					uniqueItems: true,
@@ -76,7 +76,7 @@ module.exports = {
 						description: "A notification for the event."
 					}
 				},
-				Images: {
+				images: {
 					bsonType: "array",
 					description: "Images of the event.",
 					items: {

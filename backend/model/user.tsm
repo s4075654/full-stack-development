@@ -22,18 +22,18 @@ Fields:
  */
 
 
-module.exports = {
+export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "A user.",
-			required: Array.of("Username", "Maximum number of active events", "Maximum number of invitations to an event", "Admin"),
+			required: Array.of("username", "Maximum number of active events", "Maximum number of invitations to an event", "admin"),
 			properties: {
-				Username: {
+				username: {
 					bsonType: "string",
 					description: "The username of a user."
 				},
-				Password: {
+				password: {
 					bsonType: "string",
 					description: "The hashed password of a user."
 				},
@@ -41,7 +41,7 @@ module.exports = {
 					bsonType: "string",
 					description: "The email address of a user."
 				},
-				Notifications: {
+				notifications: {
 					bsonType: "array",
 					description: "The notifications the user has received.",
 					uniqueItems: true,
@@ -67,11 +67,11 @@ module.exports = {
 					bsonType: "long",
 					description: "The maximum number of invitations to an event the user can send."
 				},
-				Admin: {
+				admin: {
 					bsonType: "bool",
 					description: "Whether the user is an admin."
 				},
-				Sessions: {
+				sessions: {
 					bsonType: "array",
 					description: "The sessions of the user.",
 					uniqueItems: true,

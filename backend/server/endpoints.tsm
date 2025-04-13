@@ -5,11 +5,11 @@ Session management
 Static frontend file serving
 Centralized logging and error handling
 */
-require("dotenv").config()
-const g_cExpress = require("express")
-const g_cAuth = require("./auth.cts")
-const g_codes = require("./data.cts").get("Status codes")
-const g_coPath = require("path")
+import "dotenv/config"
+import g_coExpress from "express"
+import g_coAuth from "./auth.tsm"
+import g_codes from "./data.tsm" .get("Status codes")
+import g_coPath from "path"
 
 const g_coApp = g_cExpress()
 g_coApp.use(function(a_oRequest, _, a_Next) {
@@ -21,7 +21,7 @@ g_coApp.use(function(a_oRequest, _, a_Next) {
 })
 
 g_coApp.use(require("express-session")({ //// Creates Express instance
-	store: new (require("../queries/SessionOps.cts"))(), //// Custom session store
+	store: new (require("../queries/SessionOps.ts"))(), //// Custom session store
 	resave: false,
 	saveUninitialized: false,
 	secret: process.env.SECRET //// Encryption key from .env
@@ -42,13 +42,13 @@ g_coApp.use(require("express-session")({ //// Creates Express instance
 	//   /notification→ User notifications (authenticated)
 	//   /user        → User account operations (mixed public/private)
  */
-g_coApp.use("/log", require("../queries/logging.cts"))
-g_coApp.use("/event", g_cAuth, require("../queries/EventOps.cts"))
-g_coApp.use("/invitation", g_cAuth, require("../queries/InvitationOps.cts"))
-g_coApp.use("/message", g_cAuth, require("../queries/MesOps.cts"))
-g_coApp.use("/request", g_cAuth, require("../queries/RequestOps.cts"))
-g_coApp.use("/notification", g_cAuth, require("../queries/NotifOps.cts"))
-g_coApp.use("/user", require("../queries/UserOps.cts"))
+g_coApp.use("/log", require("../queries/logging.ts"))
+g_coApp.use("/event", g_cAuth, require("../queries/EventOps.ts"))
+g_coApp.use("/invitation", g_cAuth, require("../queries/InvitationOps.ts"))
+g_coApp.use("/message", g_cAuth, require("../queries/MesOps.ts"))
+g_coApp.use("/request", g_cAuth, require("../queries/RequestOps.ts"))
+g_coApp.use("/notification", g_cAuth, require("../queries/NotifOps.ts"))
+g_coApp.use("/user", require("../queries/UserOps.ts"))
 
 g_coApp.use(g_cExpress.static(g_coPath.join(process.cwd(), "frontend/dist"), { index: "index.html" }))
 g_coApp.use((_, a_oResponse) =>	a_oResponse.sendStatus(g_codes.get("Not found")))

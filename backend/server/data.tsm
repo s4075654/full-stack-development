@@ -1,11 +1,29 @@
 const g_coPath = require("path")
-const g_csModelsPath = g_coPath.join(__dirname, "../validators")
-//Exports a Map containing two main categories:
+const g_csModelsPath = g_coPath.join(__dirname, "../model")
 
 //Status codes: Predefined HTTP status codes with custom names
 
 //Objects: Dynamically loaded validation/model definitions
-module.exports = new Map(Array.of(
+export default function(a_aKeys) {
+	switch (a_aKeys.at(0)) {
+		case "Status codes":
+			switch (a_aKeys.at(1)) {
+				case "Success":
+					return 200
+				case "Invalid":
+					return 400
+				case "Unauthenticated":
+					return 401
+				case "Forbidden":
+					return 403
+				case "Not found":
+					return 404
+				case "Server error":
+					return 500
+			}
+		
+	}
+}
 	Array.of("Status codes", new Map(Array.of(
 		Array.of("Success", 200),
 		Array.of("Unauthenticated", 401),

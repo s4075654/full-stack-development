@@ -1,15 +1,18 @@
 {
   "name": "GroupProject",
   "version": "1.0.0",
-  "main": "backend/server/main.cts",
+  "type": "module",
+  "main": "backend/server/main.tsm",
   "repository": "https://github.com/Group-tam/full-stack-development",
   "author": "Gr 8",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "latest",
+    "cookie-parser": "latest",
     "dotenv": "latest",
     "express": "latest",
     "express-session": "latest",
-    "mongodb": "latest"
+    "mongodb": "latest",
+    "morgan": "latest"
   }
 }

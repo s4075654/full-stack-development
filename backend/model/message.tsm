@@ -20,14 +20,14 @@ Fields:
  */
 
 
-module.exports = {
+export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "A message in the discussion board of an event.",
 			required: Array.of("Sender ID", "Event ID"),
 			properties: {
-				Text: {
+				text: {
 					bsonType: "string",
 					description: "The contents of the message.",
 				},
