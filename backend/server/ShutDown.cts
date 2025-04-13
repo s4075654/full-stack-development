@@ -1,11 +1,20 @@
+/*
+This code implements cleanup procedures for shutting down the application, it handles two critical tasks:
+Database disconnection and HTTP server termination
+*/
 const g_cToggleProcessing = require("../utilities/processing.cts")
 
 module.exports = new Set(Array.of(
 	async function() {
 		g_cToggleProcessing("Attempting to disconnect from database.")
 		try {
+	//		closes active database connection
 			await require("./main.cts").get("Database connection").close()
 		} catch (a_oError) {
+			/*
+			 Forces process termination when the connection fail to close
+	  		Uses custom exit code for identification
+			 */
 			g_cToggleProcessing()
 			console.error("Unable to disconnect from database due to: ", a_oError)
 			return process.exit(0xDB)
@@ -17,6 +26,9 @@ module.exports = new Set(Array.of(
 		const g_coServer = require("./main.cts").get("Server")
 		if (g_coServer) {
 			g_cToggleProcessing("Attempting to stop the server.")
+			/*
+			.close() stops accepting new connections
+			.destroy() kills existing connections if graceful shutdown fails */
 			try {
 				await g_coServer?.close()
 			} catch (a_oError) {
