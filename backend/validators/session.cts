@@ -1,3 +1,26 @@
+/* MongoDB JSON Schema Validator for Sessions Collection
+
+Key Features:
+- Requires core session identifiers (_id, data.Active)
+- Supports user association via optional User ID
+- Implements soft-deletion via Active flag
+- Strict schema prevents undocumented fields
+
+Fields:
+1. _id (Required):
+   - Type: string (typically session ID from express-session)
+   - Example: "sess:AbCdEf123456"
+
+2. data (Required Object):
+   a. Active (Required):
+      - Type: boolean
+      - Purpose: Tracks session validity (false = logged out/expired)
+   b. User ID (Optional):
+      - Type: objectId
+      - Purpose: Links to authenticated user document
+
+ */
+
 module.exports = {
 	validator: {
 		$jsonSchema: {

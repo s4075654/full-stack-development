@@ -1,3 +1,10 @@
+/*setting up an Express.js web server with
+ API endpoints for various operations (events, users, messages, etc.)
+Authentication requirements for protected routes
+Session management
+Static frontend file serving
+Centralized logging and error handling
+*/
 require("dotenv").config()
 const g_cExpress = require("express")
 const g_cAuth = require("./auth.cts")
@@ -13,13 +20,28 @@ g_coApp.use(function(a_oRequest, _, a_Next) {
 	a_Next()
 })
 
-g_coApp.use(require("express-session")({
-	store: new (require("../queries/SessionOps.cts"))(),
+g_coApp.use(require("express-session")({ //// Creates Express instance
+	store: new (require("../queries/SessionOps.cts"))(), //// Custom session store
 	resave: false,
 	saveUninitialized: false,
-	secret: process.env.SECRET
+	secret: process.env.SECRET //// Encryption key from .env
 }), (_, __, a_Next) => a_Next())
-
+/*
+ API Route Configuration
+	// ---------------------
+	// Defines protected and public API endpoints by mounting router modules:
+	// - Routes with 'g_cAuth' middleware require valid authentication
+	// - Routes without 'g_cAuth' are publicly accessible
+	//
+	// Endpoint Structure:
+	//   /log         → System logging (public)
+	//   /event       → Event management (authenticated)
+	//   /invitation  → Invitation operations (authenticated)
+	//   /message     → Messaging system (authenticated)
+	//   /request     → Connection requests (authenticated)
+	//   /notification→ User notifications (authenticated)
+	//   /user        → User account operations (mixed public/private)
+ */
 g_coApp.use("/log", require("../queries/logging.cts"))
 g_coApp.use("/event", g_cAuth, require("../queries/EventOps.cts"))
 g_coApp.use("/invitation", g_cAuth, require("../queries/InvitationOps.cts"))
