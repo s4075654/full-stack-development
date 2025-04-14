@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage.tsx";
 import RegisterPage from "../pages/RegisterPage.tsx";
 import NotFound from "../pages/NotFound.tsx";
 import EventDetail from "../pages/EventPage.tsx";
+import PublicEvents from "../pages/PublicEvents.tsx";
 
 
 export const router = createBrowserRouter([
@@ -22,9 +23,13 @@ export const router = createBrowserRouter([
     {
         path: "/register",
         element: <RegisterPage />
-    }, 
+    },
     {
-        path: "/eventDetail",
+        path: "/public-events",
+        element: <PublicEvents />
+    },
+    {
+        path: "/event-detail/:id",
         element: <EventDetail />
     }
 ]);
