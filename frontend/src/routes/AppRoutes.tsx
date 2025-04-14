@@ -3,6 +3,8 @@ import HomePage from "../pages/HomePage.tsx";
 import LoginPage from "../pages/LoginPage.tsx";
 import RegisterPage from "../pages/RegisterPage.tsx";
 import NotFound from "../pages/NotFound.tsx";
+import EventDetail from "../pages/EventPage.tsx";
+
 
 export const router = createBrowserRouter([
     {
@@ -20,5 +22,9 @@ export const router = createBrowserRouter([
     {
         path: "/register",
         element: <RegisterPage />
+    }, 
+    {
+        path: "/eventDetail",
+        element: <EventDetail />
     }
 ]);
