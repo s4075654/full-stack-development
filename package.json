@@ -1,7 +1,8 @@
 {
   "name": "GroupProject",
   "version": "1.0.0",
-  "main": "backend/server/main.cts",
+  "type": "module",
+  "main": "backend/server/main.ts",
   "repository": "https://github.com/Group-tam/full-stack-development",
   "author": "Gr 8",
   "license": "MIT",
@@ -13,8 +14,5 @@
     "express-session": "latest",
     "mongodb": "latest",
     "morgan": "latest"
-  },
-  "devDependencies": {
-    "@types/node": "^22.14.0"
   }
 }
