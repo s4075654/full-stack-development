@@ -1,10 +1,10 @@
 import "dotenv/config"
-import { g_coApp } from "./main.tsm"
-import g_coAuth from "./auth.tsm"
+import g_coAuth from "./auth.ts"
 import g_coExpress from "express"
-import g_codes from "./statuses.tsm"
-import g_coPath from "path"
+import g_codes from "./statuses.ts"
+import { join } from "path"
 
+const g_coApp = g_coExpress()
 g_coApp.use(function(a_oRequest, _, a_Next) {
 	console.log("Request received: ")
 	console.log("Method: " + a_oRequest.method)
@@ -14,7 +14,7 @@ g_coApp.use(function(a_oRequest, _, a_Next) {
 })
 
 import g_coExpressSession from "express-session"
-import g_coStore from "../queries/SessionOps.tsm"
+import g_coStore from "../queries/SessionOps.ts"
 g_coApp.use(g_coExpressSession({ //// Creates Express instance
 	store: new g_coStore(), //// Custom session store
 	resave: false,
@@ -22,23 +22,23 @@ g_coApp.use(g_coExpressSession({ //// Creates Express instance
 	secret: process.env.SECRET //// Encryption key from .env
 }), (_, __, a_Next) => a_Next())
 
-import g_coLogRouter from "../queries/logging.tsm"
+import g_coLogRouter from "../queries/logging.ts"
 g_coApp.use("/log", g_coLogRouter)
-import g_coEventRouter from "../queries/EventOps.tsm"
+import g_coEventRouter from "../queries/EventOps.ts"
 g_coApp.use("/event", g_coAuth, g_coEventRouter)
-import g_coInvitationRouter from "../queries/InvitationOps.tsm"
+import g_coInvitationRouter from "../queries/InvitationOps.ts"
 g_coApp.use("/invitation", g_coAuth, g_coInvitationRouter)
-import g_coMesRouter from "../queries/MesOps.tsm"
+import g_coMesRouter from "../queries/MesOps.ts"
 g_coApp.use("/message", g_coAuth, g_coMesRouter)
-import g_coRequestRouter from "../queries/RequestOps.tsm"
+import g_coRequestRouter from "../queries/RequestOps.ts"
 g_coApp.use("/request", g_coAuth, g_coRequestRouter)
-import g_coNotifRouter from "../queries/NotifOps.tsm"
+import g_coNotifRouter from "../queries/NotifOps.ts"
 g_coApp.use("/notification", g_coAuth, g_coNotifRouter)
-import g_coUserRouter from "../queries/UserOps.tsm"
+import g_coUserRouter from "../queries/UserOps.ts"
 g_coApp.use("/user", g_coUserRouter)
 
-g_coApp.use(g_coExpress.static(g_coPath.join(process.cwd(), "frontend/dist"), { index: "index.html" }))
-g_coApp.use((_, a_oResponse) =>	a_oResponse.sendStatus(g_codes.get("Not found")))
-g_coApp.use((a_oError, _, a_oResponse, __) => a_oResponse.status(g_codes.get("Server error")).json(a_oError))
+g_coApp.use(g_coExpress.static(join(process.cwd(), "frontend/dist"), { index: "index.html" }))
+g_coApp.use((_, a_oResponse) =>	a_oResponse.sendStatus(g_codes("Not found")))
+g_coApp.use((a_oError, _, a_oResponse, __) => a_oResponse.status(g_codes("Server error")).json(a_oError))
 
 export default g_coApp

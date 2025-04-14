@@ -1,7 +1,7 @@
 import { Router } from "express"
-import g_coDb from "../server/db.tsm"
+import g_coDb from "../server/db.ts"
 const g_coUsers = g_coDb.collection("users")
-import g_codes from "../server/statuses.tsm"
+import g_codes from "../server/statuses.ts"
 import g_coBcrypt from "bcrypt"
 
 const g_coRouter = Router()

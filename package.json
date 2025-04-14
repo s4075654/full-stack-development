@@ -2,7 +2,7 @@
   "name": "GroupProject",
   "version": "1.0.0",
   "type": "module",
-  "main": "backend/server/main.tsm",
+  "main": "backend/server/main.ts",
   "repository": "https://github.com/Group-tam/full-stack-development",
   "author": "Gr 8",
   "license": "MIT",

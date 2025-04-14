@@ -1,5 +1,5 @@
 import { Store } from "express-session"
-import g_coDb from "../server/db.tsm"
+import g_coDb from "../server/db.ts"
 
 function g_Store() {
 	Store.call(this)

@@ -1,7 +1,7 @@
 import { Router } from "express"
-import g_coDb from "../server/db.tsm"
+import g_coDb from "../server/db.ts"
 const g_coMessages = g_coDb.collection("messages")
-import g_codes from "../server/statuses.tsm"
+import g_codes from "../server/statuses.ts"
 
 const g_coRouter = Router()
 // HTTP methods for the event operations in this Express router

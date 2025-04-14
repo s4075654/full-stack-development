@@ -9,13 +9,8 @@ process.stdout.write("Hello world!\n")
 
 // Take all the data from ".env"
 import "dotenv/config"
-import g_coToggleProcessing from "../utilities/processing.tsm"
-import { MongoClient } from "mongodb"
-export const g_connection = new MongoClient("mongodb://" + process.env.DB_HOST + ":" + process.env.DB_PORT)
-import g_coExpress from "express"
-export const g_coApp = g_coExpress()
-
-import g_cseShutDown from "./ShutDown.tsm"
+import g_coToggleProcessing from "../utilities/processing.ts"
+import g_cseShutDown from "./ShutDown.ts"
 let g_bShuttingDown = false // Shutdown state flag
 JSON.parse(process.env.SIGNALS).forEach(a_signal => process.on(a_signal, async function() {
 	console.log(a_signal + " received.")
@@ -30,9 +25,9 @@ JSON.parse(process.env.SIGNALS).forEach(a_signal => process.on(a_signal, async f
 	}
 }))
 
-import g_coServer from "./endpoints.tsm"
+import g_coServer from "./endpoints.ts"
 g_coToggleProcessing("Attempting server start.")
-g_coServer.listen(process.env.PORT, function() {
+export default g_coServer.listen(process.env.PORT, function() {
 		g_coToggleProcessing()
 		console.log("Server started.")
 	}).on("error", function(a_oError) {
