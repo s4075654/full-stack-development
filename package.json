@@ -7,10 +7,12 @@
   "license": "MIT",
   "dependencies": {
     "bcrypt": "latest",
+    "cookie-parser": "latest",
     "dotenv": "latest",
     "express": "latest",
     "express-session": "latest",
-    "mongodb": "latest"
+    "mongodb": "latest",
+    "morgan": "latest"
   },
   "devDependencies": {
     "@types/node": "^22.14.0"
