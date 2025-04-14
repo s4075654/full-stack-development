@@ -10,10 +10,10 @@ Usage:
   indicator() → Stops current animation
  */
 
-require("dotenv").config()
+import "dotenv/config"
 
 let g_oIntervalId
-module.exports = function(a_sProcess) {
+export default function(a_sProcess) {
 	if (g_oIntervalId) {
 		clearInterval(g_oIntervalId)
 		console.log()

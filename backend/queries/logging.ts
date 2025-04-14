@@ -1,19 +1,23 @@
-const g_coRouter = require("express").Router()
-const g_coUsers = require("../server/main.cts").get("DB").collection("users")
-const g_codes = require("../server/data.cts").get("Status codes")
+import { Router } from "express"
+import g_coDb from "../server/db.ts"
+const g_coUsers = g_coDb.collection("users")
+import g_codes from "../server/statuses.ts"
+import g_coBcrypt from "bcrypt"
+
+const g_coRouter = Router()
 //Handling user log in and log out activities
 // Authentication middleware
 // Handle login route (/in)
 g_coRouter.use("/in", function(a_oRequest, a_oResponse) {
 	// Extract credentials from headers using destructuring assignment
-    // Header format: { "m_susername": "...", "m_spassword": "..." }
+	// Header format: { "m_susername": "...", "m_spassword": "..." }
 
 	const { m_sUsername, m_sPassword } = a_oRequest.headers
 	// Validate username presence using truthy check
-    // Returns 400-level status if validation fails
+	// Returns 400-level status if validation fails
 	if (!m_sUsername) return a_oResponse.sendStatus(g_codes.get("Invalid"))
 	// Database query using MongoDB findOne() with projection
-    // Projection: { password: 1 } returns only _id and password fields
+	// Projection: { password: 1 } returns only _id and password fields
 	// Now we want to search for a user in the database
 	const l_coUser = g_coUsers.findOne({ username: m_sUsername }).project({ password: 1 })
 	// If the user does not exist then returns a "Not Found" status
@@ -21,7 +25,7 @@ g_coRouter.use("/in", function(a_oRequest, a_oResponse) {
 	// If the user is found
 	// Password comparison using bcrypt's async compare() method
 
-	require("bcrypt").compare(m_sPassword, l_coUser.password, function(a_oError, a_oResult) {
+	g_coBcrypt.compare(m_sPassword, l_coUser.password, function(a_oError, a_oResult) {
 		// If the password is incorrect
 		if (a_oError) return a_oResponse.sendStatus(g_codes.get("Invalid"))
 		// Otherwise we store user ID in session
@@ -45,4 +49,4 @@ g_coRouter.use("/out", function(a_oRequest, a_oResponse) {
 	})
 })
 
-module.exports = g_coRouter
+export default g_coRouter

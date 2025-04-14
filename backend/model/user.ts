@@ -1,39 +1,15 @@
-/* MongoDB JSON Schema Validator for Users Collection
-
-Key Features:
-- Requires core user metadata (Username, Admin status, event limits)
-- Tracks user activity via references to events/notifications/sessions
-- Defines administrative privileges and usage limits
-- Strict schema prevents undocumented fields
-
-Fields:
-1. Required Fields:
-   - Username (string): Unique identifier for login/display
-   - Max Active Events (long): Usage cap for concurrent events
-   - Max Invitations (long): Per-event invitation limit
-   - Admin (bool): Privilege flag
-
-2. Optional Fields:
-   - Password (string): Hashed credentials (should be required for security)
-   - Email (string): Contact information
-   - Notifications (objectId[]): User alerts
-   - Organizing Events (objectId[]): Managed events
-   - Sessions (objectId[]): Active logins
- */
-
-
-module.exports = {
+export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "A user.",
-			required: Array.of("Username", "Maximum number of active events", "Maximum number of invitations to an event", "Admin"),
+			required: Array.of("username", "Maximum number of active events", "Maximum number of invitations to an event", "admin"),
 			properties: {
-				Username: {
+				username: {
 					bsonType: "string",
 					description: "The username of a user."
 				},
-				Password: {
+				password: {
 					bsonType: "string",
 					description: "The hashed password of a user."
 				},
@@ -41,7 +17,7 @@ module.exports = {
 					bsonType: "string",
 					description: "The email address of a user."
 				},
-				Notifications: {
+				notifications: {
 					bsonType: "array",
 					description: "The notifications the user has received.",
 					uniqueItems: true,
@@ -67,11 +43,11 @@ module.exports = {
 					bsonType: "long",
 					description: "The maximum number of invitations to an event the user can send."
 				},
-				Admin: {
+				admin: {
 					bsonType: "bool",
 					description: "Whether the user is an admin."
 				},
-				Sessions: {
+				sessions: {
 					bsonType: "array",
 					description: "The sessions of the user.",
 					uniqueItems: true,

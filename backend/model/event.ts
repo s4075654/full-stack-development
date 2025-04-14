@@ -1,46 +1,15 @@
-/* MongoDB JSON Schema Validator for Events Collection
-
-Key Features:
-- Requires 'Public' (visibility flag) and 'Organiser ID' fields
-- Defines relational arrays using MongoDB references (objectId)
-- Stores binary image data for event photos
-- Prevents extra/unvalidated fields (additionalProperties: false)
-
-Fields:
-1. Public (Required):
-   - Type: boolean
-   - Purpose: Determines event visibility
-
-2. Organiser ID (Required):
-   - Type: objectId
-   - Purpose: Reference to user collection
-   - Note: Should be named 'Organiser' per required array
-
-3. Relational Arrays (All optional):
-   - Invitations: Unique invitation references
-   - Requests: Unique join request references
-   - Disscussion [sic] board: Unique message references
-   - Notifications: Unique notification references
-
-4. Images:
-   - Type: binData array
-   - Purpose: Raw image storage
- */
-
-
-
-module.exports = {
+export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "An event.",
-			required: Array.of("Public", "Organiser"),
+			required: Array.of("public", "organiser"),
 			properties: {
-				Public: {
+				public: {
 					bsonType: "bool",
 					description: "Whether or not the event is public."
 				},
-				Invitations: {
+				invitations: {
 					bsonType: "array",
 					description: "The invitations to the event.",
 					uniqueItems: true,
@@ -49,7 +18,7 @@ module.exports = {
 						description: "An invitation to the event."
 					}
 				},
-				Requests: {
+				requests: {
 					bsonType: "array",
 					description: "The requests to join the event.",
 					uniqueItems: true,
@@ -67,7 +36,7 @@ module.exports = {
 						description: "A message in the discussion board."
 					}
 				},
-				Notifications: {
+				notifications: {
 					bsonType: "array",
 					description: "Notifications for the event.",
 					uniqueItems: true,
@@ -76,7 +45,7 @@ module.exports = {
 						description: "A notification for the event."
 					}
 				},
-				Images: {
+				images: {
 					bsonType: "array",
 					description: "Images of the event.",
 					items: {
@@ -87,7 +56,10 @@ module.exports = {
 				"Organiser ID": {
 					bsonType: "objectId",
 					description: "The organiser of the event."
-				}
+				},
+				eventName: {},
+				eventLocation: {},
+				eventTime: {}
 			},
 			additionalProperties: false,
 		}
