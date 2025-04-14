@@ -29,10 +29,6 @@ module.exports = {
 			description: "A user.",
 			required: Array.of("Username", "Maximum number of active events", "Maximum number of invitations to an event", "Admin"),
 			properties: {
-				_id: {
-					bsonType: "objectId",
-					description: "The user id."
-				},
 				Username: {
 					bsonType: "string",
 					description: "The username of a user."
