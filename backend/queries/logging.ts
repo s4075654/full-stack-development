@@ -1,14 +1,13 @@
 import { Router } from "express"
 import g_coDb from "../server/db.ts"
 const g_coUsers = g_coDb.collection("users")
-import g_coBcrypt from "bcrypt"
-import g_coAuth from "../server/auth.ts"
 import g_codes from "../server/statuses.ts"
 
 const g_coRouter = Router()
 //Handling user log in and log out activities
 // Authentication middleware
 // Handle login route (/in)
+import g_coBcrypt from "bcrypt"
 g_coRouter.use("/in", function(a_oRequest, a_oResponse) {
 	// Extract credentials from headers using destructuring assignment
 	// Header format: { "m_susername": "...", "m_spassword": "..." }
@@ -38,7 +37,9 @@ g_coRouter.use("/in", function(a_oRequest, a_oResponse) {
 		a_oResponse.status(g_codes("Invalid")).redirect("/authentication.htm")
 	})
 })
+
 //When the user log out
+import g_coAuth from "../server/auth.ts"
 g_coRouter.use("/out", g_coAuth, function(a_oRequest, a_oResponse) {
 	//Session Destruction Process
 	//session.destroy() removes session data from server-side store
