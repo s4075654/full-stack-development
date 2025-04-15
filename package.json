@@ -9,10 +9,16 @@
   "dependencies": {
     "bcrypt": "latest",
     "cookie-parser": "latest",
+    "cors": "^2.8.5",
     "dotenv": "latest",
     "express": "latest",
     "express-session": "latest",
     "mongodb": "latest",
     "morgan": "latest"
+  },
+  "devDependencies": {
+    "@esbuild-kit/esm-loader": "^2.6.5",
+    "@tsconfig/node18": "^18.2.4",
+    "@types/node": "^22.14.1"
   }
 }
