@@ -1,6 +1,5 @@
 import "dotenv/config"
 import { readdir } from "fs/promises"
-import { join } from "path"
 import { MongoClient } from "mongodb"
 import g_coToggleProcessing from "../utilities/processing.ts"
 
@@ -11,7 +10,7 @@ console.log("Database successfully connected.")
 
 const g_coDb = g_connection.db(process.env.DB_NAME)
 for (const l_csFileName of await readdir("backend/model")) {
-	const l_coMod = await import(join("../model", l_csFileName))
+	const l_coMod = await import("../model/" + l_csFileName)
 	const l_csCollectionName = l_csFileName.replace(".ts", "s")
 	if ((await g_coDb.listCollections({ name: l_csCollectionName }).toArray()).length === 0) {
 		//	Validation Setup: Recreates collections with schema validators
