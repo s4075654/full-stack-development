@@ -4,7 +4,7 @@ const g_coInvitations = g_coDb.collection("invitations")
 import g_codes from "../server/statuses.ts"
 
 const g_coRouter = Router()
-// HTTP methods for the event operations in this Express router
+// HTTP methods for the invitation operations in this Express router
 g_coRouter.post("/", function(a_oRequest, a_oResponse) {
 	
 })
