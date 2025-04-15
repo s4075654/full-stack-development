@@ -2,7 +2,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {FormEvent, useState} from "react";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../redux/store.ts";
-import {login} from "../../redux/authSlice.ts";
+import {login} from "../../redux/auth/authSlice.ts";
 
 export default function LoginCard() {
     const [show, setShow] = useState<boolean>(false);
