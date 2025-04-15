@@ -1,4 +1,4 @@
-export default (a_oRequest, a_oResponse, a_Next) => a_oRequest.session.data?.user ? a_Next() : a_oResponse.redirect("/authentication.htm")
+export default (a_oRequest, a_oResponse, a_oNext) => a_oRequest.session.data?.user ? a_oNext() : a_oResponse.redirect("/login")
 //This middleware function handles authentication verification in the application.
 /*
 session.data.user checks if a user session exists

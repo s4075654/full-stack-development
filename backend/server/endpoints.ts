@@ -15,7 +15,7 @@ g_coApp.use(g_coExpressSession({ //// Creates Express instance
 	resave: false,
 	saveUninitialized: false,
 	secret: process.env.SECRET //// Encryption key from .env
-}), (_, __, a_Next) => a_Next())
+}), (_, __, a_oNext) => a_oNext())
 
 import g_coLogRouter from "../queries/logging.ts"
 g_coApp.use("/log", g_coLogRouter)
