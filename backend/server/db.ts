@@ -1,26 +1,22 @@
 import "dotenv/config"
-import { readdir } from "fs/promises"
-import { join } from "path"
+
 import { MongoClient } from "mongodb"
-import g_coToggleProcessing from "../utilities/processing.ts"
+globalThis.g_oConnection = await new MongoClient("mongodb://" + process.env.DB_HOST + ":" + process.env.DB_PORT).connect()
+console.log("Connected to database.")
 
-g_coToggleProcessing("Attempting database connection.")
-export const g_connection = await new MongoClient("mongodb://" + process.env.DB_HOST + ":" + process.env.DB_PORT).connect()
-g_coToggleProcessing()
-console.log("Database successfully connected.")
-
-const g_coDb = g_connection.db(process.env.DB_NAME)
+const g_coDb = globalThis.g_oConnection.db(process.env.DB_NAME)
+import { readdir } from "fs/promises"
 for (const l_csFileName of await readdir("backend/model")) {
-	const l_coMod = await import(join("../model", l_csFileName))
+	const l_coMod = await import("../model/" + l_csFileName)
 	const l_csCollectionName = l_csFileName.replace(".ts", "s")
 	if ((await g_coDb.listCollections({ name: l_csCollectionName }).toArray()).length === 0) {
 		//	Validation Setup: Recreates collections with schema validators
 		await g_coDb.createCollection(l_csCollectionName, l_coMod.default)
-		console.log(l_csCollectionName + " created.")
+		console.log("Created " + l_csCollectionName + ".")
 	} else {
 		console.log("The \"" + l_csCollectionName + "\" collection already exists.")
 	}
 }
-console.log("Collections registered.")
+console.log("Registered collections.")
 
 export default g_coDb

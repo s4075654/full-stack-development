@@ -1,17 +1,12 @@
 import "dotenv/config"
 import g_coAuth from "./auth.ts"
-import g_coExpress from "express"
 import g_codes from "./statuses.ts"
-import { join } from "path"
 
+import g_coExpress from "express"
 const g_coApp = g_coExpress()
-g_coApp.use(function(a_oRequest, _, a_Next) {
-	console.log("Request received: ")
-	console.log("Method: " + a_oRequest.method)
-	console.log("Original URL: " + a_oRequest.originalUrl)
-	console.log()
-	a_Next()
-})
+
+import g_coMorgan from "morgan"
+g_coApp.use(g_coMorgan("dev"))
 
 import g_coExpressSession from "express-session"
 import g_coStore from "../queries/SessionOps.ts"
@@ -20,7 +15,7 @@ g_coApp.use(g_coExpressSession({ //// Creates Express instance
 	resave: false,
 	saveUninitialized: false,
 	secret: process.env.SECRET //// Encryption key from .env
-}), (_, __, a_Next) => a_Next())
+}), (_, __, a_oNext) => a_oNext())
 
 import g_coLogRouter from "../queries/logging.ts"
 g_coApp.use("/log", g_coLogRouter)
@@ -37,6 +32,7 @@ g_coApp.use("/notification", g_coAuth, g_coNotifRouter)
 import g_coUserRouter from "../queries/UserOps.ts"
 g_coApp.use("/user", g_coUserRouter)
 
+import { join } from "path"
 g_coApp.use(g_coExpress.static(join(process.cwd(), "frontend/dist"), { index: "index.html" }))
 g_coApp.use((_, a_oResponse) =>	a_oResponse.sendStatus(g_codes("Not found")))
 g_coApp.use((a_oError, _, a_oResponse, __) => a_oResponse.status(g_codes("Server error")).json(a_oError))
