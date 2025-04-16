@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "An event.",
-			required: Array.of("public", "organiser"),
+			required: ["public", "organiser"],
 			properties: {
 				public: {
 					bsonType: "bool",
