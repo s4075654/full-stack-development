@@ -9,7 +9,6 @@
   "dependencies": {
     "bcrypt": "latest",
     "cookie-parser": "latest",
-    "cors": "^2.8.5",
     "dotenv": "latest",
     "express": "latest",
     "express-session": "latest",
