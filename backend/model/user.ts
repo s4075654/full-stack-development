@@ -5,6 +5,10 @@ export default {
 			description: "A user.",
 			required: ["username", "Maximum number of active events", "Maximum number of invitations to an event", "admin"],
 			properties: {
+				_id: {
+					bsonType: "objectId",
+					description: "The user ID",
+				},
 				username: {
 					bsonType: "string",
 					description: "The username of a user."

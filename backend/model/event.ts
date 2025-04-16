@@ -5,6 +5,10 @@ export default {
 			description: "An event.",
 			required: ["public", "organiser"],
 			properties: {
+				_id: {
+					bsonType: "objectId",
+					description: "The event ID",
+				},
 				public: {
 					bsonType: "bool",
 					description: "Whether or not the event is public."
@@ -57,9 +61,18 @@ export default {
 					bsonType: "objectId",
 					description: "The organiser of the event."
 				},
-				eventName: {},
-				eventLocation: {},
-				eventTime: {}
+				eventName: {
+					bsonType: "string",
+					description: "The event name of the event.",
+				},
+				eventLocation: {
+					bsonType: "string",
+					description: "The event location of the event.",
+				},
+				eventTime: {
+					bsonType: "string",
+					description: "The time of the event.",
+				}
 			},
 			additionalProperties: false,
 		}
