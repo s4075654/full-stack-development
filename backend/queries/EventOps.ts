@@ -1,8 +1,9 @@
-import { Router } from "express";
-const g_coRouter = Router();
-import g_coDb from "../server/db.ts";
-const g_coEvents = g_coDb.collection("events");
-import g_codes from "../server/statuses.ts";
+import { Router } from "express"
+const g_coRouter = Router()
+import g_coDb from "../server/db.ts"
+const g_coEvents = g_coDb.collection("events")
+import g_codes from "../server/statuses.ts"
+import {ObjectId} from "mongodb";
 
 // HTTP methods for the event operations in this Express router
 g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
@@ -54,5 +55,4 @@ g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 
 export default g_coRouter
 
-import {ObjectId} from "mongodb";
 
