@@ -50,15 +50,6 @@ export default {
 				admin: {
 					bsonType: "bool",
 					description: "Whether the user is an admin."
-				},
-				sessions: {
-					bsonType: "array",
-					description: "The sessions of the user.",
-					uniqueItems: true,
-					items: {
-						bsonType: "objectId",
-						description: "A session of the user."
-					}
 				}
 			},
 			additionalProperties: false
