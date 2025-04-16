@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "An event.",
-			required: Array.of("public", "organiser"),
+			required: ["public", "organiser"],
 			properties: {
 				public: {
 					bsonType: "bool",
@@ -27,7 +27,7 @@ export default {
 						description: "A request to join the event."
 					}
 				},
-				"Disscussion board": {
+				"Discussion board": {
 					bsonType: "array",
 					description: "The discussion board of the event.",
 					uniqueItems: true,

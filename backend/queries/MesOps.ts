@@ -1,10 +1,10 @@
 import { Router } from "express"
+const g_coRouter = Router()
 import g_coDb from "../server/db.ts"
 const g_coMessages = g_coDb.collection("messages")
 import g_codes from "../server/statuses.ts"
 
-const g_coRouter = Router()
-// HTTP methods for the event operations in this Express router
+// HTTP methods for the message operations in this Express router
 g_coRouter.post("/", function(a_oRequest, a_oResponse) {
 	
 })

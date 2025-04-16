@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "A user.",
-			required: Array.of("username", "Maximum number of active events", "Maximum number of invitations to an event", "admin"),
+			required: ["username", "Maximum number of active events", "Maximum number of invitations to an event", "admin"],
 			properties: {
 				username: {
 					bsonType: "string",
