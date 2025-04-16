@@ -1,10 +1,8 @@
 import Navbar from "../components/Navigation/Navbar.tsx";
 import Sidebar from "../components/Navigation/Sidebar.tsx";
 import EventCard from "../features/publicEvents/EventCard.tsx";
-import {dummyEvents} from "../../dataTypes/Events.ts";
-import {dummyUsers} from "../../dataTypes/User.ts";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../redux/store.ts";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../redux/store.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
 import {useAppSelector} from "../hook/hooks.ts";
 import {useEffect} from "react";
@@ -28,6 +26,8 @@ export default function PublicEvents() {
         return <div>Error: {error}</div>;
     }
     const toggleSidebar = () => dispatch(toggle())
+
+    console.log(events)
 
     return (
         <div className="flex">
