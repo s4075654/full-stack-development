@@ -66,6 +66,7 @@ export default function RegisterPage() {
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Firstname</label>
                 <input
+                  required
                   type="text"
                   className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g. John"
@@ -74,6 +75,7 @@ export default function RegisterPage() {
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Lastname</label>
                 <input
+                  required
                   type="text"
                   className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g. Doe"
@@ -85,6 +87,7 @@ export default function RegisterPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input
+                required
                 type="email"
                 className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g. john.doe@example.com"
