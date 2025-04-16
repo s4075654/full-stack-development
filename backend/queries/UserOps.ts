@@ -1,7 +1,9 @@
 import { Router } from "express"
 import g_coDb from "../server/db.ts"
 const g_coUsers = g_coDb.collection("users")
-import g_codes from "../server/statuses.ts"
+await g_coUsers.createIndex({ username: 1 }, { unique: true })
+import g_coBcrypt from "bcrypt"
+import "dotenv/config"
 
 const g_coRouter = Router()
 // HTTP methods for the event operations in this Express router
