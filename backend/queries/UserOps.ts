@@ -9,7 +9,8 @@ g_coRouter.post("/", function(a_oRequest, a_oResponse) {
 	
 })
 g_coRouter.get("/", function(a_oRequest, a_oResponse) {
-	
+    console.log(6174);
+	return a_oResponse.sendStatus(g_codes("Success"))
 })
 g_coRouter.put("/", function(a_oRequest, a_oResponse) {
 	
