@@ -1,7 +1,6 @@
 import "dotenv/config"
 import g_coAuth from "./auth.ts"
 import g_codes from "./statuses.ts"
-import cors from 'cors'
 
 import g_coExpress from "express"
 const g_coApp = g_coExpress()
@@ -18,19 +17,10 @@ g_coApp.use(g_coExpressSession({ //// Creates Express instance
 	secret: process.env.SECRET //// Encryption key from .env
 }), (_, __, a_oNext) => a_oNext())
 
-g_coApp.use(cors({
-	origin: (origin, callback) => {
-		// Allow requests with no origin (like mobile apps or curl)
-		if (!origin) return callback(null, true);
-		return callback(null, true); // Allow any origin
-	},
-	credentials: true,
-}));
-
 import g_coLogRouter from "../queries/logging.ts"
 g_coApp.use("/log", g_coLogRouter)
 import g_coEventRouter from "../queries/EventOps.ts"
-g_coApp.use("/event", g_coEventRouter) // Reminder, please add the "g_coAuth", was only deleted because authentication have not existed yet
+g_coApp.use("/event", {/*g_coAuth*/}, g_coEventRouter) // Reminder, please add the "g_coAuth", was only deleted because authentication have not existed yet
 import g_coInvitationRouter from "../queries/InvitationOps.ts"
 g_coApp.use("/invitation", g_coAuth, g_coInvitationRouter)
 import g_coMesRouter from "../queries/MesOps.ts"
