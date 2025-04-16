@@ -9,14 +9,7 @@ g_coRouter.post("/", function(a_oRequest, a_oResponse) {
 	
 })
 g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
-	try {
-        // Fetch all documents in the "user" collection
-        const l_aUsers = await g_coUsers.find({}).toArray()
-        a_oResponse.status(g_codes("Success")).json(l_aUsers)
-    } catch (err) {
-        console.error("Failed to fetch users:", err)
-        a_oResponse.sendStatus(g_codes("Server error"))
-    }
+
 })
 g_coRouter.put("/", function(a_oRequest, a_oResponse) {
 	
