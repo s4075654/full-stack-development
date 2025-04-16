@@ -1,4 +1,3 @@
-import {ObjectId} from "mongodb";
 import { Router } from "express";
 const g_coRouter = Router();
 import g_coDb from "../server/db.ts";
@@ -54,3 +53,6 @@ g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 })
 
 export default g_coRouter
+
+import {ObjectId} from "mongodb";
+
