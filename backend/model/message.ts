@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "A message in the discussion board of an event.",
-			required: Array.of("Sender ID", "Event ID"),
+			required: ["Sender ID", "Event ID"],
 			properties: {
 				text: {
 					bsonType: "string",

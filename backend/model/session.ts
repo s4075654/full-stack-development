@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "A session.",
-			required: Array.of("_id", "data"),
+			required: ["_id", "data"],
 			properties: {
 				_id: {
 					bsonType: "string",
