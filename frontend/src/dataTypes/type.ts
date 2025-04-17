@@ -9,6 +9,7 @@ export type User = {
     "Maximum number of invitations to an event": number
     admin: boolean
     sessions: string[] // Array of ObjectId strings
+    avatar: string; // ObjectID of the user's avatar
 }
 
 export type Event = {
@@ -18,9 +19,14 @@ export type Event = {
     requests: string[] // Array of ObjectId strings
     "Discussion board": string[] // Array of ObjectId strings
     notifications: string[] // Array of ObjectId strings
-    images: Array<Buffer> // Binary data for images
-    "Organiser ID": string // ObjectId as string
+    images: string // ObjectId of image as string
+    organiser: string // ObjectId of host as string
     eventName: string
     eventLocation: string
     eventTime: string
 }
+
+export type EventCard = Event & {
+    userName: string; // The organizer’s username
+    avatar: string; // ObjectID of the user's avatar
+};
