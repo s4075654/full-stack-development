@@ -20,7 +20,8 @@ g_coApp.use(g_coExpressSession({ //// Creates Express instance
 import g_coLogRouter from "../queries/logging.ts"
 g_coApp.use("/log", g_coLogRouter)
 import g_coEventRouter from "../queries/EventOps.ts"
-g_coApp.use("/event", {/*g_coAuth*/}, g_coEventRouter) // Reminder, please add the "g_coAuth", was only deleted because authentication have not existed yet
+// g_coApp.use("/event", g_coAuth, g_coEventRouter) // Auth not added yet
+g_coApp.use("/event", g_coEventRouter)
 import g_coInvitationRouter from "../queries/InvitationOps.ts"
 g_coApp.use("/invitation", g_coAuth, g_coInvitationRouter)
 import g_coMesRouter from "../queries/MesOps.ts"
