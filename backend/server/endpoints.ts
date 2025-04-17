@@ -14,13 +14,13 @@ g_coApp.use(g_coExpressSession({ //// Creates Express instance
 	store: new g_coStore(), //// Custom session store
 	resave: false,
 	saveUninitialized: false,
-	secret: process.env.SECRET //// Encryption key from .env
+	secret: process.env.m_secret //// Encryption key from .env
 }), (_, __, a_oNext) => a_oNext())
 
 import g_coLogRouter from "../queries/logging.ts"
 g_coApp.use("/log", g_coLogRouter)
 import g_coEventRouter from "../queries/EventOps.ts"
-g_coApp.use("/event", {/*g_coAuth*/}, g_coEventRouter) // Reminder, please add the "g_coAuth", was only deleted because authentication have not existed yet
+g_coApp.use("/event", g_coAuth, g_coEventRouter) // Reminder, please add the "g_coAuth", was only deleted because authentication have not existed yet
 import g_coInvitationRouter from "../queries/InvitationOps.ts"
 g_coApp.use("/invitation", g_coAuth, g_coInvitationRouter)
 import g_coMesRouter from "../queries/MesOps.ts"

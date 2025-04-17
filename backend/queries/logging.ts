@@ -1,41 +1,37 @@
 import { Router } from "express"
 import g_coDb from "../server/db.ts"
+
 const g_coUsers = g_coDb.collection("users")
+
 import g_codes from "../server/statuses.ts"
 
 const g_coRouter = Router()
+
+import g_cookieParser from "cookie-parser"
 //Handling user log in and log out activities
 // Authentication middleware
 // Handle login route (/in)
 import g_coBcrypt from "bcrypt"
-g_coRouter.use("/in", function(a_oRequest, a_oResponse) {
-	// Extract credentials from headers using destructuring assignment
-	// Header format: { "m_susername": "...", "m_spassword": "..." }
 
-	const { m_sUsername, m_sPassword } = a_oRequest.headers
-	// Validate username presence using truthy check
-	// Returns 400-level status if validation fails
-	if (!m_sUsername) return a_oResponse.sendStatus(g_codes("Invalid"))
-	// Database query using MongoDB findOne() with projection
-	// Projection: { password: 1 } returns only _id and password fields
-	// Now we want to search for a user in the database
-	const l_coUser = g_coUsers.findOne({ username: m_sUsername }).project({ password: 1 })
-	// If the user does not exist then returns a "Not Found" status
-	if (!l_coUser) return a_oResponse.sendStatus(g_codes("Not found"))
-	// If the user is found
-	// Password comparison using bcrypt's async compare() method
-
-	g_coBcrypt.compare(m_sPassword, l_coUser.password, function(a_oError, a_oResult) {
-		// If the password is incorrect
-		if (a_oError) return a_oResponse.sendStatus(g_codes("Invalid"))
-		// Otherwise we store user ID in session
-		if (a_oResult) {
-			a_oRequest.session.data.user = l_coUser._id
-			return a_oResponse.sendStatus(g_codes("Success"))
-		}
-		// If the authentication is fail then it will redirect to authentication.htm
-		a_oResponse.status(g_codes("Invalid")).redirect("/authentication.htm")
-	})
+g_coRouter.use("/in", g_cookieParser(), async function(a_oRequest, a_oResponse) {
+	if (!a_oRequest.cookies.m_sUsername) return a_oResponse.redirect("/login")
+	let l_vResult
+	try {
+		l_vResult = await g_coUsers.findOne({ username: a_oRequest.cookies.m_sUsername }, { projection: { password: 1 } })
+	} catch (a_oError) {
+		return a_oResponse.status(g_codes("Server error")).json(a_oError)
+	}
+	if (!l_vResult) return a_oResponse.sendStatus(g_codes("Not found"))
+	if (a_oRequest.cookies.m_sPassword) {
+		g_coBcrypt.compare(a_oRequest.cookies.m_sPassword, l_vResult.password, function(a_oError, a_bSuccess) {
+			if (a_oError) return a_oResponse.status(g_codes("Server error")).json(a_oError)
+			if (a_bSuccess) {
+				a_oRequest.session.data.user = l_vResult._id
+				return a_oResponse.status(g_codes("Success")).send(a_bSuccess)
+			}
+			a_oResponse.sendStatus(g_codes("Unauthorised"))
+		})
+	} else a_oResponse.sendStatus(g_codes("Success"))
 })
 
 //When the user log out

@@ -2,20 +2,21 @@ export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
-			description: "A message in the discussion board of an event.",
+			title: "A message in the discussion board of an event.",
 			required: ["Sender ID", "Event ID"],
 			properties: {
+				_id: {},
 				text: {
 					bsonType: "string",
-					description: "The contents of the message.",
+					title: "The contents of the message."
 				},
 				"Sender ID": {
 					bsonType: "objectId",
-					description: "The user who sent the message."
+					title: "The user who sent the message."
 				},
 				"Event ID": {
 					bsonType: "objectId",
-					description: "The event whose discussion board contains the message."
+					title: "The event whose discussion board contains the message."
 				}
 			},
 			additionalProperties: false
