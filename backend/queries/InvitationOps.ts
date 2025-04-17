@@ -1,7 +1,11 @@
 import { Router } from "express"
+
 const g_coRouter = Router()
+
 import g_coDb from "../server/db.ts"
+
 const g_coInvitations = g_coDb.collection("invitations")
+
 import g_codes from "../server/statuses.ts"
 
 // HTTP methods for the invitation operations in this Express router
