@@ -2,54 +2,53 @@ export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
-			description: "A user.",
-			required: ["username", "Maximum number of active events", "Maximum number of invitations to an event", "admin"],
+			title: "A user.",
+			required: ["Maximum number of active events", "Maximum number of invitations to an event", "admin"],
 			properties: {
-				_id: {
-					bsonType: "objectId",
-					description: "The user ID",
-				},
+				_id: {},
 				username: {
 					bsonType: "string",
-					description: "The username of a user."
+					title: "The username of a user."
 				},
 				password: {
 					bsonType: "string",
-					description: "The hashed password of a user."
+					title: "The hashed password of a user."
 				},
 				"Email address": {
 					bsonType: "string",
-					description: "The email address of a user."
+					title: "The email address of a user."
 				},
 				notifications: {
 					bsonType: "array",
-					description: "The notifications the user has received.",
+					title: "The notifications the user has received.",
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
-						description: "One of the notification(s) the user has received."
+						title: "One of the notification(s) the user has received."
 					}
 				},
 				"Organising events": {
 					bsonType: "array",
-					description: "The events the user is organising/has organised.",
+					title: "The events the user is organising/has organised.",
 					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
-						description: "An event the user is organising/has organised."
+						title: "An event the user is organising/has organised."
 					}
 				},
 				"Maximum number of active events": {
 					bsonType: "long",
-					description: "The maximum number of active events the user can have.",
+					title: "The maximum number of active events the user can have.",
+					minimum: 0
 				},
 				"Maximum number of invitations to an event": {
 					bsonType: "long",
-					description: "The maximum number of invitations to an event the user can send."
+					title: "The maximum number of invitations to an event the user can send.",
+					minimum: 0
 				},
 				admin: {
 					bsonType: "bool",
-					description: "Whether the user is an admin."
+					title: "Whether the user is an admin."
 				}
 			},
 			additionalProperties: false

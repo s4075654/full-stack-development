@@ -2,21 +2,22 @@ export default {
 	validator: {
 		$jsonSchema: {
 			bsonType: "object",
-			description: "A request to join an event.",
+			title: "A request to join an event.",
 			required: ["Sender ID", "state", "Event ID"],
 			properties: {
+				_id: {},
 				"Sender ID": {
 					bsonType: "objectId",
-					description: "The user who sent the request.",
+					title: "The user who sent the request."
 				},
 				state: {
 					bsonType: "string",
 					enum: ["Accepted", "Unanswered", "Rejected"],
-					description: "The state of the request."
+					title: "The state of the request."
 				},
 				"Event ID": {
 					bsonType: "objectId",
-					description: "The event to join."
+					title: "The event to join."
 				}
 			},
 			additionalProperties: false
