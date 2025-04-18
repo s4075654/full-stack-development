@@ -7,39 +7,86 @@ await g_coUsers.createIndex({ username: 1 }, { unique: true })
 import g_coBcrypt from "bcrypt"
 import "dotenv/config"
 import g_codes from "../server/statuses.ts"
-import g_coFilter from "../filters/UserFilter.ts"
 import {ObjectId} from "mongodb";
 import {getGridFSBucket} from "../server/gridfs";
 
+//g_coApp.use(g_coExpress.json());
 // HTTP methods for the user operations in this Express router
-g_coRouter.post("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
-    if (a_oRequest.cookies.m_sUsername) {
-        try {
-            await g_coUsers.insertOne({
-                username: a_oRequest.cookies.m_sUsername,
-                password: a_oRequest.cookies.m_sPassword ?
-                    await g_coBcrypt.hash(a_oRequest.cookies.m_sPassword, process.env.SALT_ROUNDS) : null,
-                "Email address": a_oRequest.cookies.m_sEmailAddress,
-                "Maximum number of active events": BigInt(a_oRequest.cookies.m_sMaximumNumberOfActiveEvents),
-                "Maximum number of invitations to an event": BigInt(a_oRequest.cookies.m_sMaximumNumberOfInvitationsToAnEvent),
-                admin: Boolean(a_oRequest.cookies.m_sAdmin)
-            })
-        } catch (a_oError) {
-            return a_oResponse.status(g_codes("Invalid")).json(a_oError)
-        }
-        return a_oResponse.sendStatus(g_codes("Success"))
+
+g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
+   // console.log("Request body:", a_oRequest.body); // Log request body
+   /*EXAMPLE
+   //Request body: {
+  username: 'Huy Mai2',
+  password: 'examplePASSWORD123!',
+  email: 'fallsgravity437@gmail.com' 
+}*/
+    const { username, password, email } = a_oRequest.body;
+
+    // Validate required fields ✅ Correct
+    if (!username || !password || !email) {
+        return a_oResponse.status(400).json({ error: "Missing required fields" });
     }
-    a_oResponse.status(g_codes("Invalid")).send("The request is missing a username.")
-})
-g_coRouter.get("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
-    let l_vResults
+
     try {
-        l_vResults = await g_coUsers.find(await g_coFilter(a_oRequest.cookies)).toArray()
-    } catch (a_oError) {
-        return a_oResponse.status(g_codes("Server error")).json(a_oError)
+        // Existing user check ✅ Correct
+        const existingUser = await g_coUsers.findOne({
+            $or: [
+                { username },
+                { "Email address": email }
+            ]
+        });
+
+        // Conflict handling ✅ Correct
+        if (existingUser) {
+            return a_oResponse.status(409).json({ 
+                error: existingUser.username === username 
+                    ? "Username already exists" 
+                    : "Email already registered"
+            });
+        }
+
+        // User creation ✅ Schema-compliant
+        await g_coUsers.insertOne({
+            username,
+            password: await g_coBcrypt.hash(
+                password, 
+                parseInt(process.env.SALT_ROUNDS) // 🚨 Ensure SALT_ROUNDS is numeric
+            ),
+            "Email address": email, // ✅ Matches schema
+            admin: false, // ✅ Default non-admin
+            notifications: [],
+            "Organising events": [],
+            sessions: []
+        });
+
+        a_oResponse.sendStatus(201); // ✅ Correct success status
+    } catch (error) {
+        // 🚨 Add duplicate key check
+        if (error.code === 11000) {
+            return a_oResponse.status(409).json({ 
+                error: "Username/email already exists" 
+            });
+        }
+        console.error("Registration error:", error);
+        a_oResponse.status(500).json({ error: "Server error during registration" });
+      
+          console.error("Validation errors:", error.errInfo.details.schemaRulesNotSatisfied);
     }
-    a_oResponse.status(g_codes(l_vResults.length ? "Success" : "Not found")).json(l_vResults)
-})
+});
+import g_coFilter from "../filters/UserFilter.ts"
+
+// GET Route update
+g_coRouter.get("/", async (req, res) => {
+    try {
+        const results = await g_coUsers.find(
+            g_coFilter(req.body) // Use body instead of cookies
+        ).toArray();
+        res.status(200).json(results);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
 
 g_coRouter.get("/image/:id", async (a_oRequest, a_oResponse) => {
     try {
@@ -59,21 +106,27 @@ g_coRouter.get("/image/:id", async (a_oRequest, a_oResponse) => {
     }
 })
 
-g_coRouter.put("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
+// PUT Route update
+g_coRouter.put("/", async (req, res) => {
     try {
-        await g_coUsers.updateMany(g_coFilter(a_oRequest.cookies), { $set: {
-                username: a_oRequest.get("Username"),
-                password: await g_coBcrypt.hash(a_oRequest.get("Password"), process.env.SALT_ROUNDS),
-                "Email address": a_oRequest.get("Email address"),
-                "Maximum number of active events": BigInt(a_oRequest.get("Maximum number of active events")),
-                "Maximum number of invitations to an event": BigInt(a_oRequest.get("Maximum number of invitations to an event")),
-                admin: Boolean(a_oRequest.get("Admin"))
-            } })
-    } catch (a_oError) {
-        return a_oResponse.status(g_codes("Server error")).json(a_oError)
+        await g_coUsers.updateMany(
+            g_coFilter(req.body),
+            { $set: {
+                username: req.body.username,
+                password: await g_coBcrypt.hash(
+                    req.body.password, 
+                    parseInt(process.env.SALT_ROUNDS)
+                ),
+                "Email address": req.body.email,
+                admin: Boolean(req.body.admin)
+            } 
+        });
+        res.sendStatus(200);
+    } catch (error) {
+        res.status(500).json(error);
     }
-    a_oResponse.sendStatus(g_codes("Success"))
-})
+});
+
 g_coRouter.delete("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
     try {
         await g_coUsers.deleteMany(await g_coFilter(a_oRequest.cookies))
