@@ -8,6 +8,8 @@ const g_coApp = g_coExpress()
 import g_coMorgan from "morgan"
 g_coApp.use(g_coMorgan("dev"))
 
+//g_coApp.use(g_coExpress.json());
+
 import g_coExpressSession from "express-session"
 import g_coStore from "../queries/SessionOps.ts"
 g_coApp.use(g_coExpressSession({ //// Creates Express instance
