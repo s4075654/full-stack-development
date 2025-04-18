@@ -14,7 +14,7 @@ import g_cookieParser from "cookie-parser"
 import g_coBcrypt from "bcrypt"
 
 g_coRouter.use("/in", g_cookieParser(), async function(a_oRequest, a_oResponse) {
-	if (!a_oRequest.cookies.m_sUsername) return a_oResponse.redirect("/login")
+	if (!a_oRequest.cookies.m_sUsername) return a_oResponse.sendStatus(g_codes("Unauthorised"))
 	let l_vResult
 	try {
 		l_vResult = await g_coUsers.findOne({ username: a_oRequest.cookies.m_sUsername }, { projection: { password: 1 } })
