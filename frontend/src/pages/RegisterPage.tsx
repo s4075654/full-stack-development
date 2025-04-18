@@ -78,9 +78,11 @@ export default function RegisterPage() {
       console.log("Submitting:", { username, email }); // Log request data
       
       try {
-        const response = await fetch('http://localhost:58888/user', {
+        const response = await fetch('/user', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'},
           body: JSON.stringify({
             username,
             password,

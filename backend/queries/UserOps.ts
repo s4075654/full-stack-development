@@ -17,7 +17,7 @@ import {getGridFSBucket} from "../server/gridfs.ts";
 // HTTP methods for the user operations in this Express router
 
 g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
-   // console.log("Request body:", a_oRequest.body); // Log request body
+    console.log("Request body:", a_oRequest.body); // Log request body
    /*EXAMPLE
    //Request body: {
   username: 'Huy Mai2',
@@ -60,7 +60,7 @@ g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
 			admin: false, //  Default non-admin
 			notifications: [],
 			"Organising events": [],
-			sessions: []
+			//sessions: []
 		});
 
 		a_oResponse.sendStatus(g_codes("Created")); //  Correct success status
@@ -117,7 +117,7 @@ g_coRouter.put("/", async function(req, res) {
 				username: req.body.username,
 				password: await g_coBcrypt.hash(
 					req.body.password, 
-					parseInt(process.env.SALT_ROUNDS)
+					parseInt(process.env.m_saltRounds)
 				),
 				"Email address": req.body.email,
 				admin: Boolean(req.body.admin)
