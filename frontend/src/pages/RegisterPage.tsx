@@ -3,10 +3,15 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { validatePassword, PasswordValidation, validatePasswordMatch } from '../utils/passwordValidator';
 import { getInputStyles, ValidationState } from '../utils/validationStyles';
 
+
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
      
     // New password validation states
     const [password, setPassword] = useState('');
@@ -22,7 +27,7 @@ export default function RegisterPage() {
         hasSpecialChar: false,
     });
     const [isPasswordMatch, setIsPasswordMatch] = useState(false); 
-
+    const [errorMessage, setErrorMessage] = useState('');
  // Password validation handler
  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
@@ -49,6 +54,55 @@ export default function RegisterPage() {
         if (confirmPassword === '') return 'neutral';
         return isPasswordMatch ? 'valid' : 'invalid';
     };
+ 
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setErrorMessage('');
+    
+      // Validate required fields
+      if (!firstName || !lastName) {
+        setErrorMessage("First name and last name are required");
+        return;
+      }
+    
+      {
+        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+        if (!emailRegex.test(email)) {
+          setErrorMessage("Please enter a properly formatted email address");
+          return;
+        }
+    }
+    
+      // Combine names
+      const username = `${firstName} ${lastName}`.trim();
+      console.log("Submitting:", { username, email }); // Log request data
+      
+      try {
+        const response = await fetch('http://localhost:58888/user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username,
+            password,
+            email,  // Match backend schema
+          }),
+        });
+    
+        if (!response.ok) {
+          const errorText = await response.json();
+          setErrorMessage(errorText.error || "Registration failed");
+          return;
+        }
+    
+        window.location.href = '/login';
+      } catch (error) {
+        setErrorMessage("Network error. Please try again.");
+        console.error('Registration error:', error);
+      }
+    };
+
+
+
 
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -60,25 +114,27 @@ export default function RegisterPage() {
           </h1>
   
           {/* Form */}
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Name Fields */}
             <div className="flex gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Firstname</label>
                 <input
-                  required
                   type="text"
                   className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g. John"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Lastname</label>
                 <input
-                  required
                   type="text"
                   className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g. Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
             </div>
@@ -87,10 +143,11 @@ export default function RegisterPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input
-                required
                 type="email"
                 className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g. john.doe@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
    
@@ -175,7 +232,13 @@ export default function RegisterPage() {
                                 {isPasswordMatch ? '✓ Passwords match' : '✗ Passwords do not match'}
                             </p>
                         )}
-               {/* Terms Checkbox */}
+     {/* Error message display */}
+        {errorMessage && (
+                        <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
+                            {errorMessage}
+                        </div>
+                    )}
+      {/* Terms Checkbox */}
       <div className="flex items-center space-x-2">
         <input
           type="checkbox"
@@ -190,13 +253,13 @@ export default function RegisterPage() {
             </div>
   
          
-      {/* Updated Register Button */}
+      {/* Register Button */}
       <button
         type="submit"
-        disabled={!isTermsAccepted}
+        disabled={!isTermsAccepted || !passwordValidation.isValid || !isPasswordMatch}
         className={`w-full text-white py-2 px-4 rounded-md transition-colors ${
-          isTermsAccepted 
-            ? 'bg-blue-600 hover:bg-blue-700' 
+          (isTermsAccepted && passwordValidation.isValid && isPasswordMatch)
+            ? 'bg-blue-600 hover:bg-blue-700'
             : 'bg-gray-300 cursor-not-allowed'
         }`}
       >
