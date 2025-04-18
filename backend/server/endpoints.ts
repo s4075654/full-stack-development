@@ -34,7 +34,7 @@ g_coApp.use("/user", g_coUserRouter)
 
 import { join } from "path"
 g_coApp.use(g_coExpress.static(join(process.cwd(), "frontend/dist"), { index: "index.html" }))
-g_coApp.get("*", (_, a_oResponse) => a_oResponse.sendFile(join(process.cwd(), "frontend/dist/index.html")))
+g_coApp.get(/.*/, (_, a_oResponse) => a_oResponse.sendFile(join(process.cwd(), "frontend/dist/index.html")))
 
 g_coApp.use((a_oError, _, a_oResponse, __) => a_oResponse.status(g_codes("Server error")).json(a_oError))
 
