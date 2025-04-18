@@ -11,7 +11,7 @@ import g_coBcrypt from "bcrypt"
 import "dotenv/config"
 import g_codes from "../server/statuses.ts"
 import {ObjectId} from "mongodb";
-import {getGridFSBucket} from "../server/gridfs";
+import {getGridFSBucket} from "../server/gridfs.ts";
 
 //g_coApp.use(g_coExpress.json());
 // HTTP methods for the user operations in this Express router
