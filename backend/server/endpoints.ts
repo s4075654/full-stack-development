@@ -8,8 +8,6 @@ const g_coApp = g_coExpress()
 import g_coMorgan from "morgan"
 g_coApp.use(g_coMorgan("dev"))
 
-//g_coApp.use(g_coExpress.json());
-
 import g_coExpressSession from "express-session"
 import g_coStore from "../queries/SessionOps.ts"
 g_coApp.use(g_coExpressSession({ //// Creates Express instance
@@ -36,7 +34,7 @@ g_coApp.use("/user", g_coUserRouter)
 
 import { join } from "path"
 g_coApp.use(g_coExpress.static(join(process.cwd(), "frontend/dist"), { index: "index.html" }))
-g_coApp.get("*", (_, a_oResponse) => a_oResponse.sendFile(join(process.cwd(), "frontend/dist/index.html")))
+g_coApp.get(/.*/, (_, a_oResponse) => a_oResponse.sendFile(join(process.cwd(), "frontend/dist/index.html")))
 
 g_coApp.use((a_oError, _, a_oResponse, __) => a_oResponse.status(g_codes("Server error")).json(a_oError))
 
