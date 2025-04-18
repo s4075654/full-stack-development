@@ -14,5 +14,8 @@
     "express-session": "latest",
     "mongodb": "latest",
     "morgan": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1"
   }
 }

@@ -10,7 +10,8 @@ await g_coUsers.createIndex({ username: 1 }, { unique: true })
 import g_coBcrypt from "bcrypt"
 import "dotenv/config"
 import g_codes from "../server/statuses.ts"
-
+import {ObjectId} from "mongodb";
+import {getGridFSBucket} from "../server/gridfs";
 
 //g_coApp.use(g_coExpress.json());
 // HTTP methods for the user operations in this Express router
@@ -90,6 +91,23 @@ g_coRouter.get("/", async function(req, res) {
 	}
 });
 
+// GET Route for avatar
+g_coRouter.get("/image/:id", async (a_oRequest, a_oResponse) => {
+    try {
+		const l_oId = new ObjectId(a_oRequest.params.id);
+		const downloadStream = getGridFSBucket().openDownloadStream(l_oId);
+		a_oResponse.set("Content-Type", "image/jpeg");
+		const onError = function () {
+			a_oResponse.sendStatus(g_codes("Not found"));
+		};
+		downloadStream
+			.on("error", onError)
+			.pipe(a_oResponse);
+    } catch (a_oError) {
+        a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid ID or error fetching image", details: a_oError })
+    }
+})
+
 // PUT Route update
 g_coRouter.put("/", async function(req, res) {
 	try {
@@ -110,7 +128,6 @@ g_coRouter.put("/", async function(req, res) {
 		res.status(g_codes("Server error")).json(error);
 	}
 });
-
 
 g_coRouter.delete("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
 	try {

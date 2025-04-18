@@ -41,11 +41,11 @@ export default function PublicEvents() {
                                 key={event._id}
                                 id={event._id}
                                 name={event.eventName}
-                                image={"/images/events/pexels-bertellifotografia-2608517.jpg"}
+                                image={event.images}
                                 location={event.eventLocation}
                                 time={event.eventTime}
-                                host={"Dummy Name"}
-                                hostAvatar={"/images/profiles/avatar-default.svg"}
+                                host={event.organiser}
+                                hostAvatar={event.avatar}
                             />
                         )
                     })

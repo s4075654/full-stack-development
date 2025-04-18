@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from "../components/Navigation/Navbar";
 import Sidebar from "../components/Navigation/Sidebar";
-import { dummyEvents } from "../../dataTypes/Events";
-import { dummyUsers } from "../../dataTypes/User";
+import { dummyEvents } from "../dataTypes/Events";
+import { dummyUsers } from "../dataTypes/User";
 
 function EventDetail() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);

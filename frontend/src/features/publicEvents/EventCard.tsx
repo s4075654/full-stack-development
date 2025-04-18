@@ -23,14 +23,14 @@ const EventCard: FC<EventCardProps> = ({
     return (
         <Link to={`/event-detail/${id}`} className="w-[260px] rounded-xl overflow-hidden bg-white shadow-sm cursor-pointer transition-transform duration-200 hover:shadow-md hover:scale-[1.02]">
             <img
-                src={image}
+                src={`/event/image/${image}`}
                 alt={name}
                 className="w-full h-[160px] object-cover rounded-t-xl"
             />
             <div className="p-3 space-y-1">
                 <div className="flex items-start gap-2">
                     <img
-                        src={hostAvatar}
+                        src={`/user/image/${hostAvatar}`}
                         alt="image"
                         className="w-6 h-6 rounded-full object-cover mt-1"
                     />

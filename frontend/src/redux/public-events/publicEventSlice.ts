@@ -1,9 +1,9 @@
 // publicEventSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { Event } from '../../../dataTypes/type'
+import { EventCard } from '../../dataTypes/type'
 
 interface EventState {
-    events: Event[]
+    events: EventCard[]
     loading: boolean
     error: string | null
 }
@@ -18,10 +18,28 @@ export const fetchPublicEvents = createAsyncThunk(
     'publicEvents/fetch',
     async (_, thunkAPI) => {
         try {
+            // Fetch public events
             const res = await fetch('/event?public=true', { credentials: 'include', method: 'GET' })
             if (!res.ok) throw new Error("Failed to fetch public events")
+            const events = await res.json()
 
-            return res.json()
+            // Fetch user data (organizer details) for each event
+            const eventsWithUserDetails = await Promise.all(
+                events.map(async (event: EventCard) => {
+                    const userRes = await fetch(`/users/${event.organiser}`, { credentials: 'include' })
+                    if (!userRes.ok) throw new Error("Failed to fetch user data for event organizer")
+                    const user = await userRes.json()
+
+                    // Return event with user data
+                    return {
+                        ...event,
+                        userName: user.username,
+                        avatar: user.avatarUrl
+                    }
+                })
+            )
+
+            return eventsWithUserDetails
         } catch (err) {
             return thunkAPI.rejectWithValue("Something went wrong while fetching public events.")
         }
