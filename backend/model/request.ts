@@ -3,10 +3,10 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			title: "A request to join an event.",
-			required: ["Sender ID", "state", "Event ID"],
+			required: ["senderId", "state", "eventId"],
 			properties: {
 				_id: {},
-				"Sender ID": {
+				senderId: {
 					bsonType: "objectId",
 					title: "The user who sent the request."
 				},
@@ -15,7 +15,7 @@ export default {
 					enum: ["Accepted", "Unanswered", "Rejected"],
 					title: "The state of the request."
 				},
-				"Event ID": {
+				eventId: {
 					bsonType: "objectId",
 					title: "The event to join."
 				}
