@@ -1,7 +1,6 @@
 import g_coExpress from "express"
 const g_coRouter = g_coExpress.Router()
 
-import g_cookieParser from "cookie-parser"
 import g_coDb from "../server/db.ts"
 
 const g_coUsers = g_coDb.collection("users")
@@ -11,13 +10,12 @@ import g_coBcrypt from "bcrypt"
 import "dotenv/config"
 import g_codes from "../server/statuses.ts"
 import { ObjectId } from "mongodb"
-import { getGridFSBucket } from "../server/gridfs.ts.ts"
+import { getGridFSBucket } from "../server/gridfs.ts"
 
 //g_coApp.use(g_coExpress.json())
 // HTTP methods for the user operations in this Express router
 
-g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse) {
-    console.log("Request body:", a_oRequest) // Log request body
+g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
    /*EXAMPLE
    //Request body: {
   username: 'Huy Mai2',
@@ -27,9 +25,7 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 	const { username, password, email } = a_oRequest.body
 
 	// Validate required fields Correct
-	if (!username || !password || !email) {
-		return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" })
-	}
+	if (!username || !password || !email) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" })
 
 	try {
 		// Existing user check  Correct
@@ -66,16 +62,8 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 		a_oResponse.sendStatus(g_codes("Created")) //  Correct success status
 	} catch (error) {
 		// Add duplicate key check
-		if (error.code === 11000) {
-			return a_oResponse.status(g_codes("Conflict")).json({ 
-				error: "Username/email already exists" 
-			})
-		}
-		console.error("Registration error:", error)
-		console.log("Goodbye World")
+		if (error.code === 11000) return a_oResponse.status(g_codes("Conflict")).json({ error: "Username/email already exists" })
 		a_oResponse.status(g_codes("Server error")).json({ error: "Server error during registration" })
-	  
-		  console.error("Validation errors:", error.errInfo.details.schemaRulesNotSatisfied)
 	}
 })
 import g_coFilter from "../filters/UserFilter.ts"
@@ -93,7 +81,7 @@ g_coRouter.get("/", async function(req, res) {
 })
 
 // GET Route for avatar
-g_coRouter.get("/image/:id", async (a_oRequest, a_oResponse) => {
+g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
     try {
 		const l_oId = new ObjectId(a_oRequest.params.id)
 		const downloadStream = getGridFSBucket().openDownloadStream(l_oId)
@@ -126,18 +114,12 @@ g_coRouter.put("/", async function(req, res) {
 		})
 		res.sendStatus(g_codes("Success"))
 	} catch (error) {
-		console.log("Goodbye World")
 		res.status(g_codes("Server error")).json(error)
 	}
 })
 
-g_coRouter.delete("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
-	try {
-		await g_coUsers.deleteMany(await g_coFilter(a_oRequest.cookies))
-	} catch (a_oError) {
-		a_oResponse.status(g_codes("Server error")).json(a_oError)
-	}
-	a_oResponse.sendStatus(g_codes("Success"))
+g_coRouter.delete("/", async function(a_oRequest, a_oResponse) {
+	
 })
 
 export default g_coRouter

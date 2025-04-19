@@ -5,9 +5,8 @@ globalThis.g_oConnection = new MongoClient("mongodb://" + process.env.m_sDbHost 
 const g_coDb = await globalThis.g_oConnection.db(process.env.m_sDbName)
 
 import { readdir } from "fs/promises"
-import { setupGridFSBucket } from "./gridfs.ts";
+import { setupGridFSBucket } from "./gridfs.ts"
 
-let g_vReadLine, g_vInterface
 for (const l_csFileName of await readdir("backend/model")) {
 	const l_coMod = await import("../model/" + l_csFileName)
 	const l_csCollectionName = l_csFileName.replace(".t", "")

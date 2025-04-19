@@ -1,8 +1,5 @@
-import "dotenv/config"
-import g_coAuth from "./auth.ts"
-import g_codes from "./statuses.ts"
-
 import g_coExpress from "express"
+
 const g_coApp = g_coExpress()
 
 import g_coMorgan from "morgan"
@@ -10,6 +7,8 @@ g_coApp.use(g_coMorgan("dev"))
 
 import g_coExpressSession from "express-session"
 import g_coStore from "../queries/SessionOps.ts"
+import "dotenv/config"
+
 g_coApp.use(g_coExpressSession({ //// Creates Express instance
 	store: new g_coStore(), //// Custom session store
 	resave: false,
@@ -19,8 +18,11 @@ g_coApp.use(g_coExpressSession({ //// Creates Express instance
 
 import g_coLogRouter from "../queries/logging.ts"
 g_coApp.use("/log", g_coLogRouter)
+
+import g_coAuth from "./auth.ts"
 import g_coEventRouter from "../queries/EventOps.ts"
-g_coApp.use("/event", g_coEventRouter) // Reminder, please add the "g_coAuth", was only deleted because authentication have not existed yet
+
+g_coApp.use("/event", g_coAuth, g_coEventRouter) // Reminder, please add the "g_coAuth", was only deleted because authentication have not existed yet
 import g_coInvitationRouter from "../queries/InvitationOps.ts"
 g_coApp.use("/invitation", g_coAuth, g_coInvitationRouter)
 import g_coMesRouter from "../queries/MesOps.ts"
@@ -33,8 +35,11 @@ import g_coUserRouter from "../queries/UserOps.ts"
 g_coApp.use("/user", g_coUserRouter)
 
 import { join } from "path"
+
 g_coApp.use(g_coExpress.static(join(process.cwd(), "frontend/dist"), { index: "index.html" }))
 g_coApp.get(/.*/, (_, a_oResponse) => a_oResponse.sendFile(join(process.cwd(), "frontend/dist/index.html")))
+
+import g_codes from "./statuses.ts"
 
 g_coApp.use((a_oError, _, a_oResponse, __) => a_oResponse.status(g_codes("Server error")).json(a_oError))
 

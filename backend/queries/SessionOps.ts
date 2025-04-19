@@ -8,7 +8,6 @@ function g_uStore() {
 g_uStore.prototype = Object.create(Store.prototype)
 // 1. get() - Retrieves active session by ID
 g_uStore.prototype.get = async function(a_sId, a_oCallback) {
-	console.log("Jensen")
 	let l_vResult
 	try {
 		l_vResult = await this.m_oSessions.findOne({ _id: a_sId })

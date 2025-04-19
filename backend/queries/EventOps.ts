@@ -7,8 +7,8 @@ import g_coDb from "../server/db.ts"
 const g_coEvents = g_coDb.collection("events")
 
 import g_codes from "../server/statuses.ts"
-import {ObjectId} from "mongodb";
-import {getGridFSBucket} from "../server/gridfs.ts";
+import { ObjectId } from "mongodb"
+import { getGridFSBucket } from "../server/gridfs.ts"
 
 // HTTP methods for the event operations in this Express router
 g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
@@ -51,20 +51,20 @@ g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
 		a_oResponse.sendStatus(g_codes("Server error"))
 	}
 })
-g_coRouter.get("/image/:id", async (a_oRequest, a_oResponse) => {
+g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
     try {
-		const l_oId = new ObjectId(a_oRequest.params.id);
+		const l_oId = new ObjectId(a_oRequest.params.id)
 
-		const downloadStream = getGridFSBucket().openDownloadStream(l_oId);
+		const downloadStream = getGridFSBucket().openDownloadStream(l_oId)
 
-		a_oResponse.set("Content-Type", "image/jpeg");
+		a_oResponse.set("Content-Type", "image/jpeg")
 
-		const onError = function () {
-			a_oResponse.sendStatus(g_codes("Not found"));
-		};
+		const onError = function() {
+			a_oResponse.sendStatus(g_codes("Not found"))
+		}
 		downloadStream
 			.on("error", onError)
-			.pipe(a_oResponse);
+			.pipe(a_oResponse)
 	} catch (a_oError) {
         a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid ID or error fetching image", details: a_oError })
     }
