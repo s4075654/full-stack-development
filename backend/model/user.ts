@@ -52,14 +52,14 @@ export default {
 				},
 				avatar: {
 					bsonType: "objectId",
-					title: "The user's avatar.",
+					title: "The user's avatar."
 				},
 				invitations: {
 					bsonType: "array",
 					title: "The user's invitations to an event",
 					items: {
 						bsonType: "objectId",
-						title: "One of the user's invitations to an event",
+						title: "One of the user's invitations to an event"
 					}
 				},
 				requests: {
@@ -67,7 +67,7 @@ export default {
 					title: "The requests have sent to the event.",
 					items: {
 						bsonType: "objectId",
-						title: "One of the request",
+						title: "One of the request"
 					}
 				}
 			},

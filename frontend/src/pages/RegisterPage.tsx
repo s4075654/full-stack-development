@@ -74,13 +74,16 @@ export default function RegisterPage() {
     }
     
       // Combine names
-      const username = `${firstName} ${lastName}`.trim();
+      const username = `${firstName}${lastName}`.trim();
+      console.log("SSET")
       console.log("Submitting:", { username, email }); // Log request data
       
       try {
-        const response = await fetch('http://localhost:58888/user', {
+        const response = await fetch('/user', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'},
           body: JSON.stringify({
             username,
             password,
@@ -90,6 +93,7 @@ export default function RegisterPage() {
     
         if (!response.ok) {
           const errorText = await response.json();
+          console.log("Goodbye World");
           setErrorMessage(errorText.error || "Registration failed");
           return;
         }

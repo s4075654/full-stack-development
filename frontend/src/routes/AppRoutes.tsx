@@ -9,10 +9,7 @@ import CreateEvent from "../pages/CreateEvent.tsx";
 
 
 export const router = createBrowserRouter([
-    {
-        path: "*",
-        element: <NotFound />
-    },
+   
     {
         path: "/",
         element: <HomePage />,
