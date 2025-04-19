@@ -8,7 +8,7 @@ export default function LoginPage() {
                 <Link to="/">
                     <div className="bg-amber-100 ml-5 mt-5">
                         <img
-                            src="/src/assets/AppNameCard.svg"
+                            src="/AppNameCard.svg"
                             alt="AppNameCard"
                         />
                     </div>

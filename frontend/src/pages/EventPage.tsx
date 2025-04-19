@@ -1,44 +1,37 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import Navbar from "../components/Navigation/Navbar";
 import Sidebar from "../components/Navigation/Sidebar";
-import { dummyEvents } from "../dataTypes/Events";
-import { dummyUsers } from "../dataTypes/User";
+import {useDispatch} from "react-redux";
+import {fetchSingleEvent} from "../redux/event/singleEventSlice.ts";
+import {AppDispatch} from "../redux/store.ts";
+import {useAppSelector} from "../hook/hooks.ts";
 
 function EventDetail() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const { id } = useParams<{ id: string }>();
+    const dispatch = useDispatch<AppDispatch>();
+    const currentEvent = useAppSelector(state => state.singleEvent.event);
+    const status = useAppSelector(state => state.singleEvent.status);
+    const navigate = useNavigate();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
-    // Find the current event and host
-    const currentEvent = dummyEvents.find(event => event.id === id);
-    const host = currentEvent ? dummyUsers.find(user => user.id === currentEvent.hostId) : null;
+    useEffect(() => {
+        if (id) {
+            dispatch(fetchSingleEvent(id))
+        }
+    }, [id, dispatch])
 
-    if (!currentEvent || !host) {
-        return <div>Event not found</div>;
+    if (status === 'failed') {
+        navigate('/*');
     }
 
-    // Get similar events (excluding current event)
-    const similarEvents = dummyEvents
-        .filter(event => event.id !== currentEvent.id)
-        .slice();
-
-    // Format the date
-    const formatEventDate = (isoDate: string) => {
-        const date = new Date(isoDate);
-        return date.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZoneName: 'short'
-        });
-    };
+    if (!currentEvent) {
+        return null;
+    }
 
     return (
         <div className="flex">
@@ -51,29 +44,29 @@ function EventDetail() {
                             {/* Main Event Content */}
                             <div className="lg:col-span-2">
                                 <img
-                                    src={`/${currentEvent.image}`}
-                                    alt={currentEvent.name}
+                                    src={`/event/image/${currentEvent.images}`}
+                                    alt={currentEvent.eventName}
                                     className="w-full h-96 object-cover rounded-lg mb-6"
                                 />
                                 <h1 className="text-3xl font-bold mb-2">
-                                    {currentEvent.name}
+                                    {currentEvent.eventName}
                                 </h1>
                                 <div className="flex items-center mb-4">
                                     <img
-                                        src={`/${host.avatar}`}
-                                        alt={host.name}
+                                        src={"/avatar-default.svg"}
+                                        alt={"Host Image"}
                                         className="h-8 w-8 rounded-full mr-2"
                                     />
-                                    <span className="text-gray-700">{host.name}</span>
+                                    <span className="text-gray-700">John Doe</span>
                                 </div>
                                 <div className="mb-6">
-                                    <p className="text-gray-600">{currentEvent.location}</p>
-                                    <p className="text-gray-600">{formatEventDate(currentEvent.time)}</p>
+                                    <p className="text-gray-600">{currentEvent.eventLocation}</p>
+                                    <p className="text-gray-600">{currentEvent.eventTime.toString()}</p>
                                 </div>
                                 <div className="mb-8">
                                     <h2 className="text-2xl font-bold mb-4">Description</h2>
                                     <p className="text-gray-700 whitespace-pre-line">
-                                        {currentEvent.description}
+                                        {currentEvent.eventDescription}
                                     </p>
                                 </div>
                             </div>
@@ -88,42 +81,42 @@ function EventDetail() {
                             </div>
                         </div>
 
-                        {/* Similar Events Section */}
-                        <div className="mt-12">
-                            <h2 className="text-2xl font-bold mb-6">Similar events</h2>
-                            <div className="flex flex-wrap gap-4">
-                                {similarEvents.map((event) => {
-                                    const eventHost = dummyUsers.find(user => user.id === event.hostId);
-                                    if (!eventHost) return null;
-                                    return (
-                                        <Link
-                                            to={`/event-detail/${event.id}`}
-                                            key={event.id}
-                                            className="w-[260px] bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-                                        >
-                                            <img
-                                                src={`/${event.image}`}
-                                                alt={event.name}
-                                                className="w-full h-[160px] object-cover rounded-t-xl"
-                                            />
-                                            <div className="p-3 space-y-1">
-                                                <div className="flex items-start gap-2">
-                                                    <img
-                                                        src={`/${eventHost.avatar}`}
-                                                        alt={eventHost.name}
-                                                        className="w-6 h-6 rounded-full object-cover mt-1"
-                                                    />
-                                                    <p className="text-sm font-medium text-gray-900 line-clamp-2">{event.name}</p>
-                                                </div>
-                                                <p className="text-xs text-gray-700">{eventHost.name}</p>
-                                                <p className="text-xs text-gray-600">{event.location}</p>
-                                                <p className="text-xs text-gray-500">{formatEventDate(event.time)}</p>
-                                            </div>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                        {/*/!* Similar Events Section *!/*/}
+                        {/*<div className="mt-12">*/}
+                        {/*    <h2 className="text-2xl font-bold mb-6">Similar events</h2>*/}
+                        {/*    <div className="flex flex-wrap gap-4">*/}
+                        {/*        {similarEvents.map((event) => {*/}
+                        {/*            const eventHost = dummyUsers.find(user => user.id === event.hostId);*/}
+                        {/*            if (!eventHost) return null;*/}
+                        {/*            return (*/}
+                        {/*                <Link*/}
+                        {/*                    to={`/event-detail/${event.id}`}*/}
+                        {/*                    key={event.id}*/}
+                        {/*                    className="w-[260px] bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"*/}
+                        {/*                >*/}
+                        {/*                    <img*/}
+                        {/*                        src={`/${event.image}`}*/}
+                        {/*                        alt={event.name}*/}
+                        {/*                        className="w-full h-[160px] object-cover rounded-t-xl"*/}
+                        {/*                    />*/}
+                        {/*                    <div className="p-3 space-y-1">*/}
+                        {/*                        <div className="flex items-start gap-2">*/}
+                        {/*                            <img*/}
+                        {/*                                src={`/${eventHost.avatar}`}*/}
+                        {/*                                alt={eventHost.name}*/}
+                        {/*                                className="w-6 h-6 rounded-full object-cover mt-1"*/}
+                        {/*                            />*/}
+                        {/*                            <p className="text-sm font-medium text-gray-900 line-clamp-2">{event.name}</p>*/}
+                        {/*                        </div>*/}
+                        {/*                        <p className="text-xs text-gray-700">{eventHost.name}</p>*/}
+                        {/*                        <p className="text-xs text-gray-600">{event.location}</p>*/}
+                        {/*                        <p className="text-xs text-gray-500">{formatEventDate(event.time)}</p>*/}
+                        {/*                    </div>*/}
+                        {/*                </Link>*/}
+                        {/*            );*/}
+                        {/*        })}*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                 </main>
             </div>

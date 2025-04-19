@@ -6,21 +6,18 @@ import {AppDispatch} from "../redux/store.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
 import {useAppSelector} from "../hook/hooks.ts";
 import {useEffect} from "react";
-import {fetchPublicEvents} from "../redux/public-events/publicEventSlice.ts";
+import {fetchPublicEvents} from "../redux/event/publicEventSlice.ts";
 
 export default function PublicEvents() {
     const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
     const dispatch = useDispatch<AppDispatch>();
 
-    const { events, loading, error } = useAppSelector(state => state.publicEvent);
+    const events = useAppSelector(state => state.publicEvent.events);
+    const error = useAppSelector(state => state.publicEvent.error);
 
     useEffect(() => {
         dispatch(fetchPublicEvents());
     }, [dispatch]);
-
-    if (loading) {
-        return <div>Loading events...</div>;
-    }
 
     if (error) {
         return <div>Error: {error}</div>;
