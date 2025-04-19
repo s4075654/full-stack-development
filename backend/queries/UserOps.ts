@@ -10,25 +10,25 @@ await g_coUsers.createIndex({ username: 1 }, { unique: true })
 import g_coBcrypt from "bcrypt"
 import "dotenv/config"
 import g_codes from "../server/statuses.ts"
-import {ObjectId} from "mongodb";
-import {getGridFSBucket} from "../server/gridfs.ts";
+import { ObjectId } from "mongodb"
+import { getGridFSBucket } from "../server/gridfs.ts.ts"
 
-//g_coApp.use(g_coExpress.json());
+//g_coApp.use(g_coExpress.json())
 // HTTP methods for the user operations in this Express router
 
-g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
-    console.log("Request body:", a_oRequest.body); // Log request body
+g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse) {
+    console.log("Request body:", a_oRequest) // Log request body
    /*EXAMPLE
    //Request body: {
   username: 'Huy Mai2',
   password: 'examplePASSWORD123!',
   email: 'fallsgravity437@gmail.com' 
 }*/
-	const { username, password, email } = a_oRequest.body;
+	const { username, password, email } = a_oRequest.body
 
 	// Validate required fields Correct
 	if (!username || !password || !email) {
-		return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" });
+		return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" })
 	}
 
 	try {
@@ -38,7 +38,7 @@ g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
 				{ username },
 				{ "Email address": email }
 			]
-		});
+		})
 
 		// Conflict handling  Correct
 		if (existingUser) {
@@ -46,7 +46,7 @@ g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
 				error: existingUser.username === username 
 					? "Username already exists" 
 					: "Email already registered"
-			});
+			})
 		}
 
 		// User creation  Schema-compliant
@@ -61,22 +61,23 @@ g_coRouter.post("/", async function (a_oRequest, a_oResponse) {
 			notifications: [],
 			"Organising events": [],
 			//sessions: []
-		});
+		})
 
-		a_oResponse.sendStatus(g_codes("Created")); //  Correct success status
+		a_oResponse.sendStatus(g_codes("Created")) //  Correct success status
 	} catch (error) {
 		// Add duplicate key check
 		if (error.code === 11000) {
 			return a_oResponse.status(g_codes("Conflict")).json({ 
 				error: "Username/email already exists" 
-			});
+			})
 		}
-		console.error("Registration error:", error);
-		a_oResponse.status(g_codes("Server error")).json({ error: "Server error during registration" });
+		console.error("Registration error:", error)
+		console.log("Goodbye World")
+		a_oResponse.status(g_codes("Server error")).json({ error: "Server error during registration" })
 	  
-		  console.error("Validation errors:", error.errInfo.details.schemaRulesNotSatisfied);
+		  console.error("Validation errors:", error.errInfo.details.schemaRulesNotSatisfied)
 	}
-});
+})
 import g_coFilter from "../filters/UserFilter.ts"
 
 // GET Route update
@@ -84,25 +85,25 @@ g_coRouter.get("/", async function(req, res) {
 	try {
 		const results = await g_coUsers.find(
 			g_coFilter(req.body) // Use body instead of cookies
-		).toArray();
-		res.status(g_codes("Success")).json(results);
+		).toArray()
+		res.status(g_codes("Success")).json(results)
 	} catch (error) {
-		res.status(g_codes("Server error")).json(error);
+		res.status(g_codes("Server error")).json(error)
 	}
-});
+})
 
 // GET Route for avatar
 g_coRouter.get("/image/:id", async (a_oRequest, a_oResponse) => {
     try {
-		const l_oId = new ObjectId(a_oRequest.params.id);
-		const downloadStream = getGridFSBucket().openDownloadStream(l_oId);
-		a_oResponse.set("Content-Type", "image/jpeg");
+		const l_oId = new ObjectId(a_oRequest.params.id)
+		const downloadStream = getGridFSBucket().openDownloadStream(l_oId)
+		a_oResponse.set("Content-Type", "image/jpeg")
 		const onError = function () {
-			a_oResponse.sendStatus(g_codes("Not found"));
-		};
+			a_oResponse.sendStatus(g_codes("Not found"))
+		}
 		downloadStream
 			.on("error", onError)
-			.pipe(a_oResponse);
+			.pipe(a_oResponse)
     } catch (a_oError) {
         a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid ID or error fetching image", details: a_oError })
     }
@@ -120,14 +121,15 @@ g_coRouter.put("/", async function(req, res) {
 					parseInt(process.env.m_saltRounds)
 				),
 				"Email address": req.body.email,
-				admin: Boolean(req.body.admin)
+				admin: req.body.admin
 			} 
-		});
-		res.sendStatus(g_codes("Success"));
+		})
+		res.sendStatus(g_codes("Success"))
 	} catch (error) {
-		res.status(g_codes("Server error")).json(error);
+		console.log("Goodbye World")
+		res.status(g_codes("Server error")).json(error)
 	}
-});
+})
 
 g_coRouter.delete("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
 	try {

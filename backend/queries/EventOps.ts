@@ -78,5 +78,3 @@ g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 })
 
 export default g_coRouter
-
-

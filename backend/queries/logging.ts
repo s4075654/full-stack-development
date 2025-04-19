@@ -7,31 +7,58 @@ import g_codes from "../server/statuses.ts"
 
 const g_coRouter = Router()
 
-import g_cookieParser from "cookie-parser"
+
 //Handling user log in and log out activities
 // Authentication middleware
 // Handle login route (/in)
 import g_coBcrypt from "bcrypt"
 
-g_coRouter.use("/in", g_cookieParser(), async function(a_oRequest, a_oResponse) {
-	if (!a_oRequest.cookies.m_sUsername) return a_oResponse.sendStatus(g_codes("Unauthorised"))
-	let l_vResult
-	try {
-		l_vResult = await g_coUsers.findOne({ username: a_oRequest.cookies.m_sUsername }, { projection: { password: 1 } })
-	} catch (a_oError) {
-		return a_oResponse.status(g_codes("Server error")).json(a_oError)
+g_coRouter.use("/in", async function(a_oRequest, a_oResponse) {
+	console.log("RMIT");
+	// Get credentials from headers
+	const username = a_oRequest.headers.m_susername;
+	const password = a_oRequest.headers.m_spassword;
+	console.log(a_oRequest.headers.m_susername);
+	console.log(a_oRequest.headers.m_spassword);
+	// Validate presence of credentials
+	if (!username || !password) {
+		console.log("ITSTudent")
+		return a_oResponse.sendStatus(g_codes("Unauthorised"));
 	}
-	if (!l_vResult) return a_oResponse.sendStatus(g_codes("Not found"))
-	if (a_oRequest.cookies.m_sPassword) {
-		g_coBcrypt.compare(a_oRequest.cookies.m_sPassword, l_vResult.password, function(a_oError, a_bSuccess) {
-			if (a_oError) return a_oResponse.status(g_codes("Server error")).json(a_oError)
-			if (a_bSuccess) {
-				a_oRequest.session.data.user = l_vResult._id
-				return a_oResponse.status(g_codes("Success")).send(a_bSuccess)
+
+	try {
+		// Find user by username from headers
+		const user = await g_coUsers.findOne(
+			{ username: username },
+			{ projection: { password: 1 } }
+		);
+		console.log(username);
+		
+		if (!user) {
+		console.log(user)
+			return a_oResponse.sendStatus(g_codes("Not found"));
+		}
+
+		// Compare password from headers
+		g_coBcrypt.compare(password, user.password, async function(error, success) {
+			
+			if (error) {
+				return a_oResponse.status(g_codes("Server error")).json(error);
 			}
-			a_oResponse.sendStatus(g_codes("Unauthorised"))
-		})
-	} else a_oResponse.sendStatus(g_codes("Success"))
+			
+			if (success) {
+				// Set session data
+				console.log(JSON.stringify(a_oRequest.session));
+				a_oRequest.session["User ID"] = user._id;
+				return a_oResponse.sendStatus(g_codes("Success"));
+			}
+			console.log("ITCOmputer")
+			a_oResponse.sendStatus(g_codes("Unauthorised"));
+		});
+	} catch (error) {
+		console.error("Login error:", error);
+		a_oResponse.sendStatus(g_codes("Server error"));
+	}
 })
 
 //When the user log out

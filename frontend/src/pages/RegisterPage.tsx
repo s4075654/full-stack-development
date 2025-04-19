@@ -74,7 +74,8 @@ export default function RegisterPage() {
     }
     
       // Combine names
-      const username = `${firstName} ${lastName}`.trim();
+      const username = `${firstName}${lastName}`.trim();
+      console.log("SSET")
       console.log("Submitting:", { username, email }); // Log request data
       
       try {
@@ -92,6 +93,7 @@ export default function RegisterPage() {
     
         if (!response.ok) {
           const errorText = await response.json();
+          console.log("Goodbye World");
           setErrorMessage(errorText.error || "Registration failed");
           return;
         }
