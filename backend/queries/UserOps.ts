@@ -32,7 +32,7 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 		const existingUser = await g_coUsers.findOne({
 			$or: [
 				{ username },
-				{ "Email address": email }
+				{ emailAddress: email }
 			]
 		})
 
@@ -52,10 +52,10 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 				password, 
 				parseInt(process.env.m_saltRounds) //  Ensure SALT_ROUNDS is numeric
 			),
-			"Email address": email, //  Matches schema
+			emailAddress: email, //  Matches schema
 			admin: false, //  Default non-admin
 			notifications: [],
-			"Organising events": [],
+			organisedEvents: [],
 			//sessions: []
 		})
 
@@ -108,7 +108,7 @@ g_coRouter.put("/", async function(req, res) {
 					req.body.password, 
 					parseInt(process.env.m_saltRounds)
 				),
-				"Email address": req.body.email,
+				emailAddress: req.body.email,
 				admin: req.body.admin
 			} 
 		})
