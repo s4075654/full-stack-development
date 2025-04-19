@@ -1,4 +1,3 @@
-// publicEventSlice.ts
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {Event} from "../../dataTypes/type.ts";
 
