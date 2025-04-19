@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			title: "The notification related to an event.",
-			required: ["reminder", "Event ID"],
+			required: ["reminder", "eventId"],
 			properties: {
 				_id: {},
 				text: {
@@ -14,11 +14,11 @@ export default {
 					bsonType: "bool",
 					title: "Whether or the notification is a reminder."
 				},
-				"Send time": {
+				sendTime: {
 					bsonType: "timestamp",
 					title: "The time at which the notification is sent."
 				},
-				"Event ID": {
+				eventId: {
 					bsonType: "objectId",
 					title: "The event."
 				}

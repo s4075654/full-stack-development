@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			description: "An event.",
-			required: ["public", "Organiser ID"],
+			required: ["public", "organiserId"],
 			properties: {
 				_id: {},
 				public: {
@@ -28,7 +28,7 @@ export default {
 						title: "A request to join the event."
 					}
 				},
-				"Discussion board": {
+				discussionBoard: {
 					bsonType: "array",
 					title: "The discussion board of the event.",
 					uniqueItems: true,
@@ -47,14 +47,10 @@ export default {
 					}
 				},
 				images: {
-					bsonType: "array",
-					title: "Images of the event.",
-					items: {
-						bsonType: "binData",
-						title: "An image of the event."
-					}
+					bsonType: "objectId",
+					title: "The image of the event.",
 				},
-				"Organiser ID": {
+				organiserID: {
 					bsonType: "objectId",
 					title: "The organiser of the event."
 				},
@@ -66,10 +62,22 @@ export default {
 					bsonType: "string",
 					title: "The event location of the event."
 				},
-				eventTime: {
+				eventDescription: {
 					bsonType: "string",
+					title: "The event description of the event."
+				},
+				eventTime: {
+					bsonType: "Date",
 					title: "The time of the event."
-				}
+				},
+				joinedUsers: {
+					bsonType: "array",
+					title: "The joined user.",
+					items: {
+						bsonType: "objectId",
+						title: "A joined user."
+					}
+				},
 			},
 			additionalProperties: false
 		}

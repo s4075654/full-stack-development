@@ -1,3 +1,4 @@
+
 export type User = {
     _id: string // MongoDB ObjectId as string
     username: string
@@ -13,20 +14,17 @@ export type User = {
 }
 
 export type Event = {
-    _id: string // MongoDB ObjectId as string
-    public: boolean
-    invitations: string[] // Array of ObjectId strings
-    requests: string[] // Array of ObjectId strings
-    "Discussion board": string[] // Array of ObjectId strings
-    notifications: string[] // Array of ObjectId strings
-    images: string // ObjectId of image as string
-    organiser: string // ObjectId of host as string
-    eventName: string
-    eventLocation: string
-    eventTime: string
-}
-
-export type EventCard = Event & {
-    userName: string; // The organizer’s username
-    avatar: string; // ObjectID of the user's avatar
+    _id: string;
+    public: boolean;
+    invitations: string[];
+    requests: string[];
+    discussionBoard: string[];
+    notifications: string[];
+    images: string;
+    organiserID: string;
+    eventName: string;
+    eventLocation: string;
+    eventDescription: string;
+    eventTime: Date;
+    joinedUsers: string[];
 };
