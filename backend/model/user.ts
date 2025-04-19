@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			title: "A user.",
-			required: ["Maximum number of active events", "Maximum number of invitations to an event", "admin"],
+			required: ["eventLimits", "invitationLimits", "admin"],
 			properties: {
 				_id: {},
 				username: {
@@ -14,7 +14,7 @@ export default {
 					bsonType: "string",
 					title: "The hashed password of a user."
 				},
-				"Email address": {
+				emailAddress: {
 					bsonType: "string",
 					title: "The email address of a user."
 				},
@@ -27,7 +27,7 @@ export default {
 						title: "One of the notification(s) the user has received."
 					}
 				},
-				"Organising events": {
+				organisedEvents: {
 					bsonType: "array",
 					title: "The events the user is organising/has organised.",
 					uniqueItems: true,
@@ -36,12 +36,12 @@ export default {
 						title: "An event the user is organising/has organised."
 					}
 				},
-				"Maximum number of active events": {
+				eventLimits: {
 					bsonType: "long",
 					title: "The maximum number of active events the user can have.",
 					minimum: 0
 				},
-				"Maximum number of invitations to an event": {
+				invitationLimits: {
 					bsonType: "long",
 					title: "The maximum number of invitations to an event the user can send.",
 					minimum: 0
@@ -49,6 +49,26 @@ export default {
 				admin: {
 					bsonType: "bool",
 					title: "Whether the user is an admin."
+				},
+				avatar: {
+					bsonType: "objectId",
+					title: "The user's avatar.",
+				},
+				invitations: {
+					bsonType: "array",
+					title: "The user's invitations to an event",
+					items: {
+						bsonType: "objectId",
+						title: "One of the user's invitations to an event",
+					}
+				},
+				requests: {
+					bsonType: "array",
+					title: "The requests have sent to the event.",
+					items: {
+						bsonType: "objectId",
+						title: "One of the request",
+					}
 				}
 			},
 			additionalProperties: false

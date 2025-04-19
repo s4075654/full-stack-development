@@ -39,13 +39,11 @@ export default function PublicEvents() {
                         return (
                             <EventCard
                                 key={event._id}
-                                id={event._id}
-                                name={event.eventName}
-                                image={event.images}
-                                location={event.eventLocation}
-                                time={event.eventTime}
-                                host={event.organiser}
-                                hostAvatar={event.avatar}
+                                _id={event._id}
+                                eventName={event.eventName}
+                                images={event.images}
+                                eventLocation={event.eventLocation}
+                                eventTime={event.eventTime}
                             />
                         )
                     })
