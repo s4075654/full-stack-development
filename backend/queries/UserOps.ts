@@ -16,6 +16,7 @@ import { getGridFSBucket } from "../server/gridfs.ts"
 // HTTP methods for the user operations in this Express router
 
 g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
+	console.log("ABCDEFGH")
    /*EXAMPLE
    //Request body: {
   username: 'Huy Mai2',
@@ -23,12 +24,13 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
   email: 'fallsgravity437@gmail.com' 
 }*/
 	const { username, password, email } = a_oRequest.body
-
+//console.log(a_oRequest.body)
 	// Validate required fields Correct
 	if (!username || !password || !email) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" })
 
 	try {
 		// Existing user check  Correct
+		
 		const existingUser = await g_coUsers.findOne({
 			$or: [
 				{ username },
@@ -56,11 +58,17 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 			admin: false, //  Default non-admin
 			notifications: [],
 			organisedEvents: [],
-			//sessions: []
+			eventLimits: BigInt(0),
+			invitationLimits: BigInt(0),
+			avatar: null,
+			requests: [],
+			
 		})
 
 		a_oResponse.sendStatus(g_codes("Created")) //  Correct success status
 	} catch (error) {
+		console.log(JSON.stringify(error))
+		console.error("Error during registration:", error)
 		// Add duplicate key check
 		if (error.code === 11000) return a_oResponse.status(g_codes("Conflict")).json({ error: "Username/email already exists" })
 		a_oResponse.status(g_codes("Server error")).json({ error: "Server error during registration" })
