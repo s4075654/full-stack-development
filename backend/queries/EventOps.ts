@@ -9,16 +9,14 @@ import g_codes from "../server/statuses.ts"
 import { ObjectId } from "mongodb"
 import { getGridFSBucket } from "../server/gridfs.ts"
 
-import multer from "multer";
-import {Readable} from "stream";
-import {uploadImage} from "../server/imageUpload.ts";
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+import multer from "multer"
+import { Readable } from "stream"
+import { uploadImage } from "../server/imageUpload.ts"
 
 // HTTP methods for the event operations in this Express router
 g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse) {
 	console.log(JSON.stringify(a_oRequest.body))
-	const {eventName, eventLocation, eventDescription, eventTime, isPublic, images, organiserId} = a_oRequest.body
+	const {eventName, eventLocation, eventDescription, eventTime, isPublic, images} = a_oRequest.body
 	try {
 		await g_coEvents.insertOne({
 			eventName: eventName,
@@ -27,7 +25,7 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 			eventTime: eventTime,
 			public: isPublic,
 			images: images,
-			organiserId: organiserId,
+			organiserId: a_oRequest.session["User ID"],
 		})
 		a_oResponse.sendStatus(g_codes("Success"))
 	} catch (error) {
@@ -36,20 +34,20 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 	}
 })
 
-g_coRouter.post("/image", async function (a_oRequest, a_oResponse) {
+const g_co = multer()
+g_coRouter.post("/image", g_co.single("image"), async function (a_oRequest, a_oResponse) {
 	try {
-		const file = a_oRequest.file;
-		if (!file) {
-			return a_oResponse.status(g_codes("Invalid"));
-		}
-
-		const stream = Readable.from(file.buffer);
-
-		const {id} = await uploadImage(stream, file.originalname, file.mimetype)
-		a_oResponse.status(200).json({imageId: id})
+		const file = a_oRequest.file
+		if (!file) return a_oResponse.status(g_codes("Invalid"))
+		console.log("f")
+		const stream = Readable.from(file.buffer)
+		console.log("File uploaded successfully")
+		const { id } = await uploadImage(stream, file.originalname, file.mimetype)
+		console.log("Image uploaded successfully")
+		a_oResponse.status(g_codes("Success")).json({ imageId: id })
 	} catch (err) {
 		console.error("Upload failed:", err)
-		a_oResponse.status(500).json({ error: "Image upload failed" })
+		a_oResponse.status(g_codes("Server error")).json({ error: "Image upload failed" })
 	}
 })
 
