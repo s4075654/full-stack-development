@@ -5,11 +5,10 @@ import RegisterPage from "../pages/RegisterPage.tsx";
 import NotFound from "../pages/NotFound.tsx";
 import EventDetail from "../pages/EventPage.tsx";
 import PublicEvents from "../pages/PublicEvents.tsx";
-//import CreateEvent from "../pages/CreateEvent.tsx";
+import CreateEvent from "../pages/CreateEvent.tsx";
 
 
 export const router = createBrowserRouter([
-   
     {
         path: "/",
         element: <HomePage />,
@@ -30,14 +29,12 @@ export const router = createBrowserRouter([
         path: "/event-detail/:id",
         element: <EventDetail />
     },
-    // {
-    //     path: "/create-event",
-    //     element: <CreateEvent />
-    // },
     {
-        path: "*", 
+        path: "/create-event",
+        element: <CreateEvent />
+    },
+    {
+        path: "*" ,
         element: <NotFound />
-
-    }
+    },
 ]);
-
