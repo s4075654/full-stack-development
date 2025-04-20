@@ -6,6 +6,7 @@ import NotFound from "../pages/NotFound.tsx";
 import EventDetail from "../pages/EventPage.tsx";
 import PublicEvents from "../pages/PublicEvents.tsx";
 import CreateEvent from "../pages/CreateEvent.tsx";
+import EventManagementPage from "../pages/EventManagementPage.tsx";
 
 
 export const router = createBrowserRouter([
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
     {
         path: "/create-event",
         element: <CreateEvent />
+    },
+    {
+        path: "/event-management",
+        element: <EventManagementPage />
     },
     {
         path: "*" ,
