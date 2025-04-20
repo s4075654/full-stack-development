@@ -1,27 +1,34 @@
-import { createReadStream } from "fs"
+import { Readable } from "stream"
 import { getGridFSBucket } from "./gridfs.ts"
 
-// Very experimental, only use this for development purpose
-// Input the absolute value of the directory and the desired name of the file, then convert it into an appropriate format for gridFS
-const uploadImage = (filePath: string, filename: string) => {
-	const readStream = createReadStream(filePath)
-	const uploadStream = getGridFSBucket().openUploadStream(filename, {
-		contentType: "image/jpeg" // or "image/png"
-	})
+// Uploads an image stream to GridFS with specified filename and content type
+export const uploadImage = (
+    stream: Readable,        // Input stream (e.g., file stream)
+    filename: string,        // Desired filename in GridFS
+    contentType: string      // Content type (MIME type) of the file
+): Promise<{ id: any; filename: string }> => {
+    const bucket = getGridFSBucket() // Get the GridFS bucket
 
-	return new Promise((resolve, reject) => {
-		readStream.pipe(uploadStream)
-			.on("error", reject)
-			.on("finish", resolve)
-	})
+    return new Promise((resolve, reject) => {
+        // Ensure the bucket is initialized
+        if (!bucket) {
+            return reject(new Error("GridFS Bucket is not initialized"))
+        }
+
+        const uploadStream = bucket.openUploadStream(filename, {
+            contentType,            // Pass the MIME type (e.g., "image/png")
+        })
+
+        // Pipe the stream to GridFS
+        stream
+            .pipe(uploadStream)
+            .on("error", (err) => {
+                console.error("Error uploading image:", err)
+                reject(err)   // Reject on error
+            })
+            .on("finish", () => {
+                console.log(`File uploaded successfully: ${filename}`)
+                resolve({ id: uploadStream.id, filename })  // Resolve with ID and filename
+            })
+    })
 }
-
-// Usage example, do not use
-(async function() {
-	try {
-		await uploadImage("/Users/ADMIN/IdeaProjects/Assignment2_FullStack/full-stack-development-fork/frontend/images/profiles/avatar-default.svg", "profile_image_1.jpg")
-		console.log("Image uploaded successfully!")
-	} catch (error) {
-		console.error("Error uploading image:", error)
-	}
-})()
