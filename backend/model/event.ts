@@ -67,7 +67,7 @@ export default {
 					title: "The event description of the event."
 				},
 				eventTime: {
-					bsonType: "Date",
+					bsonType: "date",
 					title: "The time of the event."
 				},
 				joinedUsers: {
