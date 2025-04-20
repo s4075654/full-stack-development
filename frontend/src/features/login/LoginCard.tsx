@@ -25,9 +25,10 @@ export default function LoginCard() {
 
     return (
         <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-lg my-20">
-            <h2 className="font-bold text-3xl">#Here, log in...</h2>
+            <h2 className="font-bold text-3xl">Welcome back</h2>
+            <p className="text-1xl text-gray-500">Please enter your details</p>
             {/*Login Form*/}
-            <form className="space-y-4 mt-10" onSubmit={handleLogin}>
+            <form className="space-y-4 mt-8" onSubmit={handleLogin}>
                 {/*Username input*/}
                 <div>
                     <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
@@ -70,17 +71,20 @@ export default function LoginCard() {
                     </button>
                 </div>
             </form>
-            <div className="flex items-center gap-4 mt-10">
+            <div className="flex items-center gap-4 mt-6">
                 <div className="flex-grow border-t border-gray-300"></div>
                 <span className="text-gray-500 text-sm whitespace-nowrap">New to <span className="font-bold">SEROMEET</span> community?</span>
                 <div className="flex-grow border-t border-gray-300"></div>
             </div>
             {/*Redirect to register page button*/}
-            <Link to="/register">
-                <div className="flex items-center mt-10">
-                    <button type="button" className="w-full items-center border-gray-300 border rounded-xl py-2 hover:bg-amber-100 transition duration-200">How about <span className="font-bold underline">signing up?</span></button>
-                </div>
-            </Link>
+               <div className="flex items-center mt-6">
+  <span className="w-full flex justify-center items-center border border-gray-300 rounded-xl py-2">
+    Don’t have an account?
+    <Link to="/register">
+      <span className="font-bold underline ml-1">Sign Up</span>
+    </Link>
+  </span>
+</div>
         </div>
     )
 }

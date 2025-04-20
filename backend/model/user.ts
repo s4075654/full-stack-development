@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			title: "A user.",
-			required: ["eventLimits", "invitationLimits", "admin"],
+			required: ["username", "password", "emailAddress"],
 			properties: {
 				_id: {},
 				username: {
@@ -51,7 +51,8 @@ export default {
 					title: "Whether the user is an admin."
 				},
 				avatar: {
-					bsonType: "objectId",
+					anyOf: [{ bsonType: "objectId" }, { bsonType: "null" }],
+					// The avatar can be an ObjectId or null
 					title: "The user's avatar."
 				},
 				invitations: {

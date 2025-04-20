@@ -9,8 +9,7 @@ export default function RegisterPage() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    const [Name, setName] = useState('');
     const [email, setEmail] = useState('');
      
     // New password validation states
@@ -60,8 +59,8 @@ export default function RegisterPage() {
       setErrorMessage('');
     
       // Validate required fields
-      if (!firstName || !lastName) {
-        setErrorMessage("First name and last name are required");
+      if (!Name) {
+        setErrorMessage("Username is required");
         return;
       }
     
@@ -74,7 +73,7 @@ export default function RegisterPage() {
     }
     
       // Combine names
-      const username = `${firstName}${lastName}`.trim();
+      const username = `${Name}`.trim();
       console.log("SSET")
       console.log("Submitting:", { username, email }); // Log request data
       
@@ -122,23 +121,13 @@ export default function RegisterPage() {
             {/* Name Fields */}
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Firstname</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                 <input
                   type="text"
                   className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g. John"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Lastname</label>
-                <input
-                  type="text"
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="e.g. Doe"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={Name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
             </div>
@@ -202,7 +191,7 @@ export default function RegisterPage() {
                     </div>
                 )}
             </div>
-      {/* Repeat same structure for Re-enter Password */}
+      {/* Re-enter Password */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Re-enter Password</label>
         <div className="relative">

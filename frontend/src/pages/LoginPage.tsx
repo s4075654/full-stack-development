@@ -10,6 +10,7 @@ export default function LoginPage() {
                         <img
                             src="/AppNameCard.svg"
                             alt="AppNameCard"
+                            className="mx-auto h-16 w-auto"
                         />
                     </div>
                 </Link>
