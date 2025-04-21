@@ -1,4 +1,3 @@
-
 export type User = {
     _id: string // MongoDB ObjectId as string
     username: string
