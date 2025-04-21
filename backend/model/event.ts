@@ -46,8 +46,14 @@ export default {
 						title: "A notification for the event."
 					}
 				},
-				images: {},
-				organiserID: {},
+				images: {
+					bsonType: "objectId",
+					title: "The image of the event.",
+				},
+				organiserID: {
+					bsonType: "objectId",
+					title: "The event organiser",
+				},
 				eventName: {
 					bsonType: "string",
 					title: "The event name of the event."
