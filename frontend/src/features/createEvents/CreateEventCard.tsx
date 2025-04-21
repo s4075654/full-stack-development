@@ -38,7 +38,7 @@ export default function CreateEventCard() {
                     eventLocation: eventLocation,
                     eventDescription: eventDescription,
                     eventTime: eventTime,
-                    public: eventType,
+                    ispublic: eventType,
                     images: imageId,
                 })
             });
