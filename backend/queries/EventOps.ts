@@ -88,6 +88,20 @@ g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
 		a_oResponse.sendStatus(g_codes("Server error"))
 	}
 })
+
+g_coRouter.get("/owned", async function(a_oRequest, a_oResponse) {
+	try {
+		const userId = a_oRequest.session["User ID"]
+
+		const l_aEvents = await g_coEvents.find({organiserID: userId}).toArray()
+
+		a_oResponse.status(g_codes("Success")).json(l_aEvents)
+	} catch (err) {
+		console.error("Failed to fetch events:", err)
+		a_oResponse.status(g_codes("Server error"))
+	}
+})
+
 g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
     try {
 		const l_oId = new ObjectId(a_oRequest.params.id)

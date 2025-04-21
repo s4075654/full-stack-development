@@ -3,6 +3,7 @@ import authReducer from './auth/authSlice.ts'
 import sidebarReducer from "./components/sidebarSlice.ts";
 import publicEventReducer from "./event/publicEventSlice.ts";
 import singleEventReducer from "./event/singleEventSlice.ts";
+import ownedEventsReducer from "./event/ownedEventsSlice.ts"
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         sidebar: sidebarReducer,
         publicEvent: publicEventReducer,
         singleEvent: singleEventReducer,
+        ownedEvents: ownedEventsReducer,
     }
 });
 
