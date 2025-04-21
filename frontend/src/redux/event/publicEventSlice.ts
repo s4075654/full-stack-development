@@ -19,7 +19,7 @@ export const fetchPublicEvents = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             // Fetch public events
-            const res = await fetchHandler('/event', { credentials: 'include', method: 'GET' })
+            const res = await fetchHandler('/event?public=true', { credentials: 'include', method: 'GET' })
             if (!res.ok) throw new Error("Failed to fetch public events")
             return await res.json()
         } catch (err) {
