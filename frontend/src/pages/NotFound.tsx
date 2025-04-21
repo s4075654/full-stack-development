@@ -6,7 +6,7 @@ function NotFound() {
 
   function handleGoBack() {
     // go back one entry in the history stack
-    navigate('/', { replace: true });
+    navigate(-1);
   }
 
   return (
@@ -24,7 +24,7 @@ function NotFound() {
         onClick={handleGoBack}
         className="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-2xl shadow-lg transition duration-200"
       >
-        Go back to the homepage
+        Go back
       </button>
     </div>
   );

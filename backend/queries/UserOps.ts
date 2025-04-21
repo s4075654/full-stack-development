@@ -16,7 +16,6 @@ import { getGridFSBucket } from "../server/gridfs.ts"
 // HTTP methods for the user operations in this Express router
 
 g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
-	console.log("ABCDEFGH")
    /*EXAMPLE
    //Request body: {
   username: 'Huy Mai2',

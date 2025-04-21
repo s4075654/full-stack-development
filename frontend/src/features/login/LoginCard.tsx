@@ -17,7 +17,7 @@ export default function LoginCard() {
 
         const resultAction = await dispatch(login({username, password}))
         if (login.fulfilled.match(resultAction)) {
-            navigate("/");
+            navigate("/public-events");
         } else {
             alert("Login failed!")
         }

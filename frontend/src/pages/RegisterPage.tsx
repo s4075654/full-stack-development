@@ -71,8 +71,7 @@ export default function RegisterPage() {
           return;
         }
     }
-    
-      // Combine names
+
       const username = `${Name}`.trim();
       console.log("SSET")
       console.log("Submitting:", { username, email }); // Log request data
@@ -89,10 +88,9 @@ export default function RegisterPage() {
             email,  // Match backend schema
           }),
         });
-    
+        console.log("Response:", response); // Log response
         if (!response.ok) {
           const errorText = await response.json();
-          console.log("Goodbye World");
           setErrorMessage(errorText.error || "Registration failed");
           return;
         }
