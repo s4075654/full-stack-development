@@ -7,6 +7,7 @@ export default function CreateEventCard() {
     const [eventTime, setEventTime] = useState<Date>(new Date());
     const [eventType, setEventType] = useState<boolean>(true);
     const [image, setImage] = useState<File | null>(null);
+    const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null); // null = hasn't submitted yet
 
     const uploadImageToServer = async (file: File) => {
         const formData = new FormData()
@@ -43,12 +44,14 @@ export default function CreateEventCard() {
                 })
             });
             if (!response.ok) {
-                console.log(response);
+                console.log(await response.json());
+                setSubmitSuccess(false);
             } else {
-                alert("Event created successfully!");
+                setSubmitSuccess(true);
             }
         } catch (error) {
             console.log(error);
+            setSubmitSuccess(false);
         }
     }
 
@@ -145,6 +148,17 @@ export default function CreateEventCard() {
                     )}
                 </div>
             </div>
+            {submitSuccess === true && (
+                <div className="mt-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-300">
+                    🎉 Event created successfully!
+                </div>
+            )}
+
+            {submitSuccess === false && (
+                <div className="mt-4 p-4 rounded-lg bg-red-100 text-red-800 border border-red-300">
+                    ❌ Something went wrong. Please try again.
+                </div>
+            )}
         </>
     )
 }

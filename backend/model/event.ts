@@ -52,7 +52,7 @@ export default {
 				},
 				organiserID: {
 					bsonType: "objectId",
-					title: "The organiser of the event."
+					title: "The event organiser",
 				},
 				eventName: {
 					bsonType: "string",

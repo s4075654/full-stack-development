@@ -129,3 +129,4 @@ g_coRouter.delete("/", async function(a_oRequest, a_oResponse) {
 })
 
 export default g_coRouter
+export {g_coUsers}
