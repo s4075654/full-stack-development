@@ -8,17 +8,17 @@ const g_coEvents = g_coDb.collection("events")
 import g_codes from "../server/statuses.ts"
 import { ObjectId } from "mongodb"
 import { getGridFSBucket } from "../server/gridfs.ts"
-
 import multer from "multer"
 import { Readable } from "stream"
 import { uploadImage } from "../server/imageUpload.ts"
+import { g_coUsers } from "./UserOps.ts";
 
 // HTTP methods for the event operations in this Express router
 g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse) {
 	console.log(JSON.stringify(a_oRequest.body))
 	const {eventName, eventLocation, eventDescription, eventTime, isPublic, images} = a_oRequest.body
 	try {
-		await g_coEvents.insertOne({
+		const newEventID = await g_coEvents.insertOne({
 			eventName: eventName,
 			eventLocation: eventLocation,
 			eventDescription: eventDescription,
@@ -32,6 +32,13 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 			notifications: [],
 			joinedUsers: [],
 		})
+
+		// Update the user's document to include this event
+		await g_coUsers.updateOne(
+			{ _id: a_oRequest.session["User ID"] },
+			{ $push: { organisedEvents: newEventID.insertedId } }
+		)
+
 		a_oResponse.sendStatus(g_codes("Success"))
 	} catch (error) {
 		console.error("Registration error:", error)
