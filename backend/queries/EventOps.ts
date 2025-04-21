@@ -22,15 +22,20 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 			eventName: eventName,
 			eventLocation: eventLocation,
 			eventDescription: eventDescription,
-			eventTime: eventTime,
+			eventTime: new Date(eventTime),
 			public: isPublic,
-			images: images,
-			organiserId: a_oRequest.session["User ID"],
+			images: new ObjectId(images),
+			organiserID: a_oRequest.session["User ID"],
+			invitations: [],
+			requests: [],
+			discussionBoard: [],
+			notifications: [],
+			joinedUsers: [],
 		})
 		a_oResponse.sendStatus(g_codes("Success"))
 	} catch (error) {
 		console.error("Registration error:", error)
-		a_oResponse.status(g_codes("Server error")).json({ error: "Server error during registration" })
+		a_oResponse.status(g_codes("Server error")).json({ error: error })
 	}
 })
 
