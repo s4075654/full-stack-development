@@ -51,7 +51,7 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 			username,
 			password: await g_coBcrypt.hash(
 				password, 
-				parseInt(process.env.m_saltRounds) //  Ensure SALT_ROUNDS is numeric
+				parseInt(process.env.m_saltRounds || "10") //  Ensure SALT_ROUNDS is numeric with default value
 			),
 			emailAddress: email, //  Matches schema
 			admin: false, //  Default non-admin
@@ -112,7 +112,7 @@ g_coRouter.put("/", async function(req, res) {
 				username: req.body.username,
 				password: await g_coBcrypt.hash(
 					req.body.password, 
-					parseInt(process.env.m_saltRounds)
+					parseInt(process.env.m_saltRounds || "10")
 				),
 				emailAddress: req.body.email,
 				admin: req.body.admin
