@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import Navbar from "../components/Navigation/Navbar";
 import Sidebar from "../components/Navigation/Sidebar";
@@ -6,18 +6,17 @@ import {useDispatch} from "react-redux";
 import {fetchSingleEvent} from "../redux/event/singleEventSlice.ts";
 import {AppDispatch} from "../redux/store.ts";
 import {useAppSelector} from "../hook/hooks.ts";
+import {toggle} from "../redux/components/sidebarSlice.ts";
 
 function EventDetail() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
     const { id } = useParams<{ id: string }>();
     const dispatch = useDispatch<AppDispatch>();
     const currentEvent = useAppSelector(state => state.singleEvent.event);
     const status = useAppSelector(state => state.singleEvent.status);
     const navigate = useNavigate();
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+    const toggleSidebar = () => dispatch(toggle())
 
     useEffect(() => {
         if (id) {
