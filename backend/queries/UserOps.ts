@@ -65,8 +65,6 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 		})
 		a_oResponse.sendStatus(g_codes("Created")) //  Correct success status
 	} catch (error) {
-		console.log(JSON.stringify(error))
-		console.error("Error during registration:", error)
 		// Add duplicate key check
 		if (error.code === 11000) return a_oResponse.status(g_codes("Conflict")).json({ error: "Username/email already exists" })
 		a_oResponse.status(g_codes("Server error")).json({ error: "Server error during registration" })
@@ -92,11 +90,8 @@ g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
 		const l_oId = new ObjectId(a_oRequest.params.id)
 		const downloadStream = getGridFSBucket().openDownloadStream(l_oId)
 		a_oResponse.set("Content-Type", "image/jpeg")
-		const onError = function () {
-			a_oResponse.sendStatus(g_codes("Not found"))
-		}
 		downloadStream
-			.on("error", onError)
+			.on("error", () => a_oResponse.sendStatus(g_codes("Not found")))
 			.pipe(a_oResponse)
     } catch (a_oError) {
         a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid ID or error fetching image", details: a_oError })
@@ -129,4 +124,3 @@ g_coRouter.delete("/", async function(a_oRequest, a_oResponse) {
 })
 
 export default g_coRouter
-export {g_coUsers}
