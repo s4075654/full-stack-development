@@ -3,6 +3,7 @@ import g_coExpress from "express"
 const g_coRouter = g_coExpress.Router()
 
 import g_coDb from "../server/db.ts"
+
 const g_coEvents = g_coDb.collection("events")
 
 import g_codes from "../server/statuses.ts"
@@ -14,9 +15,8 @@ import { uploadImage } from "../server/imageUpload.ts"
 import { g_coUsers } from "./UserOps.ts";
 
 // HTTP methods for the event operations in this Express router
-g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse) {
-	console.log(JSON.stringify(a_oRequest.body))
-	const {eventName, eventLocation, eventDescription, eventTime, isPublic, images} = a_oRequest.body
+g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
+	const { ventName, eventLocation, eventDescription, eventTime, isPublic, images } = a_oRequest.body
 	try {
 		const newEventID = await g_coEvents.insertOne({
 			eventName: eventName,
@@ -47,7 +47,7 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 })
 
 const g_co = multer()
-g_coRouter.post("/image", g_co.single("image"), async function (a_oRequest, a_oResponse) {
+g_coRouter.post("/image", g_co.single("image"), async function(a_oRequest, a_oResponse) {
 	try {
 		const file = a_oRequest.file
 		if (!file) return a_oResponse.status(g_codes("Invalid"))
@@ -66,7 +66,7 @@ g_coRouter.post("/image", g_co.single("image"), async function (a_oRequest, a_oR
 g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
 	try {
 		// Extract query parameter
-		const {public: sPublic, organiserId, _id } = a_oRequest.query
+		const { public: sPublic, organiserId, _id } = a_oRequest.query
 
 		// Build filter object
 		const l_oFilter: any = {}
@@ -105,7 +105,7 @@ g_coRouter.get("/owned", async function(a_oRequest, a_oResponse) {
 	try {
 		const userId = a_oRequest.session["User ID"]
 
-		const l_aEvents = await g_coEvents.find({organiserID: userId}).toArray()
+		const l_aEvents = await g_coEvents.find({ organiserID: userId }).toArray()
 
 		a_oResponse.status(g_codes("Success")).json(l_aEvents)
 	} catch (err) {

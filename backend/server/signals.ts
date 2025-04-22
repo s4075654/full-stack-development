@@ -1,7 +1,7 @@
 import "./process.ts"
+import "dotenv/config"
 
 let g_bShuttingDown = false // Shutdown state flag
-import "dotenv/config"
 JSON.parse(process.env.m_signals).forEach(a_signal => process.on(a_signal, async function() {
 	console.log(a_signal + " received.")
 	// Prevent multiple shutdownWill now be  triggers

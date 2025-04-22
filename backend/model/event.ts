@@ -48,11 +48,11 @@ export default {
 				},
 				images: {
 					bsonType: "objectId",
-					title: "The image of the event.",
+					title: "The image of the event."
 				},
 				organiserID: {
 					bsonType: "objectId",
-					title: "The event organiser",
+					title: "The event organiser"
 				},
 				eventName: {
 					bsonType: "string",
