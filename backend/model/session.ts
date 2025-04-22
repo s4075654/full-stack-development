@@ -14,9 +14,7 @@ export default {
 					title: "The user associated with the session."
 				}
 			},
-			additionalProperties: {
-				bsonType: "object"
-			}
+			additionalProperties: {	bsonType: "object" }
 		}
 	}
 }

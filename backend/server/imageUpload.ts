@@ -22,13 +22,9 @@ export const uploadImage = (
 		// Pipe the stream to GridFS
 		stream
 			.pipe(uploadStream)
-			.on("error", (err) => {
-				console.error("Error uploading image:", err)
-				reject(err)   // Reject on error
-			})
-			.on("finish", () => {
-				console.log(`File uploaded successfully: ${filename}`)
-				resolve({ id: uploadStream.id, filename })  // Resolve with ID and filename
-			})
+			.on("error", (err) => reject(err)   // Reject on error
+			)
+			.on("finish", () => resolve({ id: uploadStream.id, filename })  // Resolve with ID and filename
+			)
 	})
 }
