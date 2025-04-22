@@ -2,6 +2,7 @@
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/auth/authSlice.ts';
+import {fetchHandler} from "../utils/fetchHandler.ts";
 
 
 export default function LogoutButton() {
@@ -10,7 +11,7 @@ export default function LogoutButton() {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('/log/out', {
+            const response = await fetchHandler('/log/out', {
                 method: 'POST',
                 credentials: 'include'
             });

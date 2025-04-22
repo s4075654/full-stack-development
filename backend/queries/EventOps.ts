@@ -43,7 +43,7 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 		a_oResponse.sendStatus(g_codes("Success"))
 		
 	} catch (error) {
-		console.error("Registration error:", error)
+		console.error("Error:", error)
 		a_oResponse.status(g_codes("Server error")).json({ error: error })
 	}
 })

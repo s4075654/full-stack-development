@@ -57,20 +57,31 @@ export default {
 				},
 				invitations: {
 					bsonType: "array",
-					title: "The user's invitations to an event",
+					title: "All private invitations the user has received.",
+					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
-						title: "One of the user's invitations to an event"
+						title: "One of the private invitations"
 					}
 				},
 				requests: {
 					bsonType: "array",
-					title: "The requests have sent to the event.",
+					title: "All public requests the user has requested",
+					uniqueItems: true,
 					items: {
 						bsonType: "objectId",
-						title: "One of the request"
+						title: "One of the requests"
 					}
-				}
+				},
+				joinedEvents: {
+					bsonType: "array",
+					title: "The joined events.",
+					items: {
+						bsonType: "objectId",
+						title: "A joined event."
+					}
+				},
+
 			},
 			additionalProperties: false
 		}
