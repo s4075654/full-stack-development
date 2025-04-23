@@ -55,7 +55,7 @@ function EventDetail() {
 	return (
 		<>
 		
-		<div className="flex">
+		<div className="flex"> 
 			<Sidebar isOpen={isSidebarOpen} />
 			<div className="flex-1">
 				<Navbar toggleSidebar={toggleSidebar} />
