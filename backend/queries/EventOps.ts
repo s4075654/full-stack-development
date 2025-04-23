@@ -12,13 +12,11 @@ import { getGridFSBucket } from "../server/gridfs.ts"
 import multer from "multer"
 import { Readable } from "stream"
 import { uploadImage } from "../server/imageUpload.ts"
-import { g_coUsers } from "./UserOps.ts";
 
+const g_coUsers = g_coDb.collection("users")
 // HTTP methods for the event operations in this Express router
 g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse) {
-	console.log(a_oRequest.session["User ID"])
-	console.log(JSON.stringify(a_oRequest.body))
-	const {eventName, eventLocation, eventDescription, eventTime, isPublic, images} = a_oRequest.body
+	const { eventName, eventLocation, eventDescription, eventTime, isPublic, images } = a_oRequest.body
 	try {
 		const newEventID = await g_coEvents.insertOne({
 			eventName: eventName,
@@ -54,14 +52,10 @@ g_coRouter.post("/image", g_co.single("image"), async function(a_oRequest, a_oRe
 	try {
 		const file = a_oRequest.file
 		if (!file) return a_oResponse.status(g_codes("Invalid"))
-		console.log("f")
 		const stream = Readable.from(file.buffer)
-		console.log("File uploaded successfully")
 		const { id } = await uploadImage(stream, file.originalname, file.mimetype)
-		console.log("Image uploaded successfully")
 		a_oResponse.status(g_codes("Success")).json({ imageId: id })
 	} catch (err) {
-		console.error("Upload failed:", err)
 		a_oResponse.status(g_codes("Server error")).json({ error: "Image upload failed" })
 	}
 })
@@ -136,9 +130,60 @@ g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
     }
 })
 
-g_coRouter.put("/", function(a_oRequest, a_oResponse) {
+// g_coRouter.put("/", function(a_oRequest, a_oResponse) {
 	
+// })
+
+// Add this to your existing EventOps.ts router
+g_coRouter.put("/:id", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
+    try {
+        const eventId = a_oRequest.params.id
+        const userId = a_oRequest.session["User ID"]
+        
+		  // Validate request body
+		  const { eventName, eventLocation, eventDescription } = a_oRequest.body;
+
+        // Validate ObjectIDs
+        if (!ObjectId.isValid(eventId) || !ObjectId.isValid(userId)) {
+            return a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid ID format" })
+        }
+
+        // Convert to ObjectId
+        const eventObjectId = new ObjectId(eventId)
+        const userObjectId = new ObjectId(userId)
+
+        // Verify ownership
+        const existingEvent = await g_coEvents.findOne({ 
+            _id: eventObjectId,
+            organiserID: userObjectId 
+        })
+		const updateData = {
+            eventName,
+            eventLocation,
+            eventDescription
+        }
+
+        if (!existingEvent) {
+            return a_oResponse.status(g_codes("Unauthorised")).json({ 
+                error: "Not authorized to update this event or event not found" 
+            })
+        }
+
+        // Perform update
+		const result = await g_coEvents.findOneAndUpdate(
+            { _id: eventObjectId },
+            { $set: updateData }, // Use validated data
+            { returnDocument: 'after' }
+        )
+
+
+        a_oResponse.status(g_codes("Success")).json(result)
+    } catch (error) {
+        console.error("Update error:", error)
+        a_oResponse.status(g_codes("Server error")).json({ error: "Failed to update event" })
+    }
 })
+
 g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 	
 })

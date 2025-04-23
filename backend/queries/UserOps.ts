@@ -40,8 +40,8 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 		// Conflict handling  Correct
 		if (existingUser) {
 			return a_oResponse.status(g_codes("Conflict")).json({ 
-				error: existingUser.username === username 
-					? "Username already exists" 
+				error: existingUser.username === username
+					? "Username already exists"
 					: "Email already registered"
 			})
 		}

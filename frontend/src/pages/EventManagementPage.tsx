@@ -46,6 +46,7 @@ export default function EventManagementPage() {
                                 eventLocation={event.eventLocation}
                                 eventTime={event.eventTime}
                                 joinedUsers={event.joinedUsers}
+
                             />
                         )
                     })

@@ -1,12 +1,13 @@
-import {useEffect} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import Navbar from "../components/Navigation/Navbar";
 import Sidebar from "../components/Navigation/Sidebar";
 import {useDispatch} from "react-redux";
-import {fetchSingleEvent} from "../redux/event/singleEventSlice.ts";
+import {fetchSingleEvent, updateEvent} from "../redux/event/singleEventSlice.ts";
 import {AppDispatch} from "../redux/store.ts";
 import {useAppSelector} from "../hook/hooks.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
+import EditEventModal from "../components/EditEventModal";
 
 function EventDetail() {
     const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
@@ -18,21 +19,29 @@ function EventDetail() {
 
     const toggleSidebar = () => dispatch(toggle())
 
+    const [searchParams] = useSearchParams();
+    const ownedPara = searchParams.get("owned");
+
+      // modal state
+     const [isEditing, setIsEditing] = useState(false);
     useEffect(() => {
-        if (id) {
-            dispatch(fetchSingleEvent(id))
-        }
+        if (id) dispatch(fetchSingleEvent(id))
     }, [id, dispatch])
 
-    if (status === 'failed') {
-        navigate('/*');
-    }
+    if (status === 'failed') navigate('/*')
+    if (!currentEvent) return null
+    const openEdit = () => setIsEditing(true)
+    const closeEdit = () => setIsEditing(false)
 
-    if (!currentEvent) {
-        return null;
-    }
-
+    const handleUpdate = async (values: { eventName: string; eventLocation: string; eventDescription: string }) => {
+    await dispatch(updateEvent({ id: currentEvent._id, ...values }));
+    console.log("DanaBook");
+    closeEdit();
+  };
+    //So now we can get the ownedPara from the URL and use it to determine if the event is owned or not
     return (
+        <>
+        
         <div className="flex">
             <Sidebar isOpen={isSidebarOpen} />
             <div className="flex-1">
@@ -73,53 +82,37 @@ function EventDetail() {
                             {/* Sidebar Content */}
                             <div className="lg:col-span-1">
                                 <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-                                    <button className="w-full bg-[#2ecc71] hover:bg-[#27ae60] text-white font-bold py-3 px-6 rounded-full transition-colors">
-                                        Request to join
-                                    </button>
+                                {ownedPara === "true" ? (
+                                        <button  onClick={openEdit}
+                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors">
+                                            Edit Event Details
+                                        </button>
+                                        ) : (
+                                        <button 
+                                        className="w-full bg-[#2ecc71] hover:bg-[#27ae60] text-white font-bold py-3 px-6 rounded-full transition-colors">
+                                            Request to join
+                                        </button>
+                                        )}
                                 </div>
                             </div>
                         </div>
-
-                        {/*/!* Similar Events Section *!/*/}
-                        {/*<div className="mt-12">*/}
-                        {/*    <h2 className="text-2xl font-bold mb-6">Similar events</h2>*/}
-                        {/*    <div className="flex flex-wrap gap-4">*/}
-                        {/*        {similarEvents.map((event) => {*/}
-                        {/*            const eventHost = dummyUsers.find(user => user.id === event.hostId);*/}
-                        {/*            if (!eventHost) return null;*/}
-                        {/*            return (*/}
-                        {/*                <Link*/}
-                        {/*                    to={`/event-detail/${event.id}`}*/}
-                        {/*                    key={event.id}*/}
-                        {/*                    className="w-[260px] bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"*/}
-                        {/*                >*/}
-                        {/*                    <img*/}
-                        {/*                        src={`/${event.image}`}*/}
-                        {/*                        alt={event.name}*/}
-                        {/*                        className="w-full h-[160px] object-cover rounded-t-xl"*/}
-                        {/*                    />*/}
-                        {/*                    <div className="p-3 space-y-1">*/}
-                        {/*                        <div className="flex items-start gap-2">*/}
-                        {/*                            <img*/}
-                        {/*                                src={`/${eventHost.avatar}`}*/}
-                        {/*                                alt={eventHost.name}*/}
-                        {/*                                className="w-6 h-6 rounded-full object-cover mt-1"*/}
-                        {/*                            />*/}
-                        {/*                            <p className="text-sm font-medium text-gray-900 line-clamp-2">{event.name}</p>*/}
-                        {/*                        </div>*/}
-                        {/*                        <p className="text-xs text-gray-700">{eventHost.name}</p>*/}
-                        {/*                        <p className="text-xs text-gray-600">{event.location}</p>*/}
-                        {/*                        <p className="text-xs text-gray-500">{formatEventDate(event.time)}</p>*/}
-                        {/*                    </div>*/}
-                        {/*                </Link>*/}
-                        {/*            );*/}
-                        {/*        })}*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
                     </div>
                 </main>
             </div>
         </div>
+          {/* Edit Modal */}
+      {isEditing && (
+        <EditEventModal
+          initialValues={{
+            eventName: currentEvent.eventName,
+            eventLocation: currentEvent.eventLocation,
+            eventDescription: currentEvent.eventDescription,
+          }}
+          onCancel={closeEdit}
+          onSubmit={handleUpdate}
+        />
+      )}
+        </>
     );
 }
 

@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {Event} from "../../dataTypes/type.ts";
 import {fetchHandler} from "../../utils/fetchHandler.ts";
 
@@ -30,6 +30,31 @@ export const fetchSingleEvent = createAsyncThunk(
         }
     }
 )
+export const updateEvent = createAsyncThunk<
+  Event,
+  { id: string; eventName: string; eventLocation: string; eventDescription: string },
+  { rejectValue: string }
+>(
+  'singleEvent/update',
+  async ({ id, eventName, eventLocation, eventDescription }, thunkAPI) => {
+    try {
+      // PUT at /event/:id
+      const res = await fetchHandler(`/event/${id}`, {
+        credentials: 'include',
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ eventName, eventLocation, eventDescription }),
+      });
+   
+      if (!res.ok) throw new Error('Failed to update event');
+   
+      return (await res.json()) as Event;
+    } catch (err) {
+      console.error(err);
+      return thunkAPI.rejectWithValue('Update failed.');
+    }
+  }
+)
 
 const singleEventSlice = createSlice({
     name: 'singleEvent',
@@ -52,7 +77,21 @@ const singleEventSlice = createSlice({
                 state.loading = false
                 state.error = action.payload as string
             })
-    }
+        
+        builder
+        .addCase(updateEvent.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+        })
+        .addCase(updateEvent.fulfilled, (state, action: PayloadAction<Event>) => {
+                state.status = 'succeeded';
+                state.event = action.payload; // overwrite with updated event
+        })
+        .addCase(updateEvent.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload as string;
+        });    
+        }
 })
 
 export default singleEventSlice.reducer
