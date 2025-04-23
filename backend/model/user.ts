@@ -55,7 +55,7 @@ export default {
 					// The avatar can be an ObjectId or null
 					title: "The user's avatar."
 				},
-				invitations: {
+				receivedInvitations: {
 					bsonType: "array",
 					title: "All private invitations the user has received.",
 					uniqueItems: true,
@@ -64,7 +64,25 @@ export default {
 						title: "One of the private invitations"
 					}
 				},
-				requests: {
+				sentInvitations: {
+					bsonType: "array",
+					title: "All invitations the user has sent.",
+					uniqueItems: true,
+					items: {
+						bsonType: "objectId",
+						title: "One of the private invitations sent.",
+					}
+				},
+				receivedRequests: {
+					bsonType: "array",
+					title: "All requests the user has received.",
+					uniqueItems: true,
+					items: {
+						bsonType: "objectId",
+						title: "One of the request has received.",
+					}
+				},
+				sentRequests: {
 					bsonType: "array",
 					title: "All public requests the user has requested",
 					uniqueItems: true,
