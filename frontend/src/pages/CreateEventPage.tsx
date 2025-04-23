@@ -4,7 +4,7 @@ import {useAppDispatch, useAppSelector} from "../hook/hooks.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
 import CreateEventCard from "../features/createEvents/CreateEventCard.tsx";
 
-export default function CreateEvent() {
+export default function CreateEventPage() {
     const dispatch = useAppDispatch();
 
     const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
@@ -14,7 +14,7 @@ export default function CreateEvent() {
         <div>
             <Navbar toggleSidebar={toggleSidebar} />
             <Sidebar isOpen={isSidebarOpen} />
-            <div className={`mt-20 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
+            <div className={`mt-20 transition-all duration-300 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
                 <CreateEventCard />
             </div>
         </div>

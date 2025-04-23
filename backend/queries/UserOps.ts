@@ -84,6 +84,17 @@ g_coRouter.get("/", async function(req, res) {
 	}
 })
 
+g_coRouter.get("/:id", async function(req, res) {
+	try {
+		const result = await g_coUsers.findOne({
+			_id: req.params.id,
+		})
+		res.status(g_codes("Success")).json(result);
+	} catch (error) {
+		res.status(g_codes("Server error")).json(error)
+	}
+})
+
 // GET Route for avatar
 g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
     try {
