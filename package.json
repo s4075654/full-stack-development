@@ -8,6 +8,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"bcrypt": "latest",
+		"cookie-parser": "latest",
 		"dotenv": "latest",
 		"express": "latest",
 		"express-session": "latest",
