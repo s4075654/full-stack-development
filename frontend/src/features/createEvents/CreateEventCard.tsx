@@ -1,4 +1,5 @@
 import {FormEvent, useState} from "react";
+import {fetchHandler} from "../../utils/fetchHandler.ts";
 
 export default function CreateEventCard() {
     const [eventName, setEventName] = useState<string>('');
@@ -13,7 +14,7 @@ export default function CreateEventCard() {
         const formData = new FormData()
         formData.append("image", file)
         console.log(formData)
-        const res = await fetch("/event/image", {
+        const res = await fetchHandler("/event/image", {
             method: "POST",
             body: formData,
         })
@@ -31,7 +32,7 @@ export default function CreateEventCard() {
         }
         const imageId = await uploadImageToServer(image)
         try {
-            const response = await fetch("/event", {
+            const response = await fetchHandler("/event", {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { validatePassword, PasswordValidation, validatePasswordMatch } from '../utils/passwordValidator';
 import { getInputStyles, ValidationState } from '../utils/validationStyles';
-
+import {Link} from "react-router-dom";
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -71,8 +71,7 @@ export default function RegisterPage() {
           return;
         }
     }
-    
-      // Combine names
+
       const username = `${Name}`.trim();
       console.log("SSET")
       console.log("Submitting:", { username, email }); // Log request data
@@ -89,10 +88,9 @@ export default function RegisterPage() {
             email,  // Match backend schema
           }),
         });
-    
+        console.log("Response:", response); // Log response
         if (!response.ok) {
           const errorText = await response.json();
-          console.log("Goodbye World");
           setErrorMessage(errorText.error || "Registration failed");
           return;
         }
@@ -108,7 +106,7 @@ export default function RegisterPage() {
 
 
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-amber-100 flex flex-col items-center justify-center p-4">
         {/* Main Card */}
         <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
           {/* Header */}
@@ -263,12 +261,12 @@ export default function RegisterPage() {
   
           {/* Existing User Section */}
           <div className="mt-6 text-center text-sm text-gray-600">
-            <a
-              href="#"
+            <Link
+              to="/login"
               className="text-blue-600 hover:text-blue-800 hover:underline"
             >
               Already sign up? Then log in
-            </a>
+            </Link>
           </div>
         </div>
       </div>

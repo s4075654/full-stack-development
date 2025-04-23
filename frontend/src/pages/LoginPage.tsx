@@ -4,17 +4,17 @@ import {Link} from "react-router-dom";
 export default function LoginPage() {
     return (
         <>
-            <div className="min-h-screen bg-amber-100 pt-1">
-                <Link to="/">
-                    <div className="bg-amber-100 ml-5 mt-5">
+            <div className="min-h-screen bg-amber-100 pt-1 flex flex-col">
+                    <div className="bg-amber-100 mt-5 w-full flex justify-center">
+                    <Link to="/" className="inline-block">
                         <img
                             src="/AppNameCard.svg"
                             alt="AppNameCard"
-                            className="mx-auto h-16 w-auto"
+                            className="h-16 w-auto"
                         />
+                    </Link>
                     </div>
-                </Link>
-                <div className="min-h-screen flex justify-center">
+                <div className="flex-1 flex items-center justify-center">
                     <LoginCard/>
                 </div>
             </div>

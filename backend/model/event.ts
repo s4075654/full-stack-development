@@ -72,7 +72,7 @@ export default {
 				},
 				joinedUsers: {
 					bsonType: "array",
-					title: "The joined user.",
+					title: "The joined users.",
 					items: {
 						bsonType: "objectId",
 						title: "A joined user."

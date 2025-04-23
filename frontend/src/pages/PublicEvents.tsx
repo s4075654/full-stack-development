@@ -7,6 +7,8 @@ import {toggle} from "../redux/components/sidebarSlice.ts";
 import {useAppSelector} from "../hook/hooks.ts";
 import {useEffect} from "react";
 import {fetchPublicEvents} from "../redux/event/publicEventSlice.ts";
+import {fetchOwnedEvents} from "../redux/event/ownedEventsSlice.ts";
+
 
 export default function PublicEvents() {
     const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
@@ -15,8 +17,13 @@ export default function PublicEvents() {
     const events = useAppSelector(state => state.publicEvent.events);
     const error = useAppSelector(state => state.publicEvent.error);
 
+    const ownedEvents = useAppSelector(state => state.ownedEvents.events);
+
     useEffect(() => {
         dispatch(fetchPublicEvents());
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(fetchOwnedEvents());
     }, [dispatch]);
 
     if (error) {
@@ -39,6 +46,7 @@ export default function PublicEvents() {
                                 images={event.images}
                                 eventLocation={event.eventLocation}
                                 eventTime={event.eventTime}
+                                owned = {ownedEvents.some(item => item._id === event._id)}
                             />
                         )
                     })

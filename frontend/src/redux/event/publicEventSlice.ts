@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {Event} from "../../dataTypes/type.ts";
+import {fetchHandler} from "../../utils/fetchHandler.ts";
 
 interface EventState {
     events: Event[]
@@ -18,7 +19,7 @@ export const fetchPublicEvents = createAsyncThunk(
     async (_, thunkAPI) => {
         try {
             // Fetch public events
-            const res = await fetch('/event?public=true', { credentials: 'include', method: 'GET' })
+            const res = await fetchHandler('/event?public=true', { credentials: 'include', method: 'GET' })
             if (!res.ok) throw new Error("Failed to fetch public events")
             return await res.json()
         } catch (err) {
