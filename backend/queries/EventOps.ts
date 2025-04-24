@@ -5,6 +5,7 @@ const g_coRouter = g_coExpress.Router()
 import g_coDb from "../server/db.ts"
 
 const g_coEvents = g_coDb.collection("events")
+const g_coInvitations = g_coDb.collection("invitations")
 
 import g_codes from "../server/statuses.ts"
 import { ObjectId } from "mongodb"
@@ -26,8 +27,7 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 			public: isPublic,
 			images: new ObjectId(images),
 			organiserID: a_oRequest.session["User ID"],
-			invitations: [],
-			requests: [],
+			participation: [],
 			discussionBoard: [],
 			notifications: [],
 			joinedUsers: [],
@@ -59,6 +59,46 @@ g_coRouter.post("/image", g_co.single("image"), async function(a_oRequest, a_oRe
 		a_oResponse.status(g_codes("Server error")).json({ error: "Image upload failed" })
 	}
 })
+
+g_coRouter.post("/:id/invite",  g_coExpress.json(), async function(a_oRequest, a_oResponse) {
+	try {
+	  const eventId = a_oRequest.params.id
+	  const { userIds } = a_oRequest.body
+	  console.log("Received userIds:", userIds)
+	  // Verify ownership
+	  const event = await g_coEvents.findOne({
+		_id: new ObjectId(eventId),
+		organiserID: new ObjectId(a_oRequest.session["User ID"])
+	  })
+  
+	  if (!event) {
+		return a_oResponse.status(401).json({ error: "Not authorized" })
+	  }
+  
+	  // Add invitations
+	  const invitations = await Promise.all(
+		userIds.map(async (userId: string) => {
+		  const invitation = await g_coInvitations.insertOne({
+			eventId: new ObjectId(eventId),
+			receiverId: new ObjectId(userId),
+			state: "Not responded"
+		  })
+		  return invitation.insertedId
+		})
+	  )
+  
+	  await g_coEvents.updateOne(
+		{ _id: new ObjectId(eventId) },
+		{ $push: { participation: { $each: invitations } } }
+	  )
+  
+	  a_oResponse.sendStatus(g_codes("Success"))
+	} catch (error) {
+	  console.log(error.errInfo.details.schemaRulesNotSatisfied)
+	  console.error("Invite error:", error)
+	  a_oResponse.status(g_codes("Server error")).json({ error: "Invite failed" })
+	}
+  })
 
 g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
 	try {
@@ -141,7 +181,7 @@ g_coRouter.put("/:id", g_coExpress.json(), async function(a_oRequest, a_oRespons
         const userId = a_oRequest.session["User ID"]
         
 		  // Validate request body
-		  const { eventName, eventLocation, eventDescription } = a_oRequest.body;
+		  const { eventName, eventLocation, eventDescription } = a_oRequest.body
 
         // Validate ObjectIDs
         if (!ObjectId.isValid(eventId) || !ObjectId.isValid(userId)) {

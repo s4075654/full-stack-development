@@ -73,17 +73,41 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 import g_coFilter from "../filters/UserFilter.ts"
 
 // GET Route update
-g_coRouter.get("/", async function(req, res) {
+g_coRouter.get("/", async function(a_oRequest,  a_oResponse) {
 	try {
 		const results = await g_coUsers.find(
-			g_coFilter(req.body) // Use body instead of cookies
+			g_coFilter(a_oRequest.body) // Use body instead of cookies
 		).toArray()
-		res.status(g_codes("Success")).json(results)
+		a_oResponse.status(g_codes("Success")).json(results)
 	} catch (error) {
-		res.status(g_codes("Server error")).json(error)
+		a_oResponse.status(g_codes("Server error")).json(error)
 	}
 })
+// GET Route for current user
+g_coRouter.get("/me", async function(a_oRequest, a_oResponse) {
+	try {
+		const userId = a_oRequest.session["User ID"]
 
+		// Validate session user ID
+		if (!userId) {
+			return a_oResponse.status(g_codes("Unauthorized")).json({ error: "User not logged in" })
+		}
+
+		// Fetch user details
+		const user = await g_coUsers.findOne(
+			{ _id: new ObjectId(userId) },
+			{ projection: { password: 0 } } // Exclude password from response
+		)
+
+		if (!user) {
+			return a_oResponse.status(g_codes("Not found")).json({ error: "User not found" })
+		}
+
+		a_oResponse.status(g_codes("Success")).json(user)
+	} catch (error) {
+		a_oResponse.status(g_codes("Server error")).json({ error: "Error fetching user", details: error })
+	}
+})
 // GET Route for avatar
 g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
     try {
@@ -98,29 +122,70 @@ g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
     }
 })
 
+g_coRouter.get("/search", async function(a_oRequest, a_oResponse) {
+	try {
+	  const query = a_oRequest.query.query as string
+	  
+	  if (!query || query.length < 1) {
+		return a_oResponse.status(400).json({ error: "Minimum 1 character required" })
+	  }
+  
+	  const users = await g_coUsers.find({
+		username: { $regex: `^${query}`, $options: 'i' }
+	  }).project({
+		_id: 1,
+		username: 1,
+		emailAddress: 1
+	  }).limit(10).toArray()
+  
+	  a_oResponse.status(200).json(users)
+	} catch (error) {
+	  console.error("Search error:", error)
+	  a_oResponse.status(500).json({ error: "Search failed" })
+	}
+  })
+
 // PUT Route update
-g_coRouter.put("/", async function(req, res) {
+g_coRouter.put("/", async function(a_oRequest, a_oResponse) {
 	try {
 		await g_coUsers.updateMany(
-			g_coFilter(req.body),
+			g_coFilter(a_oRequest.body),
 			{ $set: {
-				username: req.body.username,
+				username: a_oRequest.body.username,
 				password: await g_coBcrypt.hash(
-					req.body.password, 
+					a_oRequest.body.password, 
 					parseInt(process.env.m_saltRounds || "10")
 				),
-				emailAddress: req.body.email,
-				admin: req.body.admin
+				emailAddress: a_oRequest.body.email,
+				admin: a_oRequest.body.admin
 			} 
 		})
-		res.sendStatus(g_codes("Success"))
+		a_oResponse.sendStatus(g_codes("Success"))
 	} catch (error) {
-		res.status(g_codes("Server error")).json(error)
+		a_oResponse.status(g_codes("Server error")).json(error)
 	}
 })
 
 g_coRouter.delete("/", async function(a_oRequest, a_oResponse) {
-	
+	try {
+		const { userId } = a_oRequest.body
+
+		// Validate required field
+		if (!userId) {
+			return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing user ID" })
+		}
+
+		// Attempt to delete the user
+		const result = await g_coUsers.deleteOne({ _id: new ObjectId(userId) })
+
+		if (result.deletedCount === 0) {
+			return a_oResponse.status(g_codes("Not found")).json({ error: "User not found" })
+		}
+
+		a_oResponse.sendStatus(g_codes("Success"))
+	} catch (error) {
+		a_oResponse.status(g_codes("Server error")).json({ error: "Error deleting user", details: error })
+	}
 })
 
 export default g_coRouter

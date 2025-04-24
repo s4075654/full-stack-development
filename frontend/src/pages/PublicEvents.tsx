@@ -36,7 +36,7 @@ export default function PublicEvents() {
             <Sidebar isOpen={isSidebarOpen} />
             <div>
                 <Navbar toggleSidebar={toggleSidebar} />
-                <div className="mt-20 ml-10 flex flex-wrap gap-10">
+                <div className={`mt-20 ml-10 flex flex-wrap gap-10 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
                     {events.map(event => {
                         return (
                             <EventCard
