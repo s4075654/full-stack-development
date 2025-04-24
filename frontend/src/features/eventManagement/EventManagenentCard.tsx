@@ -23,7 +23,6 @@ const EventManagementCard: FC<EventManagementCardProps> = ({
     eventLocation,
 }) => {
     return (
-        
         <Link to={`/event-detail/${_id}`} className="flex justify-around w-full gap-3">
             {/* Image Section */}
             <div className="w-60 h-40 overflow-hidden rounded-lg bg-gray-100">

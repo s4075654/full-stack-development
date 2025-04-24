@@ -27,3 +27,29 @@ export type Event = {
     eventTime: Date;
     joinedUsers: string[];
 };
+
+export type Request = {
+    _id: string;
+    senderId: string;
+    state: RequestStatus,
+    eventId: string;
+}
+
+export type Invitation = {
+    _id: string;
+    receiverId: string;
+    state: InvitationStatus,
+    eventId: string;
+}
+
+export enum RequestStatus {
+    Accepted = "Accepted",
+    Unanswered = "Unanswered",
+    Rejected = "Rejected",
+}
+
+export enum InvitationStatus {
+    Accepted = "Accepted",
+    NotResponded = "Not responded",
+    Declined = "Declined"
+}
