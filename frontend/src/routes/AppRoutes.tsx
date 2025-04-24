@@ -4,9 +4,12 @@ import LoginPage from "../pages/LoginPage.tsx";
 import RegisterPage from "../pages/RegisterPage.tsx";
 import NotFound from "../pages/NotFound.tsx";
 import EventDetail from "../pages/EventPage.tsx";
-import PublicEvents from "../pages/PublicEvents.tsx";
-import CreateEvent from "../pages/CreateEvent.tsx";
+import PublicEventPage from "../pages/PublicEventPage.tsx";
+import CreateEventPage from "../pages/CreateEventPage.tsx";
 import EventManagementPage from "../pages/EventManagementPage.tsx";
+import RSVPResponsePage from "../pages/RSVPResponsePage.tsx";
+import SentRequestsPage from "../pages/RSVPChildrenPages/SentRequestsPage.tsx";
+import ReceivedInvitationsPage from "../pages/RSVPChildrenPages/ReceivedInvitationsPage.tsx";
 
 
 export const router = createBrowserRouter([
@@ -24,7 +27,7 @@ export const router = createBrowserRouter([
     },
     {
         path: "/public-events",
-        element: <PublicEvents />
+        element: <PublicEventPage />
     },
     {
         path: "/event-detail/:id",
@@ -32,11 +35,23 @@ export const router = createBrowserRouter([
     },
     {
         path: "/create-event",
-        element: <CreateEvent />
+        element: <CreateEventPage />
     },
     {
         path: "/event-management",
         element: <EventManagementPage />
+    },
+    {
+        path: "/rsvp-responses",
+        element: <RSVPResponsePage />,
+    },
+    {
+        path: "/rsvp-responses/sent-requests",
+        element: <SentRequestsPage />
+    },
+    {
+        path: "/rsvp-responses/received-invitations",
+        element: <ReceivedInvitationsPage />
     },
     {
         path: "*" ,

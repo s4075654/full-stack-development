@@ -15,6 +15,22 @@ g_coRouter.post("/", function(a_oRequest, a_oResponse) {
 g_coRouter.get("/", function(a_oRequest, a_oResponse) {
 	
 })
+
+g_coRouter.get("/received", async function(a_oRequest, a_oResponse) {
+    try {
+        const userId = a_oRequest.session["User ID"]
+
+        const l_aResponse = await g_coInvitations.find({
+            receiverId: userId,
+        }).toArray();
+
+        a_oResponse.status(g_codes("Success")).json(l_aResponse)
+    } catch (a_oError) {
+        console.log(a_oError)
+        return a_oResponse.status(g_codes("Server error")).json(a_oError)
+    }
+})
+
 g_coRouter.put("/", function(a_oRequest, a_oResponse) {
 	
 })
