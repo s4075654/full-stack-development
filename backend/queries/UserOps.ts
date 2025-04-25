@@ -11,6 +11,9 @@ import "dotenv/config"
 import g_codes from "../server/statuses.ts"
 import { ObjectId } from "mongodb"
 import { getGridFSBucket } from "../server/gridfs.ts"
+import multer from "multer"
+import { Readable } from "stream"
+import { uploadImage } from '../server/imageUpload.ts'
 
 //g_coApp.use(g_coExpress.json())
 // HTTP methods for the user operations in this Express router
@@ -22,10 +25,10 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
   password: 'examplePASSWORD123!',
   email: 'fallsgravity437@gmail.com' 
 }*/
-	const { username, password, email } = a_oRequest.body
+	const { username, password, email, avatar } = a_oRequest.body
 //console.log(a_oRequest.body)
 	// Validate required fields Correct
-	if (!username || !password || !email) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" })
+	if (!username || !password || !email || !avatar) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" })
 
 	try {
 		// Existing user check  Correct
@@ -59,7 +62,7 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 			organisedEvents: [],
 			eventLimits: BigInt(0),
 			invitationLimits: BigInt(0),
-			avatar: null,
+			avatar: new ObjectId(avatar),
 			requests: [],
 			invitations: []
 			
@@ -122,6 +125,20 @@ g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
         a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid ID or error fetching image", details: a_oError })
     }
 })
+
+// POST Route for avatar upload
+const g_co = multer();
+g_coRouter.post("/image", g_co.single("image"), async function(a_oRequest, a_oResponse) {
+  try {
+    const file = a_oRequest.file;
+    if (!file) return a_oResponse.status(g_codes("Invalid"));
+    const stream = Readable.from(file.buffer);
+    const { id } = await uploadImage(stream, file.originalname, file.mimetype);
+    a_oResponse.status(g_codes("Success")).json({ imageId: id });
+  } catch (err) {
+    a_oResponse.status(g_codes("Server error")).json({ error: "Image upload failed" });
+  }
+});
 
 g_coRouter.get("/search", async function(a_oRequest, a_oResponse) {
 	try {
