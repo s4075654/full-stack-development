@@ -10,7 +10,7 @@ import {fetchPublicEvents} from "../redux/event/publicEventSlice.ts";
 import {fetchOwnedEvents} from "../redux/event/ownedEventsSlice.ts";
 
 
-export default function PublicEvents() {
+export default function PublicEventPage() {
     const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
     const dispatch = useDispatch<AppDispatch>();
 
@@ -36,7 +36,7 @@ export default function PublicEvents() {
             <Sidebar isOpen={isSidebarOpen} />
             <div>
                 <Navbar toggleSidebar={toggleSidebar} />
-                <div className={`mt-20 ml-10 flex flex-wrap gap-10 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
+                <div className={`mt-20 flex flex-wrap transition-all duration-300  gap-13 ${isSidebarOpen ? 'ml-80' : 'ml-9'}`}>
                     {events.map(event => {
                         return (
                             <EventCard

@@ -17,12 +17,11 @@ const EventCard: FC<EventCardProps> = ({
     owned
 }) => {
     return (
-        <>
-        <Link to={`/event-detail/${_id}?owned=${owned}`} className="w-[260px] rounded-xl overflow-hidden bg-white shadow-sm cursor-pointer transition-transform duration-200 hover:shadow-md hover:scale-[1.02]">
+        <Link to={`/event-detail/${_id}?owned=${owned}`} className="w-[328px] rounded-xl overflow-hidden bg-white shadow-sm cursor-pointer transition-transform duration-200 hover:shadow-md hover:scale-[1.02]">
             <img
                 src={`/event/image/${images}`}
                 alt={eventName}
-                className="w-full h-[160px] object-cover rounded-t-xl"
+                className="w-full object-cover rounded-t-xl"
             />
             <div className="p-3 space-y-1">
                 <div className="flex items-start gap-2">
@@ -41,7 +40,6 @@ const EventCard: FC<EventCardProps> = ({
                 )}
             </div>
         </Link>
-        </>
     )
 };
 

@@ -1,1 +1,7 @@
 @import "tailwindcss";
+body {
+    background-color: oklch(96.2% 0.059 95.617); /* This is similar to Tailwind's bg-gray-100 */
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif; /* optional, for consistent look */
+}
