@@ -18,12 +18,20 @@ export const login = createAsyncThunk(
             return true
     }
 )
-
+export const fetchCurrentUser = createAsyncThunk(
+    "auth/fetchCurrentUser",
+    async () => {
+      const res = await fetch("/user/me", { credentials: "include" });
+      if (!res.ok) throw new Error("Not authenticated");
+      return await res.json();
+    }
+  )
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
         isAuthenticated: false,
-        error: null
+        error: null,
+        user: null,
     },
     reducers: {
         logout: (state) => {
@@ -39,6 +47,10 @@ const authSlice = createSlice({
             .addCase(login.rejected, (state) => {
                 state.error = null
             })
+            .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+                state.user = action.payload;
+                state.isAuthenticated = true;
+              })
     },
 })
 
