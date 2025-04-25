@@ -26,7 +26,10 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
           });
           const data = await response.json();
            // Filter out current user
-           const filteredData = data.filter((user: User) => user._id !== currentUserId);
+           const filteredData = data.filter((user: User) => 
+            user._id !== currentUserId &&
+            !selectedUsers.some(selected => selected._id === user._id)
+          );
           setSearchResults(filteredData);
           setError('');
         } catch (err) {
@@ -36,7 +39,7 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [searchTerm, currentUserId]);
+  }, [searchTerm, currentUserId, selectedUsers]);
 
   const handleAddUser = (user: User) => {
     if (user._id === currentUserId) return;
@@ -89,7 +92,7 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
                 {searchResults.map(user => (
                   <div
                     key={user._id}
-                    onClick={() => handleAddUser(user)}
+                    onClick={() =>{ handleAddUser(user); setSearchTerm('');}}
                     className="p-2 hover:bg-green-50 cursor-pointer transition-colors"
                   >
                     {user.username}

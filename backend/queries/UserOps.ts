@@ -61,6 +61,7 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 			invitationLimits: BigInt(0),
 			avatar: null,
 			requests: [],
+			invitations: []
 			
 		})
 		a_oResponse.sendStatus(g_codes("Created")) //  Correct success status
@@ -127,7 +128,7 @@ g_coRouter.get("/search", async function(a_oRequest, a_oResponse) {
 	  const query = a_oRequest.query.query as string
 	  
 	  if (!query || query.length < 1) {
-		return a_oResponse.status(400).json({ error: "Minimum 1 character required" })
+		return a_oResponse.status(g_codes("Invalid")).json({ error: "Minimum 1 character required" })
 	  }
   
 	  const users = await g_coUsers.find({
@@ -138,10 +139,10 @@ g_coRouter.get("/search", async function(a_oRequest, a_oResponse) {
 		emailAddress: 1
 	  }).limit(10).toArray()
   
-	  a_oResponse.status(200).json(users)
+	  a_oResponse.status(g_codes("Success")).json(users)
 	} catch (error) {
 	  console.error("Search error:", error)
-	  a_oResponse.status(500).json({ error: "Search failed" })
+	  a_oResponse.status(g_codes("Server error")).json({ error: "Search failed" })
 	}
   })
 

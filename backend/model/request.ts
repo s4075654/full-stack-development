@@ -18,6 +18,10 @@ export default {
 				eventId: {
 					bsonType: "objectId",
 					title: "The event to join."
+				},
+				receiverId: {
+					bsonType: "objectId",
+					title: "The event to join."
 				}
 			},
 			additionalProperties: false

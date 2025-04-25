@@ -65,16 +65,19 @@ function EventDetail() {
 	closeEdit();
   };
 	//So now we can get the ownedPara from the URL and use it to determine if the event is owned or not
-//	const [l_coInvitation, l_coSetL_coInvitation] = useState<{ state: "Accepted" | "Unanswered" | "Rejected" } | null>(null)
-	
 	const handleInvite = async (userIds: string[]) => {
         try {
-          await fetchHandler(`/event/${id}/invite`, {
+			const response = await fetchHandler(`/event/${id}/invite`, {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userIds })
           });
+		  if (response.status === 409) {
+			console.log("Some of the invitations in the list have existed already.");
+			// handle the error UI here (maybe)
+			return;
+		  }
           setIsInviting(false);
         } catch (error) {
           console.error("Invite failed:", error);
