@@ -31,6 +31,7 @@ export type Event = {
 export type Request = {
     _id: string;
     senderId: string;
+    m_oSender : User
     state: RequestStatus,
     eventId: string;
 }
