@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			title: "A request to join an event.",
-			required: ["senderId", "state", "eventId"],
+			required: ["senderId", "state", "eventId", "receiverId"],
 			properties: {
 				_id: {},
 				senderId: {

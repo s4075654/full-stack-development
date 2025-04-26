@@ -90,7 +90,7 @@ function EventDetail() {
 			<Sidebar isOpen={isSidebarOpen} />
 			<div className="flex-1">
 				<Navbar toggleSidebar={toggleSidebar} />
-				<main className={`mt-16 px-4 py-8 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
+				<main className={`mt-16 px-4 py-8 transition-all duration-300 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
 					<div className="max-w-7xl mx-auto">
 						<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 							{/* Main Event Content */}
@@ -124,6 +124,10 @@ function EventDetail() {
 							</div>
 
 							{/* Sidebar Content */}
+							{/* If you access the public event page, for one event you click on you will get the owned para in the URL
+							if the owned is not null (either true or false) then this prove that the user click an event from the public event page.
+							Otherwise if the user access an event from the event management page, that event will not have the ownned para and thus it will
+							be null*/}
 							<div className="lg:col-span-1">
 								<div className="bg-white p-6 rounded-lg shadow-md mb-6">
 								{ownedPara !== null &&(ownedPara === "true" ? (

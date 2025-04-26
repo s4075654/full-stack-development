@@ -77,18 +77,17 @@ export default function RegisterPage() {
         setErrorMessage("Username is required");
         return;
       }
-      if (!formData.avatar) {
-        setErrorMessage("Please upload an avatar");
-        return;
-      }
       {
         const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
         if (!emailRegex.test(email)) {
           setErrorMessage("Please enter a properly formatted email address");
           return;
         }
-    }
-
+      }
+      if (!formData.avatar) {
+        setErrorMessage("Please choose and apply an avatar");
+        return;
+      }
       const username = `${Name}`.trim();
       console.log("SSET")
       console.log("Submitting:", { username, email }); // Log request data
