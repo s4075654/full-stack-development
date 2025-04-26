@@ -11,11 +11,12 @@ function HomePage() {
                         <img
                             src="/AppNameCard.svg"
                             alt="AppNameCard"
-                            className="h-16 w-auto mb-6"
+                            className="h-16 w-auto mb-10"
                         />
                     </div>
-                    <br/>
-                    <div className="text-gray-900">not a simple platform for event planning</div>
+
+                    <div className="text-gray-900">
+                        not simply a platform for event planning</div>
                 </h1>
                 <p className="text-lg md:text-xl text-gray-800 bg-[#f7dc6f] p-6 rounded-lg">
                     We are not simply a platform for event planning. We are a community of event organizers,
