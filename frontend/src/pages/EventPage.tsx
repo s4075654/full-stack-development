@@ -8,7 +8,10 @@ import {AppDispatch} from "../redux/store.ts";
 import {useAppSelector} from "../hook/hooks.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
 import EditEventModal from "../components/EditEventModal";
+import InviteMembersModal from "../components/InviteMembersModal";
 import { fetchHandler } from "../utils/fetchHandler"
+import { fetchCurrentUser } from "../redux/auth/authSlice";  
+import type { User, Request } from "../dataTypes/type";
 
 function EventDetail() {
 	const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
@@ -17,17 +20,51 @@ function EventDetail() {
 	const currentEvent = useAppSelector(state => state.singleEvent.event);
 	const status = useAppSelector(state => state.singleEvent.status);
 	const navigate = useNavigate();
+	const [isInviting, setIsInviting] = useState(false);
+
 
 	const toggleSidebar = () => dispatch(toggle())
 
 	const [searchParams] = useSearchParams();
 	const ownedPara = searchParams.get("owned");
-
+	//const currentUserId = useAppSelector(state => state.auth.user?._id); //Attempt to get the current user ID
+	
 	  // modal state
 	 const [isEditing, setIsEditing] = useState(false);
+	 const [l_coInvitation, l_coSetL_coInvitation] = useState<{ state: "Accepted" | "Unanswered" | "Rejected" } | null>(null)
+	 const [l_caInvitations, l_coSetL_caInvitations] = useState<Request[]>([])
 	useEffect(() => {
 		if (id) dispatch(fetchSingleEvent(id))
 	}, [id, dispatch])
+	useEffect(() => {
+		(async function() {
+			if (currentEvent) document.cookie = "m_sEvent=" + currentEvent._id
+			const l_coResponse = await fetchHandler("/request", {
+				method: "GET",
+				credentials: "include"
+			})
+			if (l_coResponse.ok) l_coSetL_coInvitation(await l_coResponse.json())
+			else console.error("Error fetching requests.")
+		})()
+	})
+	useEffect(() => {
+		(async function() {
+			if (currentEvent) document.cookie = "m_sEvent=" + currentEvent._id
+			const l_coResponse = await fetchHandler("/request", {
+				method: "GET",
+				credentials: "include",
+				["all" as any]: null
+			})
+			if (l_coResponse.ok) l_coSetL_caInvitations(await l_coResponse.json())
+			else console.error("Error fetching requests.")
+		})()
+	})
+	useEffect(() => {
+		dispatch(fetchCurrentUser());
+	  }, [dispatch]);
+
+	  const currentUser = useAppSelector((state: { auth: { user: User | null } }) => state.auth.user);
+	  const currentUserId = currentUser?._id;
 
 	if (status === 'failed') navigate('/*')
 	if (!currentEvent) return null
@@ -40,26 +77,32 @@ function EventDetail() {
 	closeEdit();
   };
 	//So now we can get the ownedPara from the URL and use it to determine if the event is owned or not
-	const [l_coInvitation, l_coSetL_coInvitation] = useState<{ state: "Accepted" | "Unanswered" | "Rejected" } | null>(null)
-	useEffect(() => {
-		(async function() {
-			document.cookie = "m_sEvent=" + currentEvent._id
-			const l_coResponse = await fetchHandler("/request", {
-				method: "GET",
-				credentials: "include"
-			})
-			if (l_coResponse.ok) l_coSetL_coInvitation(await l_coResponse.json()); else console.error("Error fetching requests.")
-		})()
-	})
-
+	const handleInvite = async (userIds: string[]) => {
+        try {
+			const response = await fetchHandler(`/event/${id}/invite`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userIds })
+          });
+		  if (response.status === 409) {
+			console.log("Some of the invitations in the list have existed already.");
+			// handle the error UI here (maybe)
+			return;
+		  }
+          setIsInviting(false);
+        } catch (error) {
+          console.error("Invite failed:", error);
+        }
+      };
 	return (
 		<>
 		
-		<div className="flex">
+		<div className="flex"> 
 			<Sidebar isOpen={isSidebarOpen} />
 			<div className="flex-1">
 				<Navbar toggleSidebar={toggleSidebar} />
-				<main className="mt-16 px-4 py-8">
+				<main className={`mt-16 px-4 py-8 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
 					<div className="max-w-7xl mx-auto">
 						<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 							{/* Main Event Content */}
@@ -95,11 +138,40 @@ function EventDetail() {
 							{/* Sidebar Content */}
 							<div className="lg:col-span-1">
 								<div className="bg-white p-6 rounded-lg shadow-md mb-6">
-								{ownedPara === "true" ? (
+								{ownedPara !== null &&(ownedPara === "true" ? (
+									<div>
 										<button  onClick={openEdit}
 										className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors">
 											Edit Event Details
 										</button>
+										<ul>
+											{ l_caInvitations.map(l_coInvitation => (
+												<div>
+													<li>{l_coInvitation.m_oSender.username}</li>
+													<button onClick={
+														async function(a_oEvent) {
+															if (currentEvent) document.cookie = "m_sInvitation=" + l_coInvitation._id
+															document.cookie = "m_sResponse=" + a_oEvent.currentTarget.textContent + "ed"
+															alert((await fetchHandler("/request", {
+																method: "PUT",
+																credentials: "include"
+															})).ok ? "Success." : "Failure.")
+														}
+													}>Accept</button>
+													<button onClick={
+														async function(a_oEvent) {
+															if (currentEvent) document.cookie = "m_sInvitation=" + l_coInvitation._id
+															document.cookie = "m_sResponse=" + a_oEvent.currentTarget.textContent + "ed"
+															alert((await fetchHandler("/request", {
+																method: "PUT",
+																credentials: "include"
+															})).ok ? "Success." : "Failure.")
+														}
+													}>Reject</button>
+												</div>
+											)) }
+										</ul>
+									</div>
 										) : l_coInvitation ? (
 											l_coInvitation.state === "Accepted" ? (<button>Discussion board</button>) :
 											l_coInvitation.state === "Unanswered" ? (<p>Request not answered</p>) :
@@ -115,7 +187,39 @@ function EventDetail() {
 										className="w-full bg-[#2ecc71] hover:bg-[#27ae60] text-white font-bold py-3 px-6 rounded-full transition-colors">
 											Request to join
 										</button>
-										)}
+										))}
+
+								{ownedPara === null && (
+                                currentEvent.public === false ? (
+                                    <>
+                                    {isInviting && (
+									<InviteMembersModal
+										currentUserId={currentUserId ?? ""}
+										onCancel={() => setIsInviting(false)}
+										onSubmit={handleInvite}
+									/>
+                                    )}
+                                    <button onClick={() => setIsInviting(true)}
+                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
+                                    >
+                                    Invite members
+                                    </button> <br/><br/>
+                                        <button 
+                                        onClick={openEdit}
+                                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
+                                        >
+                                        Edit Event Details
+                                        </button></>
+                                ) : (
+                                    <button 
+                                    onClick={openEdit}
+                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
+                                    >
+                                    Edit Event Details
+                                    </button>
+                                )
+                                )} 
+										
 								</div>
 							</div>
 						</div>

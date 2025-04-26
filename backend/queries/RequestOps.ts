@@ -20,10 +20,10 @@ g_coRouter.post("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
 			{ projection: { requests: 1 } })
 		const l_coSender = g_coUsers.findOne(
 			{ _id: ObjectId.createFromHexString(a_oRequest.session["User ID"]) },
-			{ projection: { requests: 1 } })
+			{ projection: { username: 1, requests: 1 } })
 		l_coSession.startTransaction()
 		const l_coRequest = await g_coRequests.insertOne({
-			senderId: l_coSender._id,
+			"Sender username": l_coSender.username,
 			state: "Unanswered",
 			eventId: l_coEvent._id
 		})
@@ -46,31 +46,29 @@ g_coRouter.post("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
 })
 g_coRouter.get("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
 	try {
-		a_oResponse.status(g_codes("Success")).json(await g_coRequests.findOne({
-			receiverId: ObjectId.createFromHexString(a_oRequest.session["User ID"]),
-			eventId: ObjectId.createFromHexString(a_oRequest.cookies.m_sEvent)
-		}))
+		a_oResponse.status(g_codes("Success")).json(a_oRequest.headers.all ?
+			await g_coRequests.findOne({
+				"Sender username": (await g_coUsers.findOne(
+					{ _id: ObjectId.createFromHexString(a_oRequest.session["User ID"]) },
+					{ projection: { username: 1 } }
+				)).username,
+				eventId: ObjectId.createFromHexString(a_oRequest.cookies.m_sEvent)
+			}) : await g_coRequests.find({
+				eventId: ObjectId.createFromHexString(a_oRequest.cookies.m_sEvent)
+			}).toArray())
 	} catch (a_oError) {
-		return a_oResponse.status(g_codes("Server error")).json(a_oError)
+		a_oResponse.status(g_codes("Server error")).json(a_oError)
 	}
 })
-g_coRouter.get("/sent", async function(a_oRequest, a_oResponse) {
+g_coRouter.put("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
 	try {
-		const userId = a_oRequest.session["User ID"]
-
-		const l_aResponse = await g_coRequests.find({
-			senderId: userId,
-		}).toArray();
-
-		a_oResponse.status(g_codes("Success")).json(l_aResponse)
+		await g_coRequests.updateOne(
+			{ _id: ObjectId.createFromHexString(a_oRequest.cookies.m_sInvitation) },
+			{ state: a_oRequest.cookies.m_sResponse })
 	} catch (a_oError) {
-		console.log(a_oError)
 		return a_oResponse.status(g_codes("Server error")).json(a_oError)
 	}
-})
-
-g_coRouter.put("/", function(a_oRequest, a_oResponse) {
-	
+	a_oResponse.sendStatus(g_codes("Success"))
 })
 g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 	

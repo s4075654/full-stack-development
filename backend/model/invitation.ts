@@ -10,6 +10,10 @@ export default {
 					bsonType: "objectId",
 					title: "The user invited to the event."
 				},
+				senderId: {
+					bsonType: "objectId",
+					title: "The user who send the invitation."
+				},
 				state: {
 					bsonType: "string",
 					enum: ["Accepted", "Not responded", "Declined"],
