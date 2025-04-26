@@ -11,7 +11,7 @@ import EditEventModal from "../components/EditEventModal";
 import InviteMembersModal from "../components/InviteMembersModal";
 import { fetchHandler } from "../utils/fetchHandler"
 import { fetchCurrentUser } from "../redux/auth/authSlice";  
-import type { User } from "../dataTypes/type";
+import type { User, Request } from "../dataTypes/type";
 
 function EventDetail() {
 	const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
@@ -32,19 +32,31 @@ function EventDetail() {
 	  // modal state
 	 const [isEditing, setIsEditing] = useState(false);
 	 const [l_coInvitation, l_coSetL_coInvitation] = useState<{ state: "Accepted" | "Unanswered" | "Rejected" } | null>(null)
+	 const [l_caInvitations, l_coSetL_caInvitations] = useState<Request[]>([])
 	useEffect(() => {
 		if (id) dispatch(fetchSingleEvent(id))
 	}, [id, dispatch])
 	useEffect(() => {
 		(async function() {
-			if (currentEvent) {
-				document.cookie = "m_sEvent=" + currentEvent._id;
-			}
+			if (currentEvent) document.cookie = "m_sEvent=" + currentEvent._id
 			const l_coResponse = await fetchHandler("/request", {
 				method: "GET",
 				credentials: "include"
 			})
-			if (l_coResponse.ok) l_coSetL_coInvitation(await l_coResponse.json()); else console.error("Error fetching requests.")
+			if (l_coResponse.ok) l_coSetL_coInvitation(await l_coResponse.json())
+			else console.error("Error fetching requests.")
+		})()
+	})
+	useEffect(() => {
+		(async function() {
+			if (currentEvent) document.cookie = "m_sEvent=" + currentEvent._id
+			const l_coResponse = await fetchHandler("/request", {
+				method: "GET",
+				credentials: "include",
+				["all" as any]: null
+			})
+			if (l_coResponse.ok) l_coSetL_caInvitations(await l_coResponse.json())
+			else console.error("Error fetching requests.")
 		})()
 	})
 	useEffect(() => {
@@ -131,10 +143,39 @@ function EventDetail() {
 							<div className="lg:col-span-1">
 								<div className="bg-white p-6 rounded-lg shadow-md mb-6">
 								{ownedPara !== null &&(ownedPara === "true" ? (
+									<div>
 										<button  onClick={openEdit}
 										className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors">
 											Edit Event Details
 										</button>
+										<ul>
+											{ l_caInvitations.map(l_coInvitation => (
+												<div>
+													<li>{l_coInvitation.m_oSender.username}</li>
+													<button onClick={
+														async function(a_oEvent) {
+															if (currentEvent) document.cookie = "m_sInvitation=" + l_coInvitation._id
+															document.cookie = "m_sResponse=" + a_oEvent.currentTarget.textContent + "ed"
+															alert((await fetchHandler("/request", {
+																method: "PUT",
+																credentials: "include"
+															})).ok ? "Success." : "Failure.")
+														}
+													}>Accept</button>
+													<button onClick={
+														async function(a_oEvent) {
+															if (currentEvent) document.cookie = "m_sInvitation=" + l_coInvitation._id
+															document.cookie = "m_sResponse=" + a_oEvent.currentTarget.textContent + "ed"
+															alert((await fetchHandler("/request", {
+																method: "PUT",
+																credentials: "include"
+															})).ok ? "Success." : "Failure.")
+														}
+													}>Reject</button>
+												</div>
+											)) }
+										</ul>
+									</div>
 										) : l_coInvitation ? (
 											l_coInvitation.state === "Accepted" ? (<button>Discussion board</button>) :
 											l_coInvitation.state === "Unanswered" ? (<p>Request not answered</p>) :
