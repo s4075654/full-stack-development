@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {
   CalendarIcon,
@@ -7,12 +7,23 @@ import {
   Cog6ToothIcon,
   ArrowRightEndOnRectangleIcon
 } from '@heroicons/react/24/outline';
+import {useAppSelector} from "../../hook/hooks.ts";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../../redux/store.ts";
+import {fetchIsAdmin} from "../../redux/auth/isAdminSlice.ts";
 
 interface SidebarProps {
   isOpen: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { isAdmin } = useAppSelector((state) => state.isAdmin);
+
+  useEffect(() => {
+    dispatch(fetchIsAdmin());
+  }, [dispatch]);
+
   return (
     <aside className={`bg-[#f4d03f] w-64 min-h-screen fixed left-0 top-16 p-4 transition-transform duration-300 transform ${
       isOpen ? 'translate-x-0' : '-translate-x-full'
@@ -40,11 +51,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         </Link>
         
         {/* Ensure user is admin */}
-        
-          <Link to="/admin-dashboard" className="flex items-center space-x-3 px-4 py-3 text-gray-800 hover:bg-[#f7dc6f] rounded-lg transition-colors">
+
+        {isAdmin && (<Link to="/admin-dashboard" className="flex items-center space-x-3 px-4 py-3 text-gray-800 hover:bg-[#f7dc6f] rounded-lg transition-colors">
           <Cog6ToothIcon className="h-6 w-6" />
           <span>Admin dashboard</span>
-        </Link>
+        </Link>)}
         
 
         {/* Checking if user has been authenticated */}
