@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import LogoutButton from '../components/LogoutButton';
 
 
 function HomePage() {
@@ -43,8 +42,6 @@ function HomePage() {
                 </Link>
             </div>
             <>
-         <h1>This is the home page</h1>
-         <LogoutButton />
        </>
         </div>
 

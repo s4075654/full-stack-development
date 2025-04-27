@@ -61,6 +61,7 @@ export enum InvitationStatus {
     NotResponded = "Not responded",
     Declined = "Declined"
 }
+
 export type Setting = {
     _id: string;
     eventLimit: number;
