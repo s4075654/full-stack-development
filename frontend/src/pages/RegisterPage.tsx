@@ -35,11 +35,13 @@ export default function RegisterPage() {
     });
     const [isPasswordMatch, setIsPasswordMatch] = useState(false); 
     const [errorMessage, setErrorMessage] = useState('');
+    const DEFAULT_AVATAR_ID = '000000000000000000000000'; 
+    const DEFAULT_AVATAR_URL = `http://localhost:58888/user/image/${DEFAULT_AVATAR_ID}`;
     const [formData, setFormData] = useState<FormData>({
       username: '',
       email: '',
       password: '',
-      avatar: null
+      avatar: DEFAULT_AVATAR_ID
     });
  // Password validation handler
  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,10 +85,6 @@ export default function RegisterPage() {
           setErrorMessage("Please enter a properly formatted email address");
           return;
         }
-      }
-      if (!formData.avatar) {
-        setErrorMessage("Please choose and apply an avatar");
-        return;
       }
       const username = `${Name}`.trim();
       console.log("SSET")
@@ -291,9 +289,14 @@ export default function RegisterPage() {
         <div className="flex-1 flex flex-col justify-center">
           <h2 className="text-xl font-semibold mb-4">Profile Picture</h2>
           <AvatarUploader 
-            onAvatarUpload={(imageId) => 
-              setFormData(prev => ({ ...prev, avatar: imageId }))
-            }
+             onAvatarUpload={(imageId) => {
+              setFormData(prev => ({
+                ...prev,
+                avatar: imageId || DEFAULT_AVATAR_ID // Fallback to default
+              }));
+            }}
+            defaultAvatarUrl={DEFAULT_AVATAR_URL}
+            defaultAvatarId={DEFAULT_AVATAR_ID}
           />
         </div>
       </div>

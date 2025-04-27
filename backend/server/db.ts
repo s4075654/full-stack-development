@@ -1,3 +1,4 @@
+import { initializeDefaultAvatar } from "./defaultAvatar.ts"
 import "dotenv/config"
 import { MongoClient } from "mongodb"
 
@@ -5,7 +6,7 @@ globalThis.g_oConnection = new MongoClient("mongodb://" + process.env.m_sDbHost 
 const g_coDb = await globalThis.g_oConnection.db(process.env.m_sDbName)
 
 import { readdir } from "fs/promises"
-import { setupGridFSBucket } from "./gridfs.ts"
+import { setupGridFSBucket,getGridFSBucket } from "./gridfs.ts"
 
 for (const l_csFileName of await readdir("backend/model")) {
 	const l_coMod = await import("../model/" + l_csFileName)
@@ -24,6 +25,19 @@ for (const l_csFileName of await readdir("backend/model")) {
 	}
 }
 setupGridFSBucket(g_coDb)
+if ("m_sDev" in process.env) {
+	try {
+	  const tempBucket = getGridFSBucket();
+	  await tempBucket.drop();
+	  console.log('Cleared GridFS images');
+	} catch (error) {
+	  if (error.codeName !== 'NamespaceNotFound') {
+		console.error('GridFS cleanup error:', error);
+	  }
+	}
+  }
+
+await initializeDefaultAvatar()
 console.log("Registered collections.")
 
 export default g_coDb
