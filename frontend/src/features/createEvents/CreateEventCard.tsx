@@ -1,5 +1,8 @@
-import {FormEvent, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {fetchHandler} from "../../utils/fetchHandler.ts";
+import {useAppDispatch, useAppSelector} from "../../hook/hooks.ts";
+import {fetchGlobalSetting} from "../../redux/admin/globalSettingSlice.ts";
+import {fetchOwnedEvents} from "../../redux/event/ownedEventsSlice.ts";
 
 export default function CreateEventCard() {
     const [eventName, setEventName] = useState<string>('');
@@ -9,6 +12,22 @@ export default function CreateEventCard() {
     const [eventType, setEventType] = useState<boolean>(true);
     const [image, setImage] = useState<File | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null); // null = hasn't submitted yet
+
+    const dispatch = useAppDispatch();
+    const settings = useAppSelector(state => state.globalSetting.settings);
+    const userEvents = useAppSelector(state => state.ownedEvents.events);
+
+    useEffect(() => {
+        dispatch(fetchGlobalSetting())
+        dispatch(fetchOwnedEvents())
+    }, [dispatch])
+
+    // Check if settings and user events are loaded
+    const eventLimit = settings?.eventLimit || 0;
+    const userEventCount = userEvents?.length || 0;
+
+    // Compare the event count with the event limit
+    const isButtonDisabled = userEventCount >= eventLimit;
 
     const uploadImageToServer = async (file: File) => {
         const formData = new FormData()
@@ -119,8 +138,9 @@ export default function CreateEventCard() {
                     </select>
                     <button
                         type="submit"
-                        className="w-42 bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition duration-200 cursor-pointer">
-                        Create Event
+                        disabled={isButtonDisabled}
+                        className={`w-42 text-white py-2 rounded-xl ${isButtonDisabled ? 'bg-blue-200' : 'bg-blue-500 hover:bg-blue-600 transition duration-200 cursor-pointer'}`}>
+                        {isButtonDisabled ? 'Event Limit Reached' : 'Create Event'}
                     </button>
                 </form>
                 {/* Image Upload Section */}
