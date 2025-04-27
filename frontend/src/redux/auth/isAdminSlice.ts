@@ -9,7 +9,7 @@ interface AdminState {
 export const fetchIsAdmin = createAsyncThunk(
     "auth/fetchIsAdmin",
     async () => {
-        const res = await fetch('user/is-admin', {
+        const res = await fetch('/user/is-admin', {
             method: "GET",
             credentials: "include"
         });

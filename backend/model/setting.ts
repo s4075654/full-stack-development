@@ -5,6 +5,7 @@ export default {
             description: 'Global setting for website',
             required: ['eventLimit', 'invitationLimit'],
             properties: {
+                _id: {},
                 eventLimit: {
                     bsonType: "int",
                     title: "The maximum amount of events a user can create",
@@ -13,7 +14,8 @@ export default {
                     bsonType: "int",
                     title: "The maximum number of invitations an event can send",
                 }
-            }
+            },
+            additionalProperties: false
         }
     }
 }
