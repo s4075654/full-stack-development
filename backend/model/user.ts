@@ -51,7 +51,7 @@ export default {
 					title: "Whether the user is an admin."
 				},
 				avatar: {
-					anyOf: [{ bsonType: "objectId" }, { bsonType: "null" }],
+					anyOf: [{ bsonType: "objectId" }, { bsonType: "null" }, {bsonType: "string" }],
 					// The avatar can be an ObjectId or null
 					title: "The user's avatar."
 				},

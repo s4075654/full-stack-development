@@ -12,7 +12,7 @@ export default {
 				},
 				reminder: {
 					bsonType: "bool",
-					title: "Whether or the notification is a reminder."
+					title: "Whether or the notification is a reminder." //There are two types of notifications: reminders and normals. it is a reminder when the host of the event sends it (click the reminder button )to all participants. it is a normal notification when other stuffs like update event,.
 				},
 				sendTime: {
 					bsonType: "timestamp",

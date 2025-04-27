@@ -163,7 +163,8 @@ g_coRouter.get("/search", async function(a_oRequest, a_oResponse) {
 	}
   })
 
-g_coRouter.get("/is-admin", async function(a_oRequest, a_oResponse) {
+
+  g_coRouter.get("/is-admin", async function(a_oRequest, a_oResponse) {
 	try {
 		const userId = a_oRequest.session["User ID"];
 
@@ -183,7 +184,7 @@ g_coRouter.get("/is-admin", async function(a_oRequest, a_oResponse) {
 	} catch (error) {
 		a_oResponse.status(g_codes("Server error")).json({ error: "Error checking admin status", details: error });
 	}
-});
+})
 
 
 // PUT Route update
