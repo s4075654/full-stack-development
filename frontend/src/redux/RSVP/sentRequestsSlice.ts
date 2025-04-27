@@ -18,7 +18,7 @@ export const fetchSentRequests = createAsyncThunk(
     'sentRequests/fetch',
     async (_, thunkAPI) => {
         try {
-            const res = await fetchHandler(`/request/sent`, { credentials: 'include', method: 'GET' })
+            const res = await fetchHandler(`/request`, { credentials: 'include', method: 'GET' }) //errornous code
             return await res.json()
         } catch (err) {
             console.log(err);

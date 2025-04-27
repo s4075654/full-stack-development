@@ -163,6 +163,28 @@ g_coRouter.get("/search", async function(a_oRequest, a_oResponse) {
 	}
   })
 
+  g_coRouter.get("/is-admin", async function(a_oRequest, a_oResponse) {
+	try {
+		const userId = a_oRequest.session["User ID"];
+
+		// Validate session user ID
+		if (!userId) {
+			return a_oResponse.status(g_codes("Unauthorized")).json({ error: "User not logged in" });
+		}
+
+		// Fetch user details (only admin field)
+		const user = await g_coUsers.findOne(
+			{ _id: userId },
+			{ projection: { admin: 1 } }
+		);
+		
+		// Return admin status
+		a_oResponse.status(g_codes("Success")).json({ admin: user.admin });
+	} catch (error) {
+		a_oResponse.status(g_codes("Server error")).json({ error: "Error checking admin status", details: error });
+	}
+})
+
 // PUT Route update
 g_coRouter.put("/", async function(a_oRequest, a_oResponse) {
 	try {

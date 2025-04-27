@@ -31,6 +31,7 @@ export type Event = {
 export type Request = {
     _id: string;
     senderId: string;
+    m_oSender : User 
     "Sender username": string
     state: RequestStatus,
     eventId: string;
@@ -59,4 +60,9 @@ export enum InvitationStatus {
     Accepted = "Accepted",
     NotResponded = "Not responded",
     Declined = "Declined"
+}
+export type Setting = {
+    _id: string;
+    eventLimit: number;
+    invitationLimit: number;
 }

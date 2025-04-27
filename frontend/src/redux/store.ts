@@ -7,6 +7,8 @@ import ownedEventsReducer from "./event/ownedEventsSlice.ts";
 import joinedEventReducer from "./event/joinedEventSlice.ts";
 import sentRequestsReducer from "./RSVP/sentRequestsSlice.ts";
 import receivedInvitationsReducer from "./RSVP/receivedInvitationsSlice.ts";
+import isAdminReducer from "./auth/isAdminSlice.ts";
+import globalSettingReducer from "./admin/globalSettingSlice.ts"
 
 export const store = configureStore({
     reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
         joinedEvents: joinedEventReducer,
         sentRequests: sentRequestsReducer,
         receivedInvitations: receivedInvitationsReducer,
+        isAdmin: isAdminReducer,
+        globalSetting: globalSettingReducer
     }
 });
 
