@@ -32,21 +32,46 @@ export const fetchSingleEvent = createAsyncThunk(
 )
 export const updateEvent = createAsyncThunk<
   Event,
-  { id: string; eventName: string; eventLocation: string; eventDescription: string },
+  { id: string; eventName: string; eventLocation: string; eventDescription: string;
+    eventTime: Date; images: string; newImageFile?: File;},
   { rejectValue: string }
 >(
   'singleEvent/update',
-  async ({ id, eventName, eventLocation, eventDescription }, thunkAPI) => {
+  async ({ id, images, newImageFile, ...updateData }, thunkAPI) => {
     try {
+      let imageId = images;
+      let oldImageId: string | null = null;
+      if (newImageFile) {
+        const formData = new FormData();
+        formData.append('image', newImageFile);
+        const uploadRes = await fetchHandler(`/event/image`, {
+          method: 'POST',
+          body: formData,
+      }); if (!uploadRes.ok) throw new Error('Image upload failed');
+      const { imageId: newId } = await uploadRes.json();
+      oldImageId = images; // Store old ID before updating
+      imageId = newId;}
+
+
       // PUT at /event/:id
       const res = await fetchHandler(`/event/${id}`, {
         credentials: 'include',
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ eventName, eventLocation, eventDescription }),
+        body: JSON.stringify({  ...updateData, images: imageId, eventTime: (new Date(updateData.eventTime)).toISOString() }),
       });
-   
-      if (!res.ok) throw new Error('Failed to update event');
+      if (!res.ok) throw new Error('Event update failed');
+       // Delete old image ONLY after successful update
+       console.log(oldImageId)
+       if (oldImageId && oldImageId !== imageId) {
+        const deleteRes = await fetchHandler(`/event/image/${oldImageId}`, {
+          method: 'DELETE',
+        });
+        
+        if (!deleteRes.ok) {
+          console.error('Failed to delete old image, but event was updated');
+        }
+      }
    
       return (await res.json()) as Event;
     } catch (err) {

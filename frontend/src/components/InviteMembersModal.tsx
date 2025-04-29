@@ -15,6 +15,9 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [error, setError] = useState('');
   const searchRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { document.body.style.overflow = 'hidden'
+      return () => { document.body.style.overflow = '' }
+    }, [])
 
   // Debounced search
   useEffect(() => {

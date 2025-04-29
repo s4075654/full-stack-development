@@ -16,7 +16,7 @@ export default {
 				},
 				state: {
 					bsonType: "string",
-					enum: ["Accepted", "Not responded", "Declined"],
+					enum: ["Accepted", "Pending", "Declined"],
 					title: "The current state of the invitation."
 				},
 				eventId: {

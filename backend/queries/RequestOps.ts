@@ -8,7 +8,6 @@ const g_coRequests = g_coDb.collection("requests")
 const g_coEvents = g_coDb.collection("events")
 const g_coUsers = g_coDb.collection("users")
 
-import g_cookieParser from "cookie-parser"
 import { ObjectId } from "mongodb"
 import g_codes from "../server/statuses.ts"
 // HTTP methods for the request operations in this Express router
@@ -51,9 +50,9 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
     l_coSession.endSession()
     a_oResponse.sendStatus(g_codes("Success"))
 })
-g_coRouter.get("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
-	try {
-	  const eventId = a_oRequest.query.eventId || a_oRequest.cookies.m_sEvent;
+g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
+    try {
+	  const eventId = a_oRequest.query.eventId;
 	  if (!eventId) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing eventId" });
   
 	  a_oResponse.status(g_codes("Success")).json(a_oRequest.query.all ?
@@ -81,6 +80,16 @@ g_coRouter.get("/", g_cookieParser(), async function(a_oRequest, a_oResponse) {
             { _id: ObjectId.createFromHexString(requestId) },
             { $set: { state: newState } }
         )
+          // If accepted, add sender to joinedUsers of the event
+          if (newState === "Accepted") {
+            const request = await g_coRequests.findOne({ _id: ObjectId.createFromHexString(requestId) });
+            if (request && request.eventId && request.senderId) {
+                await g_coEvents.updateOne(
+                    { _id: new ObjectId(request.eventId) },
+                    { $addToSet: { joinedUsers: new ObjectId(request.senderId) } }
+                );
+            }
+        }
     } catch (a_oError) {
         console.error("Error in request update:", a_oError)
         return a_oResponse.status(g_codes("Server error")).json(a_oError)
