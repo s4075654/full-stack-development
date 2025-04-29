@@ -31,7 +31,8 @@ export type Event = {
 export type Request = {
     _id: string;
     senderId: string;
-    m_oSender : User
+    m_oSender : User 
+    "Sender username": string
     state: RequestStatus,
     eventId: string;
 }
@@ -42,6 +43,12 @@ export type Invitation = {
     state: InvitationStatus,
     eventId: string;
 }
+
+export interface AvatarUploaderProps {
+    onAvatarUpload: (imageId: string) => void;
+    defaultAvatarUrl: string;
+    defaultAvatarId: string;
+  }
 
 export enum RequestStatus {
     Accepted = "Accepted",

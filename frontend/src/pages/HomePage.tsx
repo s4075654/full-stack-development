@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+
 function HomePage() {
     return (
         <div className="min-h-screen bg-[#f4d03f] flex flex-col items-center justify-center px-4">

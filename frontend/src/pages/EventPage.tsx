@@ -31,34 +31,35 @@ function EventDetail() {
 	
 	  // modal state
 	 const [isEditing, setIsEditing] = useState(false);
-	 const [l_coInvitation, l_coSetL_coInvitation] = useState<{ state: "Accepted" | "Unanswered" | "Rejected" } | null>(null)
-	 const [l_caInvitations, l_coSetL_caInvitations] = useState<Request[]>([])
+	 const [l_coRequest, l_coSetL_coRequest] = useState<{ state: "Accepted" | "Unanswered" | "Rejected" } | null>(null)
+	 const [l_caRequests, l_coSetL_caRequests] = useState<Request[]>([])
 	useEffect(() => {
 		if (id) dispatch(fetchSingleEvent(id))
 	}, [id, dispatch])
 	useEffect(() => {
 		(async function() {
-			if (currentEvent) document.cookie = "m_sEvent=" + currentEvent._id
-			const l_coResponse = await fetchHandler("/request", {
-				method: "GET",
-				credentials: "include"
-			})
-			if (l_coResponse.ok) l_coSetL_coInvitation(await l_coResponse.json())
-			else console.error("Error fetching requests.")
-		})()
-	})
-	useEffect(() => {
+		  if (!currentEvent) return;
+		  // Pass eventId as a query param or in the body
+		  const l_coResponse = await fetchHandler(`/request?eventId=${currentEvent._id}`, {
+			method: "GET",
+			credentials: "include"
+		  });
+		  if (l_coResponse.ok) l_coSetL_coRequest(await l_coResponse.json());
+		  else console.error("Error fetching requests.");
+		})();
+	  }, [currentEvent?._id]);
+	  
+	  useEffect(() => {
 		(async function() {
-			if (currentEvent) document.cookie = "m_sEvent=" + currentEvent._id
-			const l_coResponse = await fetchHandler("/request", {
-				method: "GET",
-				credentials: "include",
-				["all" as any]: null
-			})
-			if (l_coResponse.ok) l_coSetL_caInvitations(await l_coResponse.json())
-			else console.error("Error fetching requests.")
-		})()
-	})
+		  if (!currentEvent) return;
+		  const l_coResponse = await fetchHandler(`/request?eventId=${currentEvent._id}&all=true`, {
+			method: "GET",
+			credentials: "include"
+		  });
+		  if (l_coResponse.ok) l_coSetL_caRequests(await l_coResponse.json());
+		  else console.error("Error fetching requests.");
+		})();
+	  }, [currentEvent?._id]);
 	useEffect(() => {
 		dispatch(fetchCurrentUser());
 	  }, [dispatch]);
@@ -95,6 +96,30 @@ function EventDetail() {
           console.error("Invite failed:", error);
         }
       };
+
+
+	  const handleRequestToJoin = async () => {
+        const response = await fetchHandler("/request", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ eventId: currentEvent._id })
+        });
+        if (response.ok) location.reload();
+        else console.log(await response.json());
+    };
+	const handleRequestUpdate = async (requestId: string, newState: "Accepted" | "Rejected") => {
+        const response = await fetchHandler("/request", {
+            method: "PUT",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ requestId, newState })
+        });
+        if (response.ok) location.reload();
+        else alert("Failure.");
+    };
+
+
 	return (
 		<>
 		
@@ -102,7 +127,7 @@ function EventDetail() {
 			<Sidebar isOpen={isSidebarOpen} />
 			<div className="flex-1">
 				<Navbar toggleSidebar={toggleSidebar} />
-				<main className={`mt-16 px-4 py-8 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
+				<main className={`mt-16 px-4 py-8 transition-all duration-300 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
 					<div className="max-w-7xl mx-auto">
 						<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 							{/* Main Event Content */}
@@ -136,6 +161,10 @@ function EventDetail() {
 							</div>
 
 							{/* Sidebar Content */}
+							{/* If you access the public event page, for one event you click on you will get the owned para in the URL
+							if the owned is not null (either true or false) then this prove that the user click an event from the public event page.
+							Otherwise if the user access an event from the event management page, that event will not have the ownned para and thus it will
+							be null*/}
 							<div className="lg:col-span-1">
 								<div className="bg-white p-6 rounded-lg shadow-md mb-6">
 								{ownedPara !== null &&(ownedPara === "true" ? (
@@ -145,45 +174,25 @@ function EventDetail() {
 											Edit Event Details
 										</button>
 										<ul>
-											{ l_caInvitations.map(l_coInvitation => (
+											{ l_caRequests.map(l_coRequest => (
 												<div>
-													<li>{l_coInvitation.m_oSender.username}</li>
-													<button onClick={
-														async function(a_oEvent) {
-															if (currentEvent) document.cookie = "m_sInvitation=" + l_coInvitation._id
-															document.cookie = "m_sResponse=" + a_oEvent.currentTarget.textContent + "ed"
-															alert((await fetchHandler("/request", {
-																method: "PUT",
-																credentials: "include"
-															})).ok ? "Success." : "Failure.")
-														}
-													}>Accept</button>
-													<button onClick={
-														async function(a_oEvent) {
-															if (currentEvent) document.cookie = "m_sInvitation=" + l_coInvitation._id
-															document.cookie = "m_sResponse=" + a_oEvent.currentTarget.textContent + "ed"
-															alert((await fetchHandler("/request", {
-																method: "PUT",
-																credentials: "include"
-															})).ok ? "Success." : "Failure.")
-														}
-													}>Reject</button>
+													<li>
+														<p>{l_coRequest["Sender username"]}</p>
+														<p>{l_coRequest.state}</p>
+													</li>
+													<button onClick={() => handleRequestUpdate(l_coRequest._id, "Accepted")}>Accept</button>
+													<button onClick={() => handleRequestUpdate(l_coRequest._id, "Rejected")}>Reject</button>
 												</div>
 											)) }
 										</ul>
 									</div>
-										) : l_coInvitation ? (
-											l_coInvitation.state === "Accepted" ? (<button>Discussion board</button>) :
-											l_coInvitation.state === "Unanswered" ? (<p>Request not answered</p>) :
-											l_coInvitation.state === "Rejected" ? (<p>Request rejected</p>) :
-											(<p>Invalid invitation state</p>)
+										) : l_coRequest ? (
+											l_coRequest.state === "Accepted" ? (<button>Discussion board</button>) :
+											l_coRequest.state === "Unanswered" ? (<p>Request not answered</p>) :
+											l_coRequest.state === "Rejected" ? (<p>Request rejected</p>) : 
+											(<p>Invalid request state</p>)
 										) : (
-										<button onClick={ async function() {
-											alert((await fetchHandler("/request", {
-												method: "POST",
-												credentials: "include"
-											})).ok ? "Success." : "Failure.")
-										} }
+										<button onClick={ handleRequestToJoin }
 										className="w-full bg-[#2ecc71] hover:bg-[#27ae60] text-white font-bold py-3 px-6 rounded-full transition-colors">
 											Request to join
 										</button>
