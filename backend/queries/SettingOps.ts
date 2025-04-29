@@ -19,4 +19,22 @@ g_coRouter.get("/", async function (a_oRequest, a_oResponse) {
     }
 });
 
+g_coRouter.put("/", g_coExpress.json(), async function (a_oRequest, a_oResponse) {
+    const {eventLimit, invitationLimit} = a_oRequest.body
+    try {
+        const res = await g_coSettings.findOneAndUpdate(
+            { _id: "global_settings" },
+            { $set: {eventLimit: eventLimit, invitationLimit: invitationLimit} },
+            { new: true },
+        )
+        a_oResponse.status(g_codes("Success")).json({
+            message: "Global settings updated.",
+            updatedSettings: res
+        });
+    } catch (error) {
+        console.log('Error details:', error);
+        a_oResponse.status(g_codes("Error")).json({message: "Failed to update global settings"});
+    }
+});
+
 export default g_coRouter

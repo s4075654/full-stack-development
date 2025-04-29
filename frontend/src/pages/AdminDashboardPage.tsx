@@ -1,7 +1,45 @@
+import {useAppDispatch, useAppSelector} from "../hook/hooks.ts";
+import {toggle} from "../redux/components/sidebarSlice.ts";
+import Navbar from "../components/Navigation/Navbar.tsx";
+import Sidebar from "../components/Navigation/Sidebar.tsx";
+import {useEffect, useState} from "react";
+import {fetchGlobalSetting} from "../redux/admin/globalSettingSlice.ts";
+import {PencilSquareIcon} from "@heroicons/react/24/solid";
+import SettingsCard from "../features/admin/SettingsCard.tsx";
+
 export default function AdminDashboardPage() {
+    const [isSettingsCardOpen, setIsSettingsCardOpen] = useState(false);
+
+    const openSettingsCard = () => setIsSettingsCardOpen(true);
+    const closeSettingsCard = () => setIsSettingsCardOpen(false);
+
+    const dispatch = useAppDispatch();
+
+    const isSidebarOpen = useAppSelector(state => state.sidebar.isOpen)
+    const settings = useAppSelector(state => state.globalSetting.settings);
+    const toggleSidebar = () => dispatch(toggle())
+
+    useEffect(() => {
+        dispatch(fetchGlobalSetting())
+    }, [dispatch]);
+
     return (
         <div>
-            <h1>Admin Dashboard</h1>
+            <Navbar toggleSidebar={toggleSidebar} />
+            <Sidebar isOpen={isSidebarOpen} />
+            <div className={`mt-20 transition-all duration-300 flex flex-col gap-6 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
+                <h1 className={"font-bold text-3xl"}>Admin Dashboard</h1>
+                <div>
+                    <span className="flex items-center space-x-2">
+                        <h1 className={"font-bold text-2xl"}>Global Setting</h1>
+                        <button className="cursor-pointer"><PencilSquareIcon height={32} width={32} onClick={openSettingsCard}/></button>
+                    </span>
+                    <h2 className={"text-xl"}>Maximum amount of active events a user can create: {settings ? settings.eventLimit : "Loading..."}</h2>
+                    <h2 className={"text-xl"}>Maximum amount of invitations that can be sent: {settings ? settings.invitationLimit : "Loading..."}</h2>
+                </div>
+            </div>
+            {isSettingsCardOpen && <SettingsCard onClose={closeSettingsCard} />}
         </div>
     )
+
 }
