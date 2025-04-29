@@ -55,7 +55,7 @@ export default function EventManagementPage() {
                     })
                     }
                 </div>
-                <div className="flex flex-col gap-y-4">
+                <div className={`flex flex-col gap-y-4 transition-all duration-300 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
                         <h1 className="font-bold text-2xl">Joined Events</h1>
                         {joinedEvents.map(event => {
                             return (

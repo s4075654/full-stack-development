@@ -8,8 +8,6 @@ import PublicEventPage from "../pages/PublicEventPage.tsx";
 import CreateEventPage from "../pages/CreateEventPage.tsx";
 import EventManagementPage from "../pages/EventManagementPage.tsx";
 import RSVPResponsePage from "../pages/RSVPResponsePage.tsx";
-import SentRequestsPage from "../pages/RSVPChildrenPages/SentRequestsPage.tsx";
-import ReceivedInvitationsPage from "../pages/RSVPChildrenPages/ReceivedInvitationsPage.tsx";
 import AdminDashboardPage from "../pages/AdminDashboardPage.tsx";
 import {adminLoader} from "../loader/adminLoader.ts";
 
@@ -46,14 +44,6 @@ export const router = createBrowserRouter([
     {
         path: "/rsvp-responses",
         element: <RSVPResponsePage />,
-    },
-    {
-        path: "/rsvp-responses/sent-requests",
-        element: <SentRequestsPage />
-    },
-    {
-        path: "/rsvp-responses/received-invitations",
-        element: <ReceivedInvitationsPage />
     },
     {
         path: "admin-dashboard",

@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
+import LogoutButton from '../../components/LogoutButton';
 import {
   CalendarIcon,
   UserGroupIcon,
@@ -65,11 +66,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             <UserGroupIcon className="h-6 w-6" />
             <span>Account</span>
           </Link>
-        {/* Login the user out */}
-          <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-800 hover:bg-[#f7dc6f] rounded-lg transition-colors">
-          <ArrowRightEndOnRectangleIcon className="h-6 w-6" />
+       {/* Login the user out */}
+        <LogoutButton
+          className="w-full flex items-center space-x-3 px-4 py-3 text-gray-800 hover:bg-[#f7dc6f] rounded-lg transition-colors"
+          icon={<ArrowRightEndOnRectangleIcon className="h-6 w-6" />}
+        >
           <span>Logout</span>
-          </button>
+        </LogoutButton>
         </div>
       
       </nav>

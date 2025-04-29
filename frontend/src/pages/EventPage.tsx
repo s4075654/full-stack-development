@@ -72,7 +72,14 @@ function EventDetail() {
 	const openEdit = () => setIsEditing(true)
 	const closeEdit = () => setIsEditing(false)
 
-	const handleUpdate = async (values: { eventName: string; eventLocation: string; eventDescription: string }) => {
+	const handleUpdate = async (values: { 
+		eventName: string;
+		eventLocation: string;
+		eventDescription: string;
+		eventTime: Date;
+		images: string;
+		newImageFile?: File;
+	  }) => {
 	await dispatch(updateEvent({ id: currentEvent._id, ...values }));
 	console.log("DanaBook");
 	closeEdit();
@@ -118,8 +125,6 @@ function EventDetail() {
         if (response.ok) location.reload();
         else alert("Failure.");
     };
-
-
 	return (
 		<>
 		
@@ -180,8 +185,12 @@ function EventDetail() {
 														<p>{l_coRequest["Sender username"]}</p>
 														<p>{l_coRequest.state}</p>
 													</li>
-													<button onClick={() => handleRequestUpdate(l_coRequest._id, "Accepted")}>Accept</button>
-													<button onClick={() => handleRequestUpdate(l_coRequest._id, "Rejected")}>Reject</button>
+													{l_coRequest.state === "Unanswered" && (
+														<>
+															<button onClick={() => handleRequestUpdate(l_coRequest._id, "Accepted")}>Accept</button>
+															<button onClick={() => handleRequestUpdate(l_coRequest._id, "Rejected")}>Reject</button>
+														</>
+														)}
 												</div>
 											)) }
 										</ul>
@@ -208,6 +217,8 @@ function EventDetail() {
 										onSubmit={handleInvite}
 									/>
                                     )}
+									 {currentUserId === currentEvent.organiserID && (
+       								 <>
                                     <button onClick={() => setIsInviting(true)}
                                     className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
                                     >
@@ -218,14 +229,14 @@ function EventDetail() {
                                         className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
                                         >
                                         Edit Event Details
-                                        </button></>
-                                ) : (
+                                        </button> </>
+                                )}</>) : (  currentUserId === currentEvent.organiserID && (
                                     <button 
                                     onClick={openEdit}
                                     className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
                                     >
                                     Edit Event Details
-                                    </button>
+                                    </button>)
                                 )
                                 )} 
 										
@@ -243,6 +254,8 @@ function EventDetail() {
 			eventName: currentEvent.eventName,
 			eventLocation: currentEvent.eventLocation,
 			eventDescription: currentEvent.eventDescription,
+			eventTime: currentEvent.eventTime,
+			images: currentEvent.images
 		  }}
 		  onCancel={closeEdit}
 		  onSubmit={handleUpdate}

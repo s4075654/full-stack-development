@@ -35,6 +35,8 @@ import g_coUserRouter from "../queries/UserOps.ts"
 g_coApp.use("/user", g_coUserRouter)
 import g_coSettingsRouter from "../queries/SettingOps.ts"
 g_coApp.use("/setting", g_coSettingsRouter)
+import g_coRSVPRouter from "../queries/RSVPOps.ts"
+g_coApp.use("/rsvp", g_coAuth, g_coRSVPRouter)
 
 import { join } from "path"
 

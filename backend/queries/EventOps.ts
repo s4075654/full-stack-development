@@ -64,6 +64,7 @@ g_coRouter.post("/:id/invite", g_coExpress.json(), async function(a_oRequest, a_
 	try {
 	  const eventId = a_oRequest.params.id;
 	  const { userIds } = a_oRequest.body;
+	  console.log(userIds)
 	  const senderId = a_oRequest.session["User ID"];
   
 	  // Verify ownership
@@ -82,7 +83,7 @@ g_coRouter.post("/:id/invite", g_coExpress.json(), async function(a_oRequest, a_
 		const existing = await g_coInvitations.findOne({
 		  eventId: new ObjectId(eventId),
 		  receiverId: new ObjectId(userId),
-		  senderId: new ObjectId(senderId)
+		  senderId: new ObjectId(senderId),
 		});
 		if (existing) {
 		  duplicateUserIds.push(userId);
@@ -104,7 +105,7 @@ g_coRouter.post("/:id/invite", g_coExpress.json(), async function(a_oRequest, a_
 			eventId: new ObjectId(eventId),
 			receiverId: new ObjectId(userId),
 			senderId: new ObjectId(senderId),
-			state: "Not responded"
+			state: "Pending"
 		  });
 		  return {
 			receiverId: userId,
@@ -223,14 +224,13 @@ g_coRouter.get("/image/:id", async function(a_oRequest, a_oResponse) {
 	
 // })
 
-// Add this to your existing EventOps.ts router
 g_coRouter.put("/:id", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
     try {
         const eventId = a_oRequest.params.id
         const userId = a_oRequest.session["User ID"]
         
 		  // Validate request body
-		  const { eventName, eventLocation, eventDescription } = a_oRequest.body
+		  const { eventName, eventLocation, eventDescription, eventTime, images } = a_oRequest.body
 
         // Validate ObjectIDs
         if (!ObjectId.isValid(eventId) || !ObjectId.isValid(userId)) {
@@ -249,7 +249,9 @@ g_coRouter.put("/:id", g_coExpress.json(), async function(a_oRequest, a_oRespons
 		const updateData = {
             eventName,
             eventLocation,
-            eventDescription
+            eventDescription,
+			eventTime: new Date(eventTime), 
+			images: new ObjectId(images)
         }
 
         if (!existingEvent) {
@@ -276,5 +278,43 @@ g_coRouter.put("/:id", g_coExpress.json(), async function(a_oRequest, a_oRespons
 g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 	
 })
+
+g_coRouter.delete("/image/:id",g_coExpress.json(), async function(a_oRequest, a_oResponse) {
+	try {
+
+	  if (!ObjectId.isValid(a_oRequest.params.id)) {
+		return a_oResponse.status(g_codes("Invalid")).json({ 
+		  error: "Invalid image ID format" 
+		})
+	  }
+  
+	  const l_oId = new ObjectId(a_oRequest.params.id);
+	  const bucket = getGridFSBucket();
+  
+	  // Verify image exists and not used elsewhere
+	  const [file, eventsUsingImage] = await Promise.all([
+		bucket.find({ _id: l_oId }).toArray(),
+		g_coEvents.countDocuments({ images: l_oId })
+	  ]);
+	  
+	  if (file.length === 0) {
+		return a_oResponse.status(g_codes("Not found")).json({ error: "Image not found" });
+	  }
+
+	  if (eventsUsingImage > 0) {
+		return a_oResponse.status(g_codes("Conflict")).json({ 
+		  error: "Image still in use by other events" 
+		});
+	  }
+	  console.log("Deleting image with ID:", l_oId)
+	  await bucket.delete(l_oId);
+	  a_oResponse.sendStatus(g_codes("Success"));
+	} catch (a_oError) {
+	  console.error("Image deletion error:", a_oError);
+	  a_oResponse.status(g_codes("Server error")).json({ 
+		error: "Failed to delete image" 
+	  });
+	}
+  });
 
 export default g_coRouter

@@ -58,7 +58,7 @@ export enum RequestStatus {
 
 export enum InvitationStatus {
     Accepted = "Accepted",
-    NotResponded = "Not responded",
+    NotResponded = "Pending",
     Declined = "Declined"
 }
 

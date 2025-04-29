@@ -4,6 +4,7 @@ import {useAppDispatch, useAppSelector} from "../../hook/hooks.ts";
 import {fetchGlobalSetting} from "../../redux/admin/globalSettingSlice.ts";
 import {fetchOwnedEvents} from "../../redux/event/ownedEventsSlice.ts";
 
+
 export default function CreateEventCard() {
     const [eventName, setEventName] = useState<string>('');
     const [eventLocation, setEventLocation] = useState<string>('');
@@ -17,6 +18,19 @@ export default function CreateEventCard() {
     const settings = useAppSelector(state => state.globalSetting.settings);
     const userEvents = useAppSelector(state => state.ownedEvents.events);
 
+    const [showToast, setShowToast] = useState(false);
+
+    useEffect(() => {
+    if (submitSuccess !== null) {
+        setShowToast(true);
+        const timer = setTimeout(() => {
+        setShowToast(false);
+        setSubmitSuccess(null);
+        }, 1500);
+        return () => clearTimeout(timer);
+    }
+    }, [submitSuccess]);
+
     useEffect(() => {
         dispatch(fetchGlobalSetting())
         dispatch(fetchOwnedEvents())
@@ -27,6 +41,8 @@ export default function CreateEventCard() {
     const userEventCount = userEvents?.length || 0;
 
     // Compare the event count with the event limit
+    // In mongosh you can use the following command to bypass the event limit:
+    //db.settings.insertOne({  _id: "global_settings",  eventLimit: 4,  invitationLimit: 2})
     const isButtonDisabled = userEventCount >= eventLimit;
 
     const uploadImageToServer = async (file: File) => {
@@ -77,6 +93,21 @@ export default function CreateEventCard() {
 
     return (
         <>
+                    <style>{`
+            .toast-animation {
+                animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 1s;
+            }
+
+            @keyframes slideIn {
+                from { transform: translateY(-100%); }
+                to { transform: translateY(0); }
+            }
+
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+            `}</style>
             <h1 className="font-bold text-3xl flex justify-center">Create an event</h1>
             <div className="flex flex-row gap-10 mt-10 justify-around">
                 <form className="space-y-4" onSubmit={handleSubmit}>
@@ -169,16 +200,20 @@ export default function CreateEventCard() {
                     )}
                 </div>
             </div>
-            {submitSuccess === true && (
-                <div className="mt-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-300">
-                    🎉 Event created successfully!
+            {showToast && submitSuccess === true &&(
+            <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 toast-animation">
+                <div className="mt-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow-lg">
+                🎉 Event created successfully!
                 </div>
+            </div>
             )}
 
-            {submitSuccess === false && (
-                <div className="mt-4 p-4 rounded-lg bg-red-100 text-red-800 border border-red-300">
-                    ❌ Something went wrong. Please try again.
+            {showToast && submitSuccess === false &&(
+            <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 toast-animation">
+                <div className="mt-4 p-4 rounded-lg bg-red-100 text-red-800 border border-red-300 shadow-lg">
+                ❌ Something went wrong. Please try again.
                 </div>
+            </div>
             )}
         </>
     )
