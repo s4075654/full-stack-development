@@ -34,9 +34,10 @@ export default function PublicEventPage() {
     return (
         <div className="flex">
             <Sidebar isOpen={isSidebarOpen} />
-            <div>
-                <Navbar toggleSidebar={toggleSidebar} />
-                <div className={`mt-20 flex flex-wrap transition-all duration-300  gap-13 ${isSidebarOpen ? 'ml-80' : 'ml-9'}`}>
+            <Navbar toggleSidebar={toggleSidebar} />
+            <div className={`mt-20 transition-all duration-300 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
+                <h1 className={"font-bold text-3xl"}>Public Events</h1>
+                <div className={"flex flex-wrap gap-13 mt-8"}>
                     {events.map(event => {
                         return (
                             <EventCard
