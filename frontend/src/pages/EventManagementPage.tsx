@@ -6,7 +6,7 @@ import {fetchOwnedEvents} from "../redux/event/ownedEventsSlice.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
 import Sidebar from "../components/Navigation/Sidebar.tsx";
 import Navbar from "../components/Navigation/Navbar.tsx";
-import EventManagementCard from "../features/eventManagement/EventManagenentCard.tsx";
+import EventManagementCard from "../components/card/EventManagenentCard.tsx";
 import {fetchJoinedEvents} from "../redux/event/joinedEventSlice.ts";
 
 export default function EventManagementPage() {
@@ -26,8 +26,6 @@ export default function EventManagementPage() {
         if (ownedError || joinedError) {
                  return <div>Error: {ownedError || joinedError}</div>;}
 
-    console.log(ownedEvents);
-
     const toggleSidebar = () => dispatch(toggle())
 
     return (
@@ -36,7 +34,7 @@ export default function EventManagementPage() {
             <div>
                 <Navbar toggleSidebar={toggleSidebar} />
                 <div className={`mt-20 ml-10 flex flex-col gap-y-4 transition-all duration-300 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
-                    <h1 className="font-bold text-2xl">Owned Events</h1>
+                    <h1 className="font-bold text-3xl">Owned Events</h1>
                     {ownedEvents.map(event => {
                         return (
                             <EventManagementCard
@@ -49,14 +47,13 @@ export default function EventManagementPage() {
                                 eventLocation={event.eventLocation}
                                 eventTime={event.eventTime}
                                 joinedUsers={event.joinedUsers}
-
                             />
                         )
                     })
                     }
                 </div>
                 <div className={`flex flex-col gap-y-4 transition-all duration-300 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
-                        <h1 className="font-bold text-2xl">Joined Events</h1>
+                        <h1 className="font-bold text-3xl">Joined Events</h1>
                         {joinedEvents.map(event => {
                             return (
                                 <EventManagementCard

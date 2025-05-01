@@ -10,6 +10,8 @@ import EventManagementPage from "../pages/EventManagementPage.tsx";
 import RSVPResponsePage from "../pages/RSVPResponsePage.tsx";
 import AdminDashboardPage from "../pages/AdminDashboardPage.tsx";
 import {adminLoader} from "../loader/adminLoader.ts";
+import AllUsersDashboardPage from "../pages/AllUserDashboardPage.tsx";
+import AllEventDashboardPage from "../pages/AllEventDashboardPage.tsx";
 
 
 export const router = createBrowserRouter([
@@ -46,8 +48,18 @@ export const router = createBrowserRouter([
         element: <RSVPResponsePage />,
     },
     {
-        path: "admin-dashboard",
+        path: "/admin-dashboard",
         element: <AdminDashboardPage />,
+        loader: adminLoader
+    },
+    {
+        path: "/admin-dashboard/all-user-dashboard",
+        element: <AllUsersDashboardPage />,
+        loader: adminLoader
+    },
+    {
+        path: "/admin-dashboard/all-event-dashboard",
+        element: <AllEventDashboardPage />,
         loader: adminLoader
     },
     {

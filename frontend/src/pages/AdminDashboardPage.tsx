@@ -8,6 +8,7 @@ import {PencilSquareIcon} from "@heroicons/react/24/solid";
 import SettingsCard from "../features/admin/SettingsCard.tsx";
 import {fetchEvents} from "../redux/event/eventsSlice.ts";
 import {fetchUsers} from "../redux/user/usersSlice.ts";
+import {Link} from "react-router-dom";
 
 export default function AdminDashboardPage() {
     const [isSettingsCardOpen, setIsSettingsCardOpen] = useState(false);
@@ -53,12 +54,14 @@ export default function AdminDashboardPage() {
                     <h2 className="text-xl">Number of users who are currently hosting events: {users ? users.filter(user => user.organisedEvents.length > 0).length : "Loading..."}</h2>
                     <h2 className="text-xl">Number of users who are current attending events: {users ? users.filter(user => user.joinedEvents.length > 0).length : "Loading..."}</h2>
                     <h2 className="text-xl">Number of admins: {users ? users.filter(user => user.admin).length : "Loading..."}</h2>
+                    <Link to="/admin-dashboard/all-user-dashboard" className="text-xl text-blue-500 hover:text-blue-600 transition duration-200 cursor-pointer">View all users</Link>
                 </div>
                 <div>
                     <h1 className="font-bold text-2xl">Event statistics</h1>
                     <h2 className="text-xl">Total number of events: {events ? events.length : "Loading..."}</h2>
                     <h2 className="text-xl">Number of public events: {events ? events.filter(event => event.public).length : "Loading..."}</h2>
                     <h2 className="text-xl">Number of private events: {events ? events.filter(event => !event.public).length : "Loading..."}</h2>
+                    <Link to="/admin-dashboard/all-event-dashboard" className="text-xl text-blue-500 hover:text-blue-600 transition duration-200 cursor-pointer">View all events</Link>
                 </div>
             </div>
         </div>
