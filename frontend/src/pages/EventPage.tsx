@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useNavigate, useParams, useSearchParams} from 'react-router-dom';
-import Navbar from "../components/Navigation/Navbar";
-import Sidebar from "../components/Navigation/Sidebar";
+import Navbar from "../components/navigation/Navbar";
+import Sidebar from "../components/navigation/Sidebar";
 import {useDispatch} from "react-redux";
 import {fetchSingleEvent, updateEvent} from "../redux/event/singleEventSlice.ts";
 import {AppDispatch} from "../redux/store.ts";

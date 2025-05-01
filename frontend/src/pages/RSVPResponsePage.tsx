@@ -1,5 +1,5 @@
-import Navbar from "../components/Navigation/Navbar";
-import Sidebar from "../components/Navigation/Sidebar";
+import Navbar from "../components/navigation/Navbar";
+import Sidebar from "../components/navigation/Sidebar";
 import RSVPTable from "../components/RSVPTable";
 import { useAppDispatch, useAppSelector } from "../hook/hooks";
 import { toggle } from "../redux/components/sidebarSlice";

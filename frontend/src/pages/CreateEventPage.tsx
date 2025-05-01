@@ -1,8 +1,8 @@
-import Navbar from "../components/Navigation/Navbar.tsx";
-import Sidebar from "../components/Navigation/Sidebar.tsx";
+import Navbar from "../components/navigation/Navbar.tsx";
+import Sidebar from "../components/navigation/Sidebar.tsx";
 import {useAppDispatch, useAppSelector} from "../hook/hooks.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
-import CreateEventCard from "../features/createEvents/CreateEventCard.tsx";
+import CreateEventCard from "../components/createEvent/CreateEventCard.tsx";
 
 export default function CreateEventPage() {
     const dispatch = useAppDispatch();

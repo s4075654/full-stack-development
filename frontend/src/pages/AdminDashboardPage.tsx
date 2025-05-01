@@ -1,11 +1,11 @@
 import {useAppDispatch, useAppSelector} from "../hook/hooks.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
-import Navbar from "../components/Navigation/Navbar.tsx";
-import Sidebar from "../components/Navigation/Sidebar.tsx";
+import Navbar from "../components/navigation/Navbar.tsx";
+import Sidebar from "../components/navigation/Sidebar.tsx";
 import {useEffect, useState} from "react";
 import {fetchGlobalSetting} from "../redux/admin/globalSettingSlice.ts";
 import {PencilSquareIcon} from "@heroicons/react/24/solid";
-import SettingsCard from "../features/admin/SettingsCard.tsx";
+import SettingsCard from "../components/admin/SettingsCard.tsx";
 import {fetchEvents} from "../redux/event/eventsSlice.ts";
 import {fetchUsers} from "../redux/user/usersSlice.ts";
 import {Link} from "react-router-dom";

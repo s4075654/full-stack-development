@@ -4,8 +4,8 @@ import {AppDispatch} from "../redux/store.ts";
 import {useEffect} from "react";
 import {toggle} from "../redux/components/sidebarSlice.ts";
 import {fetchUsers} from "../redux/user/usersSlice.ts";
-import Sidebar from "../components/Navigation/Sidebar.tsx";
-import Navbar from "../components/Navigation/Navbar.tsx";
+import Sidebar from "../components/navigation/Sidebar.tsx";
+import Navbar from "../components/navigation/Navbar.tsx";
 import UserManagementCard from "../components/card/UserManagementCard.tsx";
 
 export default function AllUsersDashboardPage() {
