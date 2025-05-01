@@ -2,14 +2,17 @@ export type User = {
     _id: string // MongoDB ObjectId as string
     username: string
     password: string
-    "Email address": string
+    emailAddress: string
     notifications: string[] // Array of ObjectId strings
-    "Organising events": string[] // Array of ObjectId strings
-    "Maximum number of active events": number
-    "Maximum number of invitations to an event": number
+    organisedEvents: string[] // Array of ObjectId strings
+    eventLimits: number
+    invitationLimits: number
     admin: boolean
     sessions: string[] // Array of ObjectId strings
-    avatar: string; // ObjectID of the user's avatar
+    avatar: string | null; // ObjectID of the user's avatar
+    invitations: string[]
+    requests: string[]
+    joinedEvents: string[]
 }
 
 export type Event = {

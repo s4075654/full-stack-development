@@ -64,7 +64,8 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 			invitationLimits: BigInt(0),
 			avatar: new ObjectId(avatar),
 			requests: [],
-			invitations: []
+			invitations: [],
+			joinedEvents: [],
 			
 		})
 		a_oResponse.sendStatus(g_codes("Created")) //  Correct success status
@@ -80,7 +81,7 @@ import g_coFilter from "../filters/UserFilter.ts"
 g_coRouter.get("/", async function(a_oRequest,  a_oResponse) {
 	try {
 		const results = await g_coUsers.find(
-			g_coFilter(a_oRequest.body) // Use body instead of cookies
+			g_coFilter(a_oRequest.query) // Use query instead of cookies
 		).toArray()
 		a_oResponse.status(g_codes("Success")).json(results)
 	} catch (error) {

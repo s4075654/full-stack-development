@@ -30,7 +30,7 @@ const EventCard: FC<EventCardProps> = ({
                     </p>
                 </div>
                 <p className="text-xs text-gray-600">{eventLocation}</p>
-                <p className="text-xs text-gray-500">{eventTime.toString()}</p>
+                <p className="text-xs text-gray-500">{new Date(eventTime).toLocaleString()}</p>
             </div>
             <div>
             {owned && (
