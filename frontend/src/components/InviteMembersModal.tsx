@@ -39,7 +39,7 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
           setError('Failed to search users: ' + err);
         }
       }
-    }, 300);
+    }, 200); //200ms debounce
 
     return () => clearTimeout(handler);
   }, [searchTerm, currentUserId, selectedUsers]);

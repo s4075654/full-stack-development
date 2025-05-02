@@ -17,7 +17,7 @@ const EventCard: FC<EventCardProps> = ({
     owned
 }) => {
     return (
-        <Link to={`/event-detail/${_id}?owned=${owned}`} className="w-[328px] rounded-xl overflow-hidden bg-white shadow-sm cursor-pointer transition-transform duration-200 hover:shadow-md hover:scale-[1.02]">
+        <Link to={`/event-detail/${_id}`} className="w-[328px] rounded-xl overflow-hidden bg-white shadow-sm cursor-pointer transition-transform duration-200 hover:shadow-md hover:scale-[1.02]">
             <img
                 src={`/event/image/${images}`}
                 alt={eventName}

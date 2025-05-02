@@ -43,6 +43,8 @@ export default function RegisterPage() {
       password: '',
       avatar: DEFAULT_AVATAR_ID
     });
+    const [avatarZoom, setAvatarZoom] = useState(1); // Add zoom state
+
  // Password validation handler
  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
@@ -100,7 +102,8 @@ export default function RegisterPage() {
             username,
             password,
             email,  // Match backend schema
-            avatar: formData.avatar
+            avatar: formData.avatar,
+            avatarZoom // Add this
           }),
         });
         console.log("Response:", response); // Log response
@@ -297,6 +300,8 @@ export default function RegisterPage() {
             }}
             defaultAvatarUrl={DEFAULT_AVATAR_URL}
             defaultAvatarId={DEFAULT_AVATAR_ID}
+            initialZoom={1}
+            onZoomChange={(zoom) => setAvatarZoom(zoom)}
           />
         </div>
       </div>

@@ -23,6 +23,7 @@ g_coRouter.post("/", g_coExpress.json(), async function (a_oRequest, a_oResponse
 			eventName: eventName,
 			eventLocation: eventLocation,
 			eventDescription: eventDescription,
+			discussionDescription: "",
 			eventTime: new Date(eventTime),
 			public: isPublic,
 			images: new ObjectId(images),
@@ -274,6 +275,39 @@ g_coRouter.put("/:id", g_coExpress.json(), async function(a_oRequest, a_oRespons
         a_oResponse.status(g_codes("Server error")).json({ error: "Failed to update event" })
     }
 })
+
+g_coRouter.put("/:id/discussion", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
+  try {
+    const eventId = a_oRequest.params.id;
+    const userId = a_oRequest.session["User ID"];
+    const { description } = a_oRequest.body;
+    
+    // Validate event ownership
+    const event = await g_coEvents.findOne({
+      _id: new ObjectId(eventId),
+      organiserID: new ObjectId(userId)
+    });
+
+    if (!event) {
+      return a_oResponse.status(g_codes("Unauthorised")).json({ 
+        error: "Not authorized to update this event" 
+      });
+    }
+
+    // Update discussion description
+    await g_coEvents.updateOne(
+      { _id: new ObjectId(eventId) },
+      { $set: { discussionDescription: description } }
+    );
+
+    a_oResponse.sendStatus(g_codes("Success"));
+  } catch (error) {
+    console.error("Update discussion description error:", error);
+    a_oResponse.status(g_codes("Server error")).json({ 
+      error: "Failed to update discussion description" 
+    });
+  }
+});
 
 g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 	

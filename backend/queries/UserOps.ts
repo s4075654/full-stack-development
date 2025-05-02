@@ -25,7 +25,8 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
   password: 'examplePASSWORD123!',
   email: 'fallsgravity437@gmail.com' 
 }*/
-	const { username, password, email, avatar } = a_oRequest.body
+	const { username, password, email, avatar, avatarZoom } = a_oRequest.body
+	console.log(parseFloat(avatarZoom))
 //console.log(a_oRequest.body)
 	// Validate required fields Correct
 	if (!username || !password || !email || !avatar) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" })
@@ -63,6 +64,7 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 			eventLimits: BigInt(0),
 			invitationLimits: BigInt(0),
 			avatar: new ObjectId(avatar),
+			avatarZoom: parseFloat(avatarZoom) || 1.0,
 			requests: [],
 			invitations: []
 			
@@ -70,10 +72,31 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 		a_oResponse.sendStatus(g_codes("Created")) //  Correct success status
 	} catch (error) {
 		// Add duplicate key check
+		//console.log(error.errInfo.details.schemaRulesNotSatisfied[0]. propertiesNotSatisfied)
 		if (error.code === 11000) return a_oResponse.status(g_codes("Conflict")).json({ error: "Username/email already exists" })
 		a_oResponse.status(g_codes("Server error")).json({ error: "Server error during registration" })
 	}
 })
+
+g_coRouter.post("/verify-password", g_coExpress.json(), async (req, res) => {
+	const userId = req.session["User ID"];
+	const { password } = req.body;
+	if (!userId || !password) return res.status(g_codes("Invalid")).json({ error: "Missing fields" });
+  
+	try {
+	  const user = await g_coUsers.findOne({ _id: new ObjectId(userId) });
+	  if (!user) return res.status(g_codes("Not found")).json({ error: "User not found" });
+  
+	  const isMatch = await g_coBcrypt.compare(password, user.password);
+	  if (!isMatch) return res.status(g_codes("Unauthorised")).json({ error: "Incorrect password" });
+  
+	  res.sendStatus(g_codes("Success"));
+	} catch (err) {
+		console.log(err)
+	  res.status(g_codes("Server error")).json({ error: "Failed to verify password" });
+	}
+  });
+
 import g_coFilter from "../filters/UserFilter.ts"
 
 // GET Route update
@@ -207,6 +230,81 @@ g_coRouter.put("/", async function(a_oRequest, a_oResponse) {
 		a_oResponse.status(g_codes("Server error")).json(error)
 	}
 })
+
+g_coRouter.put("/update-username", g_coExpress.json(), async (req, res) => {
+	const userId = req.session["User ID"];
+	const { username } = req.body;
+	if (!userId || !username) return res.status(g_codes("Invalid")).json({ error: "Missing user or username" });
+  
+	try {
+	  // Check if username is taken (except for current user)
+	  const existing = await g_coUsers.findOne({ username, _id: { $ne: new ObjectId(userId) } });
+	  if (existing) return res.status(g_codes("Conflict")).json({ error: "Username already exists" });
+  
+	  // Get old username
+	  const user = await g_coUsers.findOne({ _id: new ObjectId(userId) });
+	  if (!user) return res.status(g_codes("Not found")).json({ error: "User not found" });
+	  const oldUsername = user.username;
+  
+	  // Update username in users
+	  await g_coUsers.updateOne({ _id: new ObjectId(userId) }, { $set: { username } });
+  
+	  // Update "Sender username" in requests
+	  await g_coDb.collection("requests").updateMany(
+		{ "Sender username": oldUsername },
+		{ $set: { "Sender username": username } }
+	  );
+  
+	  res.sendStatus(g_codes("Success"));
+	} catch (err) {
+	  res.status(g_codes("Server error")).json({ error: "Failed to update username" });
+	}
+  });
+
+  g_coRouter.put("/update-password", g_coExpress.json(), async (req, res) => {
+	const userId = req.session["User ID"];
+	const { currentPassword, newPassword } = req.body;
+	if (!userId || !currentPassword || !newPassword) return res.status(g_codes("Invalid")).json({ error: "Missing fields" });
+  
+	try {
+	  const user = await g_coUsers.findOne({ _id: new ObjectId(userId) });
+	  if (!user) return res.status(g_codes("Not found")).json({ error: "User not found" });
+  
+	  const isMatch = await g_coBcrypt.compare(currentPassword, user.password);
+	  if (!isMatch) return res.status(g_codes("Unauthorized")).json({ error: "Current password incorrect" });
+  
+	  await g_coUsers.updateOne(
+		{ _id: new ObjectId(userId) },
+		{ $set: { password: await g_coBcrypt.hash(newPassword, parseInt(process.env.m_saltRounds || "10")) } }
+	  );
+	  res.sendStatus(g_codes("Success"));
+	} catch (err) {
+	  res.status(g_codes("Server error")).json({ error: "Failed to update password" });
+	}
+  });
+
+  g_coRouter.put("/update-avatar", g_coExpress.json(), async (req, res) => {
+  const userId = req.session["User ID"];
+  const { avatar, avatarZoom } = req.body;
+  if (!userId || !avatar) return res.status(g_codes("Invalid")).json({ error: "Missing avatar" });
+
+  try {
+    await g_coUsers.updateOne(
+      { _id: new ObjectId(userId) },
+      { 
+        $set: { 
+          avatar: new ObjectId(avatar),
+          avatarZoom: parseFloat(avatarZoom) || 1.0
+        } 
+      }
+    );
+    res.sendStatus(g_codes("Success"));
+  } catch (err) {
+    console.error('Avatar update error:', err);
+    res.status(g_codes("Server error")).json({ error: "Failed to update avatar" });
+  }
+});
+
 
 g_coRouter.delete("/", async function(a_oRequest, a_oResponse) {
 	try {

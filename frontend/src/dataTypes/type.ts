@@ -10,6 +10,7 @@ export type User = {
     admin: boolean
     sessions: string[] // Array of ObjectId strings
     avatar: string; // ObjectID of the user's avatar
+    avatarZoom?: number;
 }
 
 export type Event = {
@@ -24,6 +25,7 @@ export type Event = {
     eventName: string;
     eventLocation: string;
     eventDescription: string;
+    discussionDescription: string;
     eventTime: Date;
     joinedUsers: string[];
 };
@@ -67,3 +69,19 @@ export type Setting = {
     eventLimit: number;
     invitationLimit: number;
 }
+
+export type Message = {
+    _id: string;
+    text: string;
+    senderId: string;
+    eventId: string;
+    parentMessageId?: string;
+    createdAt: Date;
+    updatedAt?: Date;
+    user?: {
+      _id: string;
+      username: string;
+      avatar: string;
+    };
+    isOrganizer?: boolean;
+  }
