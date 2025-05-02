@@ -110,7 +110,7 @@ const singleEventSlice = createSlice({
         })
         .addCase(updateEvent.fulfilled, (state, action: PayloadAction<Event>) => {
                 state.status = 'succeeded';
-                state.event = action.payload; // overwrite with updated event
+                state.event = action.payload; 
         })
         .addCase(updateEvent.rejected, (state, action) => {
                 state.status = 'failed';

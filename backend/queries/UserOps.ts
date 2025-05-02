@@ -99,7 +99,7 @@ g_coRouter.post("/verify-password", g_coExpress.json(), async (req, res) => {
 
 import g_coFilter from "../filters/UserFilter.ts"
 
-// GET Route update
+// GET Route
 g_coRouter.get("/", async function(a_oRequest,  a_oResponse) {
 	try {
 		const results = await g_coUsers.find(
@@ -110,6 +110,7 @@ g_coRouter.get("/", async function(a_oRequest,  a_oResponse) {
 		a_oResponse.status(g_codes("Server error")).json(error)
 	}
 })
+
 // GET Route for current user
 g_coRouter.get("/me", async function(a_oRequest, a_oResponse) {
 	try {
@@ -208,6 +209,31 @@ g_coRouter.get("/search", async function(a_oRequest, a_oResponse) {
 		a_oResponse.status(g_codes("Server error")).json({ error: "Error checking admin status", details: error });
 	}
 })
+
+// GET Route for a specific user (This get route must be at the bottom of all gets)
+g_coRouter.get("/:id", async function(a_oRequest, a_oResponse) {
+    try {
+        const userId = a_oRequest.params.id;
+
+        if (!ObjectId.isValid(userId)) {
+            return a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid user ID format" });
+        }
+
+        const user = await g_coUsers.findOne(
+            { _id: new ObjectId(userId) },
+            { projection: { password: 0 } } // Exclude password
+        );
+
+        if (!user) {
+            return a_oResponse.status(g_codes("Not found")).json({ error: "User not found" });
+        }
+
+        a_oResponse.status(g_codes("Success")).json(user);
+    } catch (error) {
+        console.error("User fetch error:", error);
+        a_oResponse.status(g_codes("Server error")).json({ error: "Failed to fetch user" });
+    }
+});
 
 
 // PUT Route update
