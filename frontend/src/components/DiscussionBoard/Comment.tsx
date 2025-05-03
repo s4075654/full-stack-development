@@ -49,11 +49,15 @@ export default function Comment({
   return (
     <div className="border-l-2 border-gray-100 pl-4">
       <div className="flex items-start gap-3 group">
+      <div className="h-8 w-8 rounded-full overflow-hidden mr-2">
         <img 
           src={`/user/image/${comment.user?.avatar}`}
-          className="w-10 h-10 rounded-full object-cover"
+          className="w-full h-full object-cover"
           alt={comment.user?.username}
-        />
+          style={{
+            transform: `scale(${comment.user?.avatarZoom})`,
+          }}
+        /></div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-medium">{comment.user?.username}</span>

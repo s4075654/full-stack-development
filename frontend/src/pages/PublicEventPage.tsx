@@ -47,6 +47,8 @@ export default function PublicEventPage() {
                                 images={event.images}
                                 eventLocation={event.eventLocation}
                                 eventTime={event.eventTime}
+                                organiserID={event.organiserID} 
+                                joinedUsers={event.joinedUsers || []} 
                                 owned = {ownedEvents.some(item => item._id === event._id)}
                             />
                         )

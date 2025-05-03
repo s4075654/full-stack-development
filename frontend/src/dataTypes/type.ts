@@ -82,6 +82,7 @@ export type Message = {
       _id: string;
       username: string;
       avatar: string;
+      avatarZoom: number;
     };
     isOrganizer?: boolean;
   }

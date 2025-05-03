@@ -8,6 +8,7 @@ import { fetchCurrentUser } from "../redux/auth/authSlice";
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { getInputStyles, ValidationState } from '../utils/validationStyles';
 import { validatePassword, validatePasswordMatch } from '../utils/passwordValidator';
+import { Tooltip } from '../components/Tooltip';
 import { User } from "../dataTypes/type";
 
 // FloatingLabelInput component
@@ -15,7 +16,7 @@ interface FloatingLabelInputProps {
   type: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  label: string;
+  label: React.ReactNode;
   disabled?: boolean;
   className?: string;
   onFocus?: () => void;
@@ -87,6 +88,8 @@ export default function AccountPage() {
   const toggleSidebar = () => dispatch(toggle());
   const [isLoading, setIsLoading] = useState(true);
   const user = useAppSelector((state: { auth: { user: User | null } }) => state.auth.user);
+  const [shouldUpdateAvatar, setShouldUpdateAvatar] = useState(false);
+
 
   // States with safe initial values
   const [username, setUsername] = useState("");
@@ -236,7 +239,7 @@ export default function AccountPage() {
       });
     }
     // Avatar update
-    if (avatar && (avatar !== user?.avatar || avatarZoom !== user?.avatarZoom)) {
+    if (shouldUpdateAvatar && (avatar && (avatar !== user?.avatar || avatarZoom !== user?.avatarZoom))) {
       await fetch("/user/update-avatar", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -250,8 +253,6 @@ export default function AccountPage() {
       dispatch(fetchCurrentUser());
     }
   };
-
-  // Add loading state to your JSX
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -268,6 +269,15 @@ export default function AccountPage() {
     );
   }
 
+  const disabled=(
+    !!usernameError || username === user?.username ||
+    (currentPassword && (
+      !canEditPassword ||
+      (newPassword && !passwordValidation.isValid) ||
+      (newPassword !== confirmPassword)
+    ) ||
+    (shouldUpdateAvatar && !avatar))
+  )
   return (
     <div>
       <Navbar toggleSidebar={toggleSidebar} />
@@ -278,7 +288,11 @@ export default function AccountPage() {
           <form autoComplete="off">
           {/* Username */}
           <div className="mb-6">
-            <label className="block font-medium mb-2">Username</label>
+            <label className="block font-medium mb-2">Username
+            <Tooltip content="Leave this blank to keep your current username" direction="right">
+            <span className="cursor-help text-gray-500 text-lg">❓</span>
+            </Tooltip>
+            </label>
             <div className="text-sm text-gray-500 mb-1">
            Current: <span className="font-mono">{user?.username}</span>
             </div>
@@ -309,7 +323,15 @@ export default function AccountPage() {
           type={showCurrentPassword ? "text" : "password"}
           value={currentPassword}
           onChange={handleCurrentPasswordChange}
-          label="Current Password"
+          label={  <span className="flex items-center gap-1">
+            Current Password
+            <Tooltip 
+              content="Leave this blank or type in your current password to keep your current password"
+              direction="right"
+            >
+              <span className="cursor-help text-gray-500 text-sm">❓</span>
+            </Tooltip>
+          </span>}
           className={getInputStyles(getCurrentPasswordState())}
           autoComplete="new-password"
         />
@@ -426,6 +448,16 @@ export default function AccountPage() {
           {/* Avatar */}
           <div className="mb-6">
             <label className="block font-medium mb-2">Profile Picture</label>
+            <div className="flex items-center gap-2 mb-2">
+            <input
+              type="checkbox"
+              checked={shouldUpdateAvatar}
+              onChange={(e) => setShouldUpdateAvatar(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm">Change avatar</span>
+          </div>
+          {shouldUpdateAvatar && (
             <AvatarUploader
               onAvatarUpload={handleAvatarUpload}
               defaultAvatarUrl={avatarPreview}
@@ -433,16 +465,15 @@ export default function AccountPage() {
               initialZoom={avatarZoom}
               onZoomChange={setAvatarZoom}
             />
+          )}
           </div>
           {/* Save Button */}
           <button
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+             className={`w-full py-2 rounded transition ${
+              disabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
             onClick={handleSave}
-            disabled={
-              !!usernameError ||
-              username === user?.username ||
-              (canEditPassword && (!newPassword || newPassword !== confirmPassword))
-            }
+            disabled={disabled}     
           >
             Save Changes
           </button>

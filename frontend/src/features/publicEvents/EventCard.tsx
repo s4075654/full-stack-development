@@ -1,5 +1,11 @@
 import {FC, useEffect, useState} from "react";
 import {Link} from "react-router-dom";
+
+interface OrganizerDetails {
+    username: string;
+    avatar: string;
+    avatarZoom?: number;
+}
 type EventCardProps = {
     _id: string;
     eventName: string;
@@ -20,7 +26,7 @@ const EventCard: FC<EventCardProps> = ({
     joinedUsers = [],
     owned
 }) => {
-    const [owner, setOwner] = useState<{ username: string; avatar: string } | null>(null);
+    const [owner, setOwner] = useState<OrganizerDetails | null>(null);
     useEffect(() => {
         // Fetch owner information if organiserID is provided
         console.log("blabla")
@@ -34,7 +40,8 @@ const EventCard: FC<EventCardProps> = ({
                     const userData = await response.json();
                     setOwner({
                         username: userData.username,
-                        avatar: userData.avatar
+                        avatar: userData.avatar,
+                        avatarZoom: userData.avatarZoom || 1
                     });
                 }
             } catch (error) {
@@ -66,28 +73,29 @@ const EventCard: FC<EventCardProps> = ({
             />
             </div>
             <div className="p-4 space-y-1">
-                <div className="flex items-start gap-2">
+                <div className="flex flex-col items-start gap-2">
                     <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
                         {eventName}
                     </h3>
-                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        {joinedUsers.length} attendees
-                    </span>
                 </div>
                 <p className="text-xs text-gray-600">
                 <span className="inline-block mr-1">📍</span> {eventLocation}</p>
                 <p className="text-xs text-gray-500">
                 <span className="inline-block mr-1">🕒</span>{formatDate(eventTime)}</p>
-            </div>
-            <div>
-            {/* Owner information */}
-            {owner && (
-            <div className="flex items-center mt-3 pt-3 border-t border-gray-100">
+                <p className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        {joinedUsers.length} attendees
+                </p>
+                 {/* Owner information */}
+                {owner && (
+            <div className="flex items-center">
                 <div className="h-6 w-6 rounded-full bg-gray-200 overflow-hidden">
                     <img 
                         src={`user/image/${owner.avatar}`}
                         alt={owner.username}
                         className="h-full w-full object-cover"
+                        style={{
+                            transform: `scale(${owner.avatarZoom})`,
+                          }}
                     />
                 </div>
                 <span className="ml-2 text-xs text-gray-500">
@@ -95,8 +103,10 @@ const EventCard: FC<EventCardProps> = ({
                 </span>
             </div>
         )}
+            </div>
+            <div>           
             {owned && (
-            <span className="block text-center text-green-600 font-semibold mt-2">
+            <span className="block text-center text-green-600 font-semibold">
                 You own this item!
             </span>
                 )}

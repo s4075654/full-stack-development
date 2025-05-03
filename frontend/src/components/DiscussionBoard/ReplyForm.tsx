@@ -33,7 +33,7 @@ export default function ReplyForm({ parentId, eventId, onReplyComplete }: ReplyF
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex gap-2 p-2">
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}

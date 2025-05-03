@@ -62,7 +62,8 @@ g_coRouter.get("/", async (a_oRequest, a_oResponse) => {
                 user: {
                     _id: 1,
                     username: 1,
-                    avatar: 1
+                    avatar: 1,
+                    avatarZoom: 1
                 },
                 isOrganizer: 1
             }},
