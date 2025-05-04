@@ -140,7 +140,7 @@ export default function DiscussionBoard({
       )}
 
       {messages.length > 0 ? (
-        <CommentList canInteract={canInteract} />
+        <CommentList canInteract={canInteract} isOwner={isOwner} />
       ) : (
         <div className="flex flex-col items-center justify-center py-12 px-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
           <div className="text-4xl mb-4">💭</div>

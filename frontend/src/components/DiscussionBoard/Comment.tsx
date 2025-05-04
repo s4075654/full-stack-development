@@ -5,6 +5,7 @@ import { deleteMessage, updateMessage } from '../../redux/message/messageSlice';
 import ReplyForm from './ReplyForm';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Message, User } from '../../dataTypes/type';
+import { fetchMessages } from "../../redux/message/messageSlice";
 
 interface CommentProps {
   comment: Message;
@@ -12,6 +13,7 @@ interface CommentProps {
   activeReplyId: string | null;
   onReplyClick: (commentId: string | null) => void;
   canInteract: boolean;
+  isOwner: boolean;
 }
 
 export default function Comment({ 
@@ -19,21 +21,39 @@ export default function Comment({
   allMessages, 
   activeReplyId,
   onReplyClick,
-  canInteract 
+  canInteract,
+  isOwner 
 }: CommentProps) {
   const dispatch = useAppDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(comment.text);
   const currentUser = useAppSelector((state: { auth: { user: User | null } }) => state.auth.user);
 
-  const handleUpdate = async () => {
-    await dispatch(updateMessage({ messageId: comment._id, text }));
+  const handleUpdate = async () =>{
+  try {
+    await dispatch(updateMessage({ 
+      messageId: comment._id, 
+      text 
+    })).unwrap(); // Add unwrap() for proper error handling
+    
     setIsEditing(false);
-  };
+  } catch (error) {
+    console.error('Update failed:', error);
+    // Optional: Show error message to user
+  }
+};
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this comment?')) {
-      dispatch(deleteMessage(comment._id));
+      dispatch(deleteMessage(comment._id))
+        .unwrap()
+        .then(() => {
+          // Refetch messages to update the list after deletion
+          dispatch(fetchMessages(comment.eventId));
+        })
+        .catch(error => {
+          console.error('Deletion failed:', error);
+        });
     }
   };
 
@@ -47,8 +67,8 @@ export default function Comment({
   );
 
   return (
-    <div className="border-l-2 border-gray-100 pl-4">
-      <div className="flex items-start gap-3 group">
+    <div className="group border-l-2 border-gray-100 pl-4">
+      <div className="flex items-start gap-3">
       <div className="h-8 w-8 rounded-full overflow-hidden mr-2">
         <img 
           src={`/user/image/${comment.user?.avatar}`}
@@ -82,42 +102,7 @@ export default function Comment({
           )}
 
           <div className="flex items-center gap-4 mt-2">
-            {currentUser?._id === comment.senderId && canInteract && (
-              <>
-                {!isEditing ? (
-                  <button 
-                    onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600"
-                  >
-                    <PencilIcon className="w-4 h-4" />
-                    Edit
-                  </button>
-                ) : (
-                  <>
-                    <button 
-                      onClick={handleUpdate}
-                      className="text-sm text-green-600 hover:text-green-700"
-                    >
-                      Save
-                    </button>
-                    <button 
-                      onClick={() => setIsEditing(false)}
-                      className="text-sm text-gray-600 hover:text-gray-700"
-                    >
-                      Cancel
-                    </button>
-                  </>
-                )}
-                <button
-                  onClick={handleDelete}
-                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-600"
-                >
-                  <TrashIcon className="w-4 h-4" />
-                  Delete
-                </button>
-              </>
-            )}
-            {canInteract ? (
+          {canInteract ? (
               <button
                 onClick={handleReplyClick}
                 className="text-sm text-gray-600 hover:text-blue-600"
@@ -129,8 +114,46 @@ export default function Comment({
                 <span className="text-sm">Cannot reply (you are not accepted)</span>
               </div>
             )}
+            <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              {currentUser?._id === comment.senderId && canInteract && (
+                <>
+                  {!isEditing ? (
+                    <button 
+                      onClick={() => setIsEditing(true)}
+                      className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600"
+                    >
+                      <PencilIcon className="w-4 h-4" />
+                      Edit
+                    </button>
+                  ) : (
+                    <>
+                      <button 
+                        onClick={handleUpdate}
+                        className="text-sm text-green-600 hover:text-green-700"
+                      >
+                        Save
+                      </button>
+                      <button 
+                        onClick={() => setIsEditing(false)}
+                        className="text-sm text-gray-600 hover:text-gray-700"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
+                  {(currentUser?._id === comment.senderId || isOwner) && canInteract && (
+                    <button 
+                      onClick={handleDelete}
+                      className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-600"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                      Delete
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
-
           {activeReplyId === comment._id && canInteract && (
             <div className="mt-4 ml-4">
               <ReplyForm 
@@ -153,6 +176,7 @@ export default function Comment({
                 activeReplyId={activeReplyId}
                 onReplyClick={onReplyClick}
                 canInteract={canInteract}
+                isOwner={isOwner}
             />
           ))}
         </div>

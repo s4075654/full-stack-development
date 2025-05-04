@@ -49,7 +49,8 @@ g_coRouter.get("/", async (a_oRequest, a_oResponse) => {
             { $project: {
                 _id: 1,
                 text: 1,
-                eventId: { $toString: "$eventId" }, 
+                eventId: { $toString: "$eventId" },  
+                senderId: { $toString: "$senderId" },  
                 createdAt: 1,
                 updatedAt: 1,
                 parentMessageId: {
@@ -129,26 +130,36 @@ g_coRouter.put("/", g_coAuth, async (a_oRequest, a_oResponse) => {
         }
 
         const l_oMessageId = new ObjectId(messageId)
-        const l_coMessage = await g_coDb.collection("messages").findOne({ _id: l_oMessageId })
+        const l_coMessage = await g_coDb.collection("messages").findOneAndUpdate(
+            { _id: l_oMessageId },
+            { $set: { text, updatedAt: new Date() } },
+            { returnDocument: 'after' }
+        )
 
         if (!l_coMessage) return a_oResponse.status(g_codes("Not found")).json({ error: "Message not found" })
         if (!l_coMessage.senderId.equals(l_oUserId)) {
             return a_oResponse.status(g_codes("Unauthorized")).json({ error: "Not authorized" })
         }
 
-        const l_oUpdate = { 
-            $set: { 
-                text,
-                updatedAt: new Date() 
-            } 
+        const user = await g_coDb.collection("users").findOne({ _id: l_coMessage.senderId })
+        const event = await g_coDb.collection("events").findOne({ _id: l_coMessage.eventId })
+        const responseData = {
+            _id: l_coMessage._id.toString(),
+            text: l_coMessage.text,
+            senderId: l_coMessage.senderId.toString(),
+            eventId: l_coMessage.eventId.toString(),
+            parentMessageId: l_coMessage.parentMessageId?.toString(),
+            createdAt: l_coMessage.createdAt,
+            updatedAt: l_coMessage.updatedAt,
+            user: {
+                _id: user._id.toString(),
+                username: user.username,
+                avatar: user.avatar,
+                avatarZoom: user.avatarZoom
+            },
+            isOrganizer: event.organiserID.equals(l_coMessage.senderId)
         }
-
-        await g_coDb.collection("messages").updateOne(
-            { _id: l_oMessageId },
-            l_oUpdate
-        )
-
-        a_oResponse.sendStatus(g_codes("Success"))
+        a_oResponse.status(g_codes("Success")).json(responseData)
     } catch (a_oError) {
         a_oResponse.status(g_codes("Server error")).json({ error: a_oError.message })
     }
@@ -157,41 +168,63 @@ g_coRouter.put("/", g_coAuth, async (a_oRequest, a_oResponse) => {
 // Delete message
 g_coRouter.delete("/", g_coAuth, async (a_oRequest, a_oResponse) => {
     try {
-        const { messageId } = a_oRequest.body
-        const l_oUserId = a_oRequest.session["User ID"]
+        const { messageId } = a_oRequest.body;
+        const l_oUserId = a_oRequest.session["User ID"];
 
         if (!messageId || !ObjectId.isValid(messageId)) {
-            return a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid Message ID" })
+            return a_oResponse.status(g_codes("Invalid")).json({ error: "Invalid Message ID" });
         }
 
-        const l_oMessageId = new ObjectId(messageId)
-        const l_coMessage = await g_coDb.collection("messages").findOne({ _id: l_oMessageId })
+        const l_oMessageId = new ObjectId(messageId);
+        const l_coMessage = await g_coDb.collection("messages").findOne({ _id: l_oMessageId });
 
-        if (!l_coMessage) return a_oResponse.status(g_codes("Not found")).json({ error: "Message not found" })
+        if (!l_coMessage) return a_oResponse.status(g_codes("Not found")).json({ error: "Message not found" });
 
         const l_coEvent = await g_coDb.collection("events").findOne({ 
             _id: l_coMessage.eventId 
-        })
+        });
 
-        // Allow delete for sender or organizer
-        const l_bIsSender = l_coMessage.senderId.equals(l_oUserId)
-        const l_bIsOrganizer = l_coEvent?.organiserID.equals(l_oUserId)
+        // Authorization check
+        const l_bIsSender = l_coMessage.senderId.equals(l_oUserId);
+        const l_bIsOrganizer = l_coEvent?.organiserID.equals(l_oUserId);
 
         if (!l_bIsSender && !l_bIsOrganizer) {
-            return a_oResponse.status(g_codes("Unauthorized")).json({ error: "Not authorized" })
+            return a_oResponse.status(g_codes("Unauthorized")).json({ error: "Not authorized" });
         }
 
-        await g_coDb.collection("messages").deleteOne({ _id: l_oMessageId })
+        // Find all descendant messages (replies and nested replies)
+        let l_aMessagesToDelete = [l_oMessageId];
+        let l_aCurrentParentIds = [l_oMessageId];
+        let l_bFoundMore = true;
 
-        // Remove from event's discussion board
+        while (l_bFoundMore) {
+            const l_aChildMessages = await g_coDb.collection("messages")
+                .find({ parentMessageId: { $in: l_aCurrentParentIds } })
+                .toArray();
+
+            if (l_aChildMessages.length === 0) {
+                l_bFoundMore = false;
+            } else {
+                const l_aNewParentIds = l_aChildMessages.map(m => m._id);
+                l_aMessagesToDelete.push(...l_aNewParentIds);
+                l_aCurrentParentIds = l_aNewParentIds;
+            }
+        }
+
+        // Delete all messages in the list
+        await g_coDb.collection("messages").deleteMany({
+            _id: { $in: l_aMessagesToDelete }
+        });
+
+        // Remove all deleted message IDs from the event's discussionBoard
         await g_coDb.collection("events").updateOne(
             { _id: l_coMessage.eventId },
-            { $pull: { discussionBoard: l_oMessageId } }
-        )
+            { $pull: { discussionBoard: { $in: l_aMessagesToDelete } } }
+        );
 
-        a_oResponse.sendStatus(g_codes("Success"))
+        a_oResponse.sendStatus(g_codes("Success"));
     } catch (a_oError) {
-        a_oResponse.status(g_codes("Server error")).json({ error: a_oError.message })
+        a_oResponse.status(g_codes("Server error")).json({ error: a_oError.message });
     }
 })
 
