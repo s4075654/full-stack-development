@@ -3,7 +3,7 @@ import { useState } from "react";
 import Comment from "./Comment";
 
 interface CommentListProps {
-  canInteract: boolean; // Add this prop
+  canInteract: boolean;
   isOwner: boolean;
 }
 

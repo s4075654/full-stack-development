@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../components/Navigation/Navbar";
-import Sidebar from "../components/Navigation/Sidebar";
+import Navbar from "../components/navigation/Navbar";
+import Sidebar from "../components/navigation/Sidebar";
 import { useDispatch } from "react-redux";
 import {fetchSingleEvent,updateEvent} from "../redux/event/singleEventSlice.ts";
 import { AppDispatch } from "../redux/store.ts";
@@ -10,9 +10,8 @@ import { toggle } from "../redux/components/sidebarSlice.ts";
 import EditEventModal from "../components/EditEventModal";
 import { fetchHandler } from "../utils/fetchHandler";
 import { fetchCurrentUser } from "../redux/auth/authSlice";
-import { updateDiscussionDescription } from "../redux/message/messageSlice";
+import { updateDiscussionDescription, fetchMessages } from "../redux/message/messageSlice";
 import DiscussionBoard from '../components/DiscussionBoard/DiscussionBoard';
-import { fetchMessages } from "../redux/message/messageSlice";
 import EventDetailsCard from "../components/EventDetailsCard";
 import EventButtonControl from '../components/EventButtonControl';
 
@@ -176,6 +175,30 @@ function EventDetail() {
     if (response.ok) setRefresh((prev) => prev + 1);
     else alert("Failure.");
   };
+
+  const handleSetReminder = async (message: string, minutesBefore: number) => {
+    try {
+      const response = await fetchHandler(`/notification/reminder`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          eventId: currentEvent._id,
+          message,
+          minutesBefore
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to set reminder');
+      }      
+      const data = await response.json();
+      console.log("Reminder set:", data);
+      
+    } catch (error) {
+      console.error("Error setting reminder:", error);
+    }
+  };
   const toggleSidebar = () => dispatch(toggle())
 
   return (
@@ -205,7 +228,8 @@ function EventDetail() {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                  <div className="lg:col-span-3">
                   <EventDetailsCard 
                     eventName={currentEvent.eventName}
                     eventLocation={currentEvent.eventLocation}
@@ -221,8 +245,9 @@ function EventDetail() {
                     currentDescription={currentEvent.discussionDescription}
                     messages={messages}
                     onUpdateDescription={handleDescriptionUpdate}
-                  />
-                  <div className="lg:col-span-1">
+                  /> 
+                  </div>
+                  <div className="lg:col-span-2">
                     <EventButtonControl
                       isPublic={currentEvent.public}
                       isOwner={isOwner}
@@ -233,6 +258,8 @@ function EventDetail() {
                       onInvite={handleInvite}
                       onRequestToJoin={handleRequestToJoin}
                       onRequestUpdate={handleRequestUpdate}
+                      eventTime={currentEvent.eventTime}
+                      onSetReminder={handleSetReminder}
                     />
                   </div>
                 </div>

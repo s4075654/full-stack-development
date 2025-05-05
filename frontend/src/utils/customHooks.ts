@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import {fetchHandler} from "../utils/fetchHandler.ts";
+
 
 //usePrevious: TRACK PREVIOUS STATE
 export const usePrevious = function <T>(value: T): T | undefined {
@@ -30,7 +32,7 @@ export const useFetch = function <T>(url: string) {
       const fetchData = async () => {
         setLoading(true);
         try {
-          const response = await fetch(url);
+          const response = await fetchHandler(url);
           const result = await response.json();
           setData(result);
         } catch (err) {

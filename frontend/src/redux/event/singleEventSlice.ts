@@ -58,7 +58,7 @@ export const updateEvent = createAsyncThunk<
         credentials: 'include',
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({  ...updateData, images: imageId, eventTime: (new Date(updateData.eventTime)).toISOString() }),
+        body: JSON.stringify({  ...updateData, images: imageId, eventTime: new Date(updateData.eventTime).toISOString() }),
       });
       if (!res.ok) throw new Error('Event update failed');
        // Delete old image ONLY after successful update

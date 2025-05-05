@@ -1,4 +1,4 @@
-import LoginCard from "../features/login/LoginCard.tsx";
+import LoginCard from "../components/login/LoginCard.tsx";
 import {Link} from "react-router-dom";
 
 export default function LoginPage() {

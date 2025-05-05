@@ -103,7 +103,7 @@ export default function RegisterPage() {
             password,
             email,  // Match backend schema
             avatar: formData.avatar,
-            avatarZoom // Add this
+            avatarZoom 
           }),
         });
         console.log("Response:", response); // Log response

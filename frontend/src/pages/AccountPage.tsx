@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import Navbar from "../components/Navigation/Navbar";
-import Sidebar from "../components/Navigation/Sidebar";
+import Navbar from "../components/navigation/Navbar";
+import Sidebar from "../components/navigation/Sidebar";
 import { useAppDispatch, useAppSelector } from "../hook/hooks";
 import { toggle } from "../redux/components/sidebarSlice";
 import AvatarUploader from "../components/AvatarUploader";
@@ -90,8 +90,6 @@ export default function AccountPage() {
   const user = useAppSelector((state: { auth: { user: User | null } }) => state.auth.user);
   const [shouldUpdateAvatar, setShouldUpdateAvatar] = useState(false);
 
-
-  // States with safe initial values
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [avatar, setAvatar] = useState<string>("000000000000000000000000");
@@ -210,7 +208,7 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (user?.username) {
-      setUsername(""); // Reset to empty string instead of current username
+      setUsername(""); 
     }
   }, [user]);
 

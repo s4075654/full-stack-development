@@ -3,7 +3,7 @@ export default {
 		$jsonSchema: {
 			bsonType: "object",
 			title: "The notification related to an event.",
-			required: ["reminder", "eventId"],
+			required: ["reminder", "eventId", "sendTime", "sent"],
 			properties: {
 				_id: {},
 				text: {
@@ -15,13 +15,17 @@ export default {
 					title: "Whether or the notification is a reminder." //There are two types of notifications: reminders and normals. it is a reminder when the host of the event sends it (click the reminder button )to all participants. it is a normal notification when other stuffs like update event,.
 				},
 				sendTime: {
-					bsonType: "timestamp",
+					bsonType: "date",
 					title: "The time at which the notification is sent."
 				},
 				eventId: {
 					bsonType: "objectId",
 					title: "The event."
-				}
+				},
+				sent: {
+					bsonType: "bool",
+					title: "Whether the notification has been sent."
+				  }
 			},
 			additionalProperties: false
 		}

@@ -1,4 +1,3 @@
-// frontend/src/components/DiscussionBoard/Comment.tsx
 import { useState, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hook/hooks';
 import { deleteMessage, updateMessage } from '../../redux/message/messageSlice';
@@ -34,12 +33,11 @@ export default function Comment({
     await dispatch(updateMessage({ 
       messageId: comment._id, 
       text 
-    })).unwrap(); // Add unwrap() for proper error handling
+    })).unwrap(); 
     
     setIsEditing(false);
   } catch (error) {
     console.error('Update failed:', error);
-    // Optional: Show error message to user
   }
 };
 

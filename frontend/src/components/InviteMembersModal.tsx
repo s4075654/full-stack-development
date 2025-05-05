@@ -1,4 +1,3 @@
-// components/InviteMembersModal.tsx
 import { useState, useEffect, useRef } from 'react';
 import { User } from '../dataTypes/type.ts';
 import {fetchHandler} from "../utils/fetchHandler.ts";

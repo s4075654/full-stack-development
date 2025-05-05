@@ -6,8 +6,10 @@ import singleEventReducer from "./event/singleEventSlice.ts";
 import ownedEventsReducer from "./event/ownedEventsSlice.ts";
 import joinedEventReducer from "./event/joinedEventSlice.ts";
 import isAdminReducer from "./auth/isAdminSlice.ts";
-import globalSettingReducer from "./admin/globalSettingSlice.ts";
+import globalSettingReducer from "./admin/globalSettingSlice.ts"
 import messageReducer from './message/messageSlice';
+import eventsReducer from "./event/eventsSlice.ts";
+import usersReducer from "./user/usersSlice.ts"
 
 export const store = configureStore({
     reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
         ownedEvents: ownedEventsReducer,
         joinedEvents: joinedEventReducer,
         isAdmin: isAdminReducer,
+        events: eventsReducer,
+        users: usersReducer,
         globalSetting: globalSettingReducer,
         messages: messageReducer,
     }

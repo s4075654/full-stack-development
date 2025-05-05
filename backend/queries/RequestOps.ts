@@ -10,7 +10,6 @@ const g_coUsers = g_coDb.collection("users")
 
 import { ObjectId } from "mongodb"
 import g_codes from "../server/statuses.ts"
-// HTTP methods for the request operations in this Express router
 g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
     console.log("USER ID", a_oRequest.session["User ID"])
     const l_coSession = globalThis.g_oConnection.startSession()

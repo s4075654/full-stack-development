@@ -14,14 +14,12 @@ const g_coRouter = Router()
 import g_coBcrypt from "bcrypt"
 
 g_coRouter.use("/in", async function(a_oRequest, a_oResponse) {
-	// Get credentials from headers
 	const username = a_oRequest.headers.m_susername
 	const password = a_oRequest.headers.m_spassword
 	// Validate presence of credentials
 	if (!username || !password) return a_oResponse.sendStatus(g_codes("Unauthorised"))
 
 	try {
-		// Find user by username from headers
 		const user = await g_coUsers.findOne(
 			{ username: username },
 			{ projection: { password: 1 } }
@@ -29,7 +27,7 @@ g_coRouter.use("/in", async function(a_oRequest, a_oResponse) {
 		
 		if (!user) return a_oResponse.sendStatus(g_codes("Not found"))
 
-		// Compare password from headers
+		// Compare password
 		g_coBcrypt.compare(password, user.password, async function(error, success) {
 			if (error) return a_oResponse.status(g_codes("Server error")).json(error)
 			

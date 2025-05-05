@@ -1,4 +1,3 @@
-// frontend/src/redux/message/messageSlice.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchHandler } from "../../utils/fetchHandler";
 import type { RootState } from "../store";
@@ -95,11 +94,10 @@ export const updateDiscussionDescription = createAsyncThunk(
       credentials: 'include',
       body: JSON.stringify({ description }),
     });
-    // Don't try to parse the response as JSON since it's just a status code
     if (!res.ok) {
       throw new Error('Failed to update description');
     }
-    return description; // Return the description instead of parsing response
+    return description; 
   }
 );
 

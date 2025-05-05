@@ -11,6 +11,8 @@ import RSVPResponsePage from "../pages/RSVPResponsePage.tsx";
 import AdminDashboardPage from "../pages/AdminDashboardPage.tsx";
 import {adminLoader} from "../loader/adminLoader.ts";
 import AccountPage from "../pages/AccountPage.tsx";
+import AllUsersDashboardPage from "../pages/AllUserDashboardPage.tsx";
+import AllEventDashboardPage from "../pages/AllEventDashboardPage.tsx";
 
 
 export const router = createBrowserRouter([
@@ -49,6 +51,16 @@ export const router = createBrowserRouter([
     {
         path: "admin-dashboard",
         element: <AdminDashboardPage />,
+        loader: adminLoader
+    },
+    {
+        path: "/admin-dashboard/all-user-dashboard",
+        element: <AllUsersDashboardPage />,
+        loader: adminLoader
+    },
+    {
+        path: "/admin-dashboard/all-event-dashboard",
+        element: <AllEventDashboardPage />,
         loader: adminLoader
     },
     {

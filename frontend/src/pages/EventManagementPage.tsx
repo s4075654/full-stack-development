@@ -4,9 +4,9 @@ import {AppDispatch} from "../redux/store.ts";
 import {useEffect} from "react";
 import {fetchOwnedEvents} from "../redux/event/ownedEventsSlice.ts";
 import {toggle} from "../redux/components/sidebarSlice.ts";
-import Sidebar from "../components/Navigation/Sidebar.tsx";
-import Navbar from "../components/Navigation/Navbar.tsx";
-import EventManagementCard from "../features/eventManagement/EventManagenentCard.tsx";
+import Sidebar from "../components/navigation/Sidebar.tsx";
+import Navbar from "../components/navigation/Navbar.tsx";
+import EventManagementCard from "../components/card/EventManagenentCard.tsx";
 import {fetchJoinedEvents} from "../redux/event/joinedEventSlice.ts";
 
 export default function EventManagementPage() {

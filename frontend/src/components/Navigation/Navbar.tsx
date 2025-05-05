@@ -1,11 +1,54 @@
 import React from 'react';
 import { MagnifyingGlassIcon, BellIcon, PlusIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { fetchHandler } from '../../utils/fetchHandler';
+import {Notification} from "../../dataTypes/type.ts";
+
 
 
 interface NavbarProps {
   toggleSidebar: () => void;
 }
+
+const NotificationsDropdown = () => {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      const res = await fetchHandler('/notification/user', { credentials: 'include' });
+      if (res.ok) setNotifications(await res.json());
+    };
+    loadNotifications();
+  }, []);
+      return (
+        <div className="relative">
+          <button onClick={() => setIsOpen(!isOpen)} className="relative">
+            <BellIcon className="h-6 w-6" />
+            {notifications.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                {notifications.length}
+              </span>
+            )}
+          </button>
+          {isOpen && (
+            <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg p-4">
+              <h4 className="font-bold mb-2">Notifications</h4>
+              {notifications.map(notification => (
+                <div key={notification._id} className="p-2 border-b last:border-0">
+                  <p className="text-sm">{notification.text}</p>
+                  <time className="text-xs text-gray-500">
+                    {new Date(notification.sendTime).toLocaleString()}
+                  </time>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    };
+
 
 // adding a trigger to navigate to the create event page
 
@@ -53,10 +96,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
           <PlusIcon className="h-5 w-5" />
           <span>Create</span>
         </button>
-        {/*  Adding icon or user logo */}
-        <button className="text-gray-800 hover:text-gray-600 transition-colors">
-          <BellIcon className="h-6 w-6" />
-        </button>
+        <NotificationsDropdown />
       </div>
     </nav>
   );

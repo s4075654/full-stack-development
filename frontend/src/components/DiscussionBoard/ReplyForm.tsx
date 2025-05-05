@@ -1,4 +1,3 @@
-// frontend/src/components/DiscussionBoard/ReplyForm.tsx
 import { useAppDispatch } from '../../hook/hooks';
 import { createMessage, fetchMessages } from '../../redux/message/messageSlice';
 import { useState } from 'react';
