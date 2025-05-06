@@ -1,6 +1,8 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 
-export const login = createAsyncThunk(
+export const login = createAsyncThunk<number,                                // return type (success)
+    { username: string; password: string }, // argument type
+    { rejectValue: number }>(
     "auth/login",
     async ({username, password}: {username: string; password: string}, thunkAPI) => {
             const response = await fetch("/log/in", {
@@ -12,11 +14,10 @@ export const login = createAsyncThunk(
                 credentials: "include",
             })
             if (response.status !== 200) {
-		return thunkAPI.rejectWithValue(response.status)
-                throw new Error(response.statusText);
+		        return thunkAPI.rejectWithValue(response.status)
             }
 
-            return true
+            return response.status
     }
 )
 export const fetchCurrentUser = createAsyncThunk(
@@ -27,6 +28,7 @@ export const fetchCurrentUser = createAsyncThunk(
       return await res.json();
     }
   )
+
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
@@ -46,9 +48,8 @@ const authSlice = createSlice({
                 state.error = null
             })
             .addCase(login.rejected, (state, m_oAction) => {
-		const l_coStatus = (m_oAction.error as any)?.status ?? 400
-                state.error = l_coStatus
-		state.isAuthenticated = false
+                state.error = m_oAction.payload ?? 400
+		        state.isAuthenticated = false
             })
             .addCase(fetchCurrentUser.fulfilled, (state, action) => {
                 state.user = action.payload;
