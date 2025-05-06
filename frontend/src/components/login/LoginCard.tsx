@@ -5,30 +5,32 @@ import {AppDispatch} from "../../redux/store.ts";
 import {login} from "../../redux/auth/authSlice.ts";
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
-import {useAppSelector} from "../../hook/hooks.ts";
-
-
 export default function LoginCard() {
     const [show, setShow] = useState<boolean>(false);
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [message, showMessage] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-
-    const error = useAppSelector(state => state.auth.error)
-
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
 
         const resultAction = await dispatch(login({username, password}))
         if (login.fulfilled.match(resultAction)) {
             navigate("/public-events");
-        } else if (error === 404) {
-            alert("There is no such user in the database.")
-        } else if (error === 401) {
-	    alert("Invalid password.")
-	} else alert(error)
+        } else if (login.rejected.match(resultAction)) {
+            const errorCode = resultAction.payload as number;
+
+            if (errorCode === 404) {
+                setErrorMessage("There is no such user in the database.")
+            } else if (errorCode === 401) {
+                setErrorMessage("Invalid password.");
+            } else {
+                setErrorMessage("There has been an error");
+            }
+        }
     }
 
     return (
@@ -42,7 +44,7 @@ export default function LoginCard() {
                     <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
                         Username
                     </label>
-                    
+
                     <input
                         type="text"
                         id="username"
@@ -66,17 +68,22 @@ export default function LoginCard() {
                         className="w-full pr-10 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                      <button type="button" className="absolute top-1/2 right-3 -translate-y-1/2 transform " onClick={() => {setShow(prev => !prev)}}>
-            {show ? (
-              <EyeSlashIcon className="h-5 w-5 text-gray-500" />
-            ) : (
-              <EyeIcon className="h-5 w-5 text-gray-500" />
-            )}
-          </button>
+                        {show ? (
+                          <EyeSlashIcon className="h-5 w-5 text-gray-500" />
+                        ) : (
+                          <EyeIcon className="h-5 w-5 text-gray-500" />
+                        )}
+                    </button>
                 </div>
+                    {message && (
+                        <h1 className="mt-4 text-xl font-bold text-red-600 bg-red-100 border border-red-400 rounded-xl p-4 shadow-md text-center">
+                            {errorMessage}
+                        </h1>
+                    )}
                 </div>
                 {/*Login button*/}
                 <div className="mt-10">
-                    <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition duration-200">
+                    <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition duration-200" onClick={() => showMessage(true)}>
                         Sign in
                     </button>
                 </div>
