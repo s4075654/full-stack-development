@@ -22,8 +22,6 @@ export const store = configureStore({
         events: eventsReducer,
         users: usersReducer,
         isAdmin: isAdminReducer,
-        events: eventsReducer,
-        users: usersReducer,
         globalSetting: globalSettingReducer,
         messages: messageReducer,
     }
