@@ -19,6 +19,8 @@ export const store = configureStore({
         singleEvent: singleEventReducer,
         ownedEvents: ownedEventsReducer,
         joinedEvents: joinedEventReducer,
+        events: eventsReducer,
+        users: usersReducer,
         isAdmin: isAdminReducer,
         events: eventsReducer,
         users: usersReducer,

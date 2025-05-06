@@ -6,7 +6,6 @@ import { fetchHandler } from '../../utils/fetchHandler';
 import {Notification} from "../../dataTypes/type.ts";
 
 
-
 interface NavbarProps {
   toggleSidebar: () => void;
 }
@@ -113,7 +112,6 @@ const NotificationsDropdown = () => {
         </div>
       );
     };
-
 
 // adding a trigger to navigate to the create event page
 

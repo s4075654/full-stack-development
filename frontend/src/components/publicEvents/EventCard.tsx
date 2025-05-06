@@ -6,6 +6,7 @@ interface OrganizerDetails {
     avatar: string;
     avatarZoom?: number;
 }
+
 type EventCardProps = {
     _id: string;
     eventName: string;

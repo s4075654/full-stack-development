@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Navbar from "../components/navigation/Navbar";
 import Sidebar from "../components/navigation/Sidebar";
 import { useDispatch } from "react-redux";
-import {fetchSingleEvent,updateEvent} from "../redux/event/singleEventSlice.ts";
+import { fetchSingleEvent, updateEvent } from "../redux/event/singleEventSlice.ts";
 import { AppDispatch } from "../redux/store.ts";
 import { useAppSelector } from "../hook/hooks.ts";
 import { toggle } from "../redux/components/sidebarSlice.ts";

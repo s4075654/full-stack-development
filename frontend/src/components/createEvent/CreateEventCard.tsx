@@ -12,7 +12,8 @@ export default function CreateEventCard() {
     const [eventTime, setEventTime] = useState<Date>(new Date());
     const [eventType, setEventType] = useState<boolean>(true);
     const [image, setImage] = useState<File | null>(null);
-    const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null); // null is hasn't submitted yet
+    const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null); // null = hasn't submitted yet
+
 
     const dispatch = useAppDispatch();
     const settings = useAppSelector(state => state.globalSetting.settings);
@@ -48,6 +49,7 @@ export default function CreateEventCard() {
 
     // Compare the event count with the event limit
     // In mongosh you can use the following command to bypass the event limit:
+
     //db.settings.insertOne({  _id: "global_settings",  eventLimit: 100,  invitationLimit: 2})
     const isButtonDisabled = userEventCount >= eventLimit;
 
