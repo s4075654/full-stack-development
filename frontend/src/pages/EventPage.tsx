@@ -131,7 +131,6 @@ function EventDetail() {
     newImageFile?: File;
   }) => {
     await dispatch(updateEvent({ id: currentEvent._id, ...values }));
-    console.log("DanaBook");
     closeEdit();
   };
   const handleInvite = async (userIds: string[]) => {
@@ -201,6 +200,21 @@ function EventDetail() {
   };
   const toggleSidebar = () => dispatch(toggle())
 
+  const getStatusMessage = () => {
+    if (currentEvent.public) {
+      if (isOwner) return null;
+      if (l_coRequest?.state === "Unanswered") return "Your request to join is pending approval";
+      if (l_coRequest?.state === "Rejected") return "Your request to join has been rejected";
+      if (l_coRequest?.state === "Accepted") return "Congrate you are accepted to this event, you can now comment and wait for incomming updates ";
+    } else {
+      if (invitation?.status === "Pending") return "Invitation is pending your response";
+      if (invitation?.status === "Declined") return "You've declined the invitation";
+    }
+    return null;
+  };
+  
+  const statusMessage = getStatusMessage();
+
   return (
     <>
       <div className="flex">
@@ -237,6 +251,7 @@ function EventDetail() {
                     eventTime={currentEvent.eventTime}
                     images={currentEvent.images}
                     organiserID={currentEvent.organiserID}
+                    statusMessage={statusMessage}
                   />
                   <DiscussionBoard 
                     eventId={currentEvent._id}

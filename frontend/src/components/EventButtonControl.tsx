@@ -54,10 +54,10 @@ export default function EventButtonControl({
             >
               Set Reminder
             </button>
-            {pendingRequests.length > 0 && (
+            {pendingRequests.length >= 0 && (
             <button
               onClick={() => setShowRequestsModal(true)}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full transition-colors mt-4"
             >
               Incoming Requests ({pendingRequests.length})
             </button>
@@ -75,39 +75,8 @@ export default function EventButtonControl({
             onRequestUpdate={onRequestUpdate}
           />
             </>
-            <ul>
-              {requests.map((request) => (
-                <li key={request._id}>
-                  <p>{request["Sender username"]}</p>
-                  <p>{request.state}</p>
-                  {request.state === "Unanswered" && (
-                    <>
-                      <button
-                        onClick={() => onRequestUpdate(request._id, "Accepted")}
-                      >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => onRequestUpdate(request._id, "Rejected")}
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
           </div>
-        ) : request ? (
-          request.state === "Accepted" ? (
-            <button>Discussion board</button>
-          ) : request.state === "Unanswered" ? (
-            <p>Request not answered</p>
-          ) : request.state === "Rejected" ? (
-            <p>Request rejected</p>
-          ) : (
-            <p>Invalid request state</p>
-          )
+        ) : request ? (null
         ) : (
           <button
             onClick={onRequestToJoin}
