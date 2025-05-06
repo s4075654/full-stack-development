@@ -8,7 +8,18 @@ function App() {
       if (typeof window !== 'undefined' && 'Worker' in window) {
         const worker = new Worker('/notificationWorker.js');
         worker.postMessage({ command: 'start' });
-        return () => worker.postMessage({ command: 'stop' });
+
+        const handleMessage = () => {
+          console.log('Worker triggered update');
+          window.dispatchEvent(new Event('notifications-update'));
+        };
+    
+        worker.addEventListener('message', handleMessage);
+
+        return () => {
+          worker.removeEventListener('message', handleMessage);
+          worker.postMessage({ command: 'stop' });
+        };
       }
     }, []);
   

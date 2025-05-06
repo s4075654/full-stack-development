@@ -10,19 +10,19 @@ import g_coExpress from "express"
 // Create reminder
 g_coRouter.post("/reminder", g_coExpress.json(), async (a_oRequest, a_oResponse) => {
   try {
-    const { eventId, message, minutesBefore } = a_oRequest.body;
+    const { eventId, message, minutesBefore } = a_oRequest.body
     console.log(a_oRequest.body)
-    const userId = a_oRequest.session["User ID"];
+    const userId = a_oRequest.session["User ID"]
 
     // Validate event ownership
     const event = await g_coDb.collection("events").findOne({
       _id: new ObjectId(eventId),
       organiserID: new ObjectId(userId)
-    });
+    })
 
-    if (!event) return a_oResponse.status(g_codes("Unauthorized")).json({ error: "Not authorized" });
+    if (!event) return a_oResponse.status(g_codes("Unauthorized")).json({ error: "Not authorized" })
 
-    const sendTime = new Date(event.eventTime.getTime() - minutesBefore * 60000);
+    const sendTime = new Date(event.eventTime.getTime() - minutesBefore * 60000)
 
     const notification = await g_coDb.collection("notifications").insertOne({
       text: message,
@@ -30,45 +30,44 @@ g_coRouter.post("/reminder", g_coExpress.json(), async (a_oRequest, a_oResponse)
       sendTime,
       eventId: new ObjectId(eventId),
       sent: false
-    });
+    })
 
     // Link notification to event
     await g_coDb.collection("events").updateOne(
       { _id: new ObjectId(eventId) },
       { $push: { notifications: notification.insertedId } }
-    );
+    )
 
-    a_oResponse.status(g_codes("Success")).json(notification.insertedId);
+    a_oResponse.status(g_codes("Success")).json(notification.insertedId)
   } catch (error) {
-    console.log(console.log(error.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied[0].details))
-    a_oResponse.status(g_codes("Server error")).json({ error: error.message });
+    a_oResponse.status(g_codes("Server error")).json({ error: error.message })
   }
-});
+})
 
 g_coRouter.post("/process", async (a_oRequest, a_oResponse) => {
     try {
-      const now = new Date();
+      const now = new Date()
       const pendingNotifications = await g_coDb.collection("notifications")
         .find({ 
           sent: false,
           sendTime: { $lte: now }
-        }).toArray();
+        }).toArray()
   
       for (const notification of pendingNotifications) {
         const event = await g_coDb.collection("events")
-          .findOne({ _id: notification.eventId });
+          .findOne({ _id: notification.eventId })
   
         // Get recipients
-        let userIds = [];
+        let userIds = []
         if (event.public) {
-          userIds = event.joinedUsers;
+          userIds = event.joinedUsers
         } else {
           const invitations = await g_coDb.collection("invitations")
             .find({ 
               eventId: event._id,
               state: "Accepted"
-            }).toArray();
-          userIds = invitations.map(i => i.receiverId);
+            }).toArray()
+          userIds = invitations.map(i => i.receiverId)
         }
   
         // Add to user notifications
@@ -77,35 +76,57 @@ g_coRouter.post("/process", async (a_oRequest, a_oResponse) => {
             { _id: userId },
             { $push: { notifications: notification._id } }
           )
-        ));
+        ))
   
         // Mark as sent
         await g_coDb.collection("notifications").updateOne(
           { _id: notification._id },
           { $set: { sent: true } }
-        );
+        )
       }
   
-      a_oResponse.sendStatus(g_codes("Success"));
+      a_oResponse.sendStatus(g_codes("Success"))
     } catch (error) {
-      a_oResponse.status(g_codes("Server error")).json({ error: error.message });
+      a_oResponse.status(g_codes("Server error")).json({ error: error.message })
     }
-  });
+  })
 
 // Get user notifications
 g_coRouter.get("/user", async (a_oRequest, a_oResponse) => {
   try {
-    const userId = new ObjectId(a_oRequest.session["User ID"]);
-    const user = await g_coDb.collection("users").findOne({ _id: userId });
+    const userId = new ObjectId(a_oRequest.session["User ID"])
+    const user = await g_coDb.collection("users").findOne({ _id: userId })
     
     const notifications = await g_coDb.collection("notifications").find({
       _id: { $in: user?.notifications || [] }
-    }).toArray();
+    }).toArray()
 
-    a_oResponse.status(g_codes("Success")).json(notifications);
+    a_oResponse.status(g_codes("Success")).json(notifications)
   } catch (error) {
-    a_oResponse.status(g_codes("Server error")).json({ error: error.message });
+    a_oResponse.status(g_codes("Server error")).json({ error: error.message })
   }
-});
+})
 
-export default g_coRouter;
+g_coRouter.delete("/:id", async (a_oRequest, a_oResponse) => {
+  try {
+    const userId = new ObjectId(a_oRequest.session["User ID"])
+    const notificationId = new ObjectId(a_oRequest.params.id)
+
+    // Remove from user's notifications array
+    await g_coDb.collection("users").updateOne(
+      { _id: userId },
+      { $pull: { notifications: notificationId } }
+    )
+
+    // Delete the notification document
+    await g_coDb.collection("notifications").deleteOne({
+      _id: notificationId
+    })
+
+    a_oResponse.sendStatus(g_codes("Success"))
+  } catch (error) {
+    a_oResponse.status(g_codes("Server error")).json({ error: error.message })
+  }
+})
+
+export default g_coRouter

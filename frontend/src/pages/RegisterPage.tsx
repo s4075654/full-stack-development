@@ -89,7 +89,6 @@ export default function RegisterPage() {
         }
       }
       const username = `${Name}`.trim();
-      console.log("SSET")
       console.log("Submitting:", { username, email }); // Log request data
       
       try {

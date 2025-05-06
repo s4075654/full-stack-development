@@ -261,7 +261,7 @@ g_coRouter.put("/:id", g_coExpress.json(), async function(a_oRequest, a_oRespons
 		 const updatedEvent = result;
         
 		 // Create notification
-		 const notificationText = `Event details for ${updatedEvent.eventName} have been updated`;
+		 const notificationText = `Event details for this event have been updated`;
 		 const notification = await g_coDb.collection("notifications").insertOne({
 			 text: notificationText,
 			 reminder: false,

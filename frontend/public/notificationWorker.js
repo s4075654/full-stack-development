@@ -9,7 +9,8 @@ function startProcessing() {
         })
         .then(response => {
             if (response.ok) {
-                self.postMessage({ status: 'processed' });
+                // Trigger UI update
+                self.postMessage('update');
             }
         })
         .catch(error => {

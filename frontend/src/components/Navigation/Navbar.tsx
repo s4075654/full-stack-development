@@ -1,7 +1,7 @@
 import React from 'react';
 import { MagnifyingGlassIcon, BellIcon, PlusIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { fetchHandler } from '../../utils/fetchHandler';
 import {Notification} from "../../dataTypes/type.ts";
 
@@ -14,16 +14,60 @@ interface NavbarProps {
 const NotificationsDropdown = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+   // Click outside detection
+   useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
 
   useEffect(() => {
     const loadNotifications = async () => {
+      console.log('Fetching notifications...');
       const res = await fetchHandler('/notification/user', { credentials: 'include' });
-      if (res.ok) setNotifications(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        console.log('Notifications fetched:', data);
+        setNotifications(data);
+      }
     };
+    const handleUpdate = () => {
+      console.log('Received update event'); 
+      loadNotifications();
+    };
+    window.addEventListener('notifications-update', handleUpdate);
+
     loadNotifications();
+    return () => {
+      window.removeEventListener('notifications-update', handleUpdate);
+    };
   }, []);
+
+  const handleDeleteNotification = async (notificationId: string) => {
+    try {
+      const res = await fetchHandler(`/notification/${notificationId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (res.ok) {
+        // Refresh notifications after deletion
+        const updated = notifications.filter(n => n._id !== notificationId);
+        setNotifications(updated);
+      }
+    } catch (error) {
+      console.error('Failed to delete notification:', error);
+    }
+  };
+
       return (
-        <div className="relative">
+        <div className="relative" ref={containerRef}>
           <button onClick={() => setIsOpen(!isOpen)} className="relative">
             <BellIcon className="h-6 w-6" />
             {notifications.length > 0 && (
@@ -37,12 +81,33 @@ const NotificationsDropdown = () => {
               <h4 className="font-bold mb-2">Notifications</h4>
               {notifications.map(notification => (
                 <div key={notification._id} className="p-2 border-b last:border-0">
-                  <p className="text-sm">{notification.text}</p>
+                    <div className="flex justify-between items-start">
+                <a 
+                  href={`/event-detail/${notification.eventId}`}
+                  className="text-sm hover:underline flex-1"
+                >
+                  {notification.text}
+                </a>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteNotification(notification._id);
+                  }}
+                  className="transition-opacity text-lg text-gray-700 hover:text-blue-600 ml-2"
+                >
+                  OK
+                </button>
+              </div>
                   <time className="text-xs text-gray-500">
                     {new Date(notification.sendTime).toLocaleString()}
                   </time>
                 </div>
               ))}
+              {notifications.length === 0 && (
+            <p className="text-sm text-gray-500 text-center py-2">
+              No notifications
+            </p>
+          )}
             </div>
           )}
         </div>

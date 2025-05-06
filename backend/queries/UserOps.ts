@@ -26,7 +26,6 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
   email: 'fallsgravity437@gmail.com' 
 }*/
 	const { username, password, email, avatar, avatarZoom } = a_oRequest.body
-	console.log(parseFloat(avatarZoom))
 //console.log(a_oRequest.body)
 	// Validate required fields Correct
 	if (!username || !password || !email || !avatar) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing required fields" })

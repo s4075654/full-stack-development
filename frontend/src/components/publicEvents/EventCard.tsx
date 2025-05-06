@@ -29,7 +29,6 @@ const EventCard: FC<EventCardProps> = ({
     const [owner, setOwner] = useState<OrganizerDetails | null>(null);
     useEffect(() => {
         // Fetch owner information if organiserID is provided
-        console.log("blabla")
         console.log(organiserID)
         const fetchOwner = async () => {
             if (!organiserID) return;
