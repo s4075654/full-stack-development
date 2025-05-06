@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from "../components/navigation/Navbar";
 import Sidebar from "../components/navigation/Sidebar";
 import { useDispatch } from "react-redux";
