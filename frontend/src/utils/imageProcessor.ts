@@ -8,11 +8,11 @@ export const cropToCircle = (imageSrc: string, scale: number): Promise<Blob> => 
         canvas.width = 256;
         canvas.height = 256;
         
-        // Calculate scaled dimensions
+        //dimensions
         const scaledWidth = img.width * scale;
         const scaledHeight = img.height * scale;
         
-        // Draw image centered
+        // Draw image
         ctx.drawImage(
           img,
           (canvas.width - scaledWidth) / 2,
@@ -21,7 +21,7 @@ export const cropToCircle = (imageSrc: string, scale: number): Promise<Blob> => 
           scaledHeight
         );
   
-        // Create circular mask
+        // circular mask
         ctx.globalCompositeOperation = 'destination-in';
         ctx.beginPath();
         ctx.arc(128, 128, 128, 0, Math.PI * 2);

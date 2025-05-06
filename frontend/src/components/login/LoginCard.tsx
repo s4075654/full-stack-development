@@ -5,6 +5,8 @@ import {AppDispatch} from "../../redux/store.ts";
 import {login} from "../../redux/auth/authSlice.ts";
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
+import {useAppSelector} from "../../hook/hooks.ts";
+
 
 export default function LoginCard() {
     const [show, setShow] = useState<boolean>(false);
@@ -14,15 +16,19 @@ export default function LoginCard() {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
+    const error = useAppSelector(state => state.auth.error)
+
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
 
         const resultAction = await dispatch(login({username, password}))
         if (login.fulfilled.match(resultAction)) {
             navigate("/public-events");
-        } else {
-            alert("Login failed!")
-        }
+        } else if (error === 404) {
+            alert("There is no such user in the database.")
+        } else if (error === 401) {
+	    alert("Invalid password.")
+	} else alert(error)
     }
 
     return (
@@ -86,4 +92,5 @@ export default function LoginCard() {
 </div>
         </div>
     )
+
 }

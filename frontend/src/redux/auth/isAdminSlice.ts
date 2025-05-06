@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 
 interface AdminState {
-    isAdmin: boolean | null; // null = not checked yet
+    isAdmin: boolean | null; // null is not checked yet
     loading: boolean;
     error: string | null;
 }

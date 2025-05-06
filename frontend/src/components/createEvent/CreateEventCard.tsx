@@ -14,11 +14,18 @@ export default function CreateEventCard() {
     const [image, setImage] = useState<File | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null); // null = hasn't submitted yet
 
+
     const dispatch = useAppDispatch();
     const settings = useAppSelector(state => state.globalSetting.settings);
     const userEvents = useAppSelector(state => state.ownedEvents.events);
 
     const [showToast, setShowToast] = useState(false);
+
+    const formatDateForInput = (date: Date) => {
+        const offset = date.getTimezoneOffset() * 60000;
+        const localISOTime = new Date(date.getTime() - offset).toISOString().slice(0, 16);
+        return localISOTime;
+      };
 
     useEffect(() => {
     if (submitSuccess !== null) {
@@ -42,7 +49,8 @@ export default function CreateEventCard() {
 
     // Compare the event count with the event limit
     // In mongosh you can use the following command to bypass the event limit:
-    //db.settings.insertOne({  _id: "global_settings",  eventLimit: 4,  invitationLimit: 2})
+
+    //db.settings.insertOne({  _id: "global_settings",  eventLimit: 100,  invitationLimit: 2})
     const isButtonDisabled = userEventCount >= eventLimit;
 
     const uploadImageToServer = async (file: File) => {
@@ -153,16 +161,8 @@ export default function CreateEventCard() {
                         type="datetime-local"
                         id="date"
                         required
-                        value={eventTime.toISOString().slice(0, 16)}
-                        onChange={(e) => {const selectedDate = new Date(e.target.value);
-                            // Check if the selected date is valid
-                            if (!isNaN(selectedDate.getTime())) {
-                            setEventTime(selectedDate);  // Set valid date
-                            } else {
-                                alert("Invalid date")
-                                console.error("Invalid date selected");
-                            }
-                        }}
+                        value={formatDateForInput(eventTime)}
+                        onChange={(e) => setEventTime(new Date(e.target.value))}
                         className="block w-108 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <label id="type" className="block text-sm font-medium text-gray-700 mb-1">Event Type: </label>

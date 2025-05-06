@@ -1,4 +1,3 @@
-// backend/queries/RSVPOps.ts
 import { Router } from "express"
 import { ObjectId } from "mongodb"
 import g_coDb from "../server/db.ts"

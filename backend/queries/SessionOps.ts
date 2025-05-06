@@ -18,7 +18,6 @@ g_uStore.prototype.get = async function(a_sId, a_oCallback) {
 }
 // 2. set() - Creates/Updates sessions
 g_uStore.prototype.set = function(a_sId, a_oSession, a_oCallback) {
-	console.log("Window11")
 	try {
 		this.m_oSessions.updateOne(
 			{ _id: a_sId }, // Filter by session ID

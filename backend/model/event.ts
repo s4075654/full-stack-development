@@ -57,6 +57,10 @@ export default {
 					bsonType: "string",
 					title: "The event description of the event."
 				},
+				discussionDescription: {
+					bsonType: "string",
+					title: "The description of the discussion board."
+				},
 				eventTime: {
 					bsonType: "date",
 					title: "The time of the event."

@@ -1,16 +1,26 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { fetchHandler } from '../utils/fetchHandler';
 import { AvatarUploaderProps } from '../dataTypes/type';
 
 export default function AvatarUploader({ 
   onAvatarUpload, 
   defaultAvatarUrl,
-  defaultAvatarId
-}: AvatarUploaderProps) {
+  defaultAvatarId,
+  initialZoom = 1,
+  onZoomChange,
+}: AvatarUploaderProps & { initialZoom?: number; onZoomChange?: (zoom: number) => void }) {
   const [preview, setPreview] = useState<string>(defaultAvatarUrl);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(initialZoom);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    setPreview(defaultAvatarUrl);
+  }, [defaultAvatarUrl]);
+
+  useEffect(() => {
+    setScale(initialZoom);
+  }, [initialZoom]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -44,6 +54,13 @@ export default function AvatarUploader({
     setSelectedFile(null);
     setPreview(defaultAvatarUrl);
     onAvatarUpload(defaultAvatarId);
+    setScale(1)
+  };
+
+  const handleZoomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newZoom = parseFloat(e.target.value);
+    setScale(newZoom);
+    onZoomChange?.(newZoom);
   };
 
   return (
@@ -55,7 +72,6 @@ export default function AvatarUploader({
             className="w-full h-full object-cover transform transition-transform"
             style={{ transform: `scale(${scale})` }}
             alt="Avatar preview"
-            
           />
         </div>
         <div className="absolute inset-0 border-2 border-white/30 rounded-full pointer-events-none" />
@@ -87,7 +103,7 @@ export default function AvatarUploader({
                 max="3"
                 step="0.1"
                 value={scale}
-                onChange={(e) => setScale(parseFloat(e.target.value))}
+                onChange={handleZoomChange}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               />
             </div>

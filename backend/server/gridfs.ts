@@ -1,4 +1,3 @@
-// backend/server/gridfs.ts
 import { GridFSBucket, Db } from "mongodb"
 
 let g_coGridFSBucket: GridFSBucket

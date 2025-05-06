@@ -45,6 +45,10 @@ export default {
 					// The avatar can be an ObjectId or null
 					title: "The user's avatar."
 				},
+				avatarZoom: {
+					anyOf: [{ bsonType: "double" }, { bsonType: "null" }, { bsonType: "int" }],
+					title: "The zoom level of the user's avatar.",
+				},
 				invitations: {
 					bsonType: "array",
 					title: "All private invitations the user has received.",

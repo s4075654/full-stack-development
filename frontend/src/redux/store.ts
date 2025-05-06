@@ -7,6 +7,7 @@ import ownedEventsReducer from "./event/ownedEventsSlice.ts";
 import joinedEventReducer from "./event/joinedEventSlice.ts";
 import isAdminReducer from "./auth/isAdminSlice.ts";
 import globalSettingReducer from "./admin/globalSettingSlice.ts"
+import messageReducer from './message/messageSlice';
 import eventsReducer from "./event/eventsSlice.ts";
 import usersReducer from "./user/usersSlice.ts"
 
@@ -21,7 +22,10 @@ export const store = configureStore({
         events: eventsReducer,
         users: usersReducer,
         isAdmin: isAdminReducer,
-        globalSetting: globalSettingReducer
+        events: eventsReducer,
+        users: usersReducer,
+        globalSetting: globalSettingReducer,
+        messages: messageReducer,
     }
 });
 

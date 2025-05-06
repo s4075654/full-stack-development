@@ -50,4 +50,5 @@ const eventSlice = createSlice({
     }
 })
 
+
 export default eventSlice.reducer
