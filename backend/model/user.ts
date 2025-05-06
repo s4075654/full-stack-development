@@ -36,16 +36,6 @@ export default {
 						title: "An event the user is organising/has organised."
 					}
 				},
-				eventLimits: {
-					bsonType: "long",
-					title: "The maximum number of active events the user can have.",
-					minimum: 0
-				},
-				invitationLimits: {
-					bsonType: "long",
-					title: "The maximum number of invitations to an event the user can send.",
-					minimum: 0
-				},
 				admin: {
 					bsonType: "bool",
 					title: "Whether the user is an admin."

@@ -60,8 +60,6 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 			admin: false, //  Default non-admin
 			notifications: [],
 			organisedEvents: [],
-			eventLimits: BigInt(0),
-			invitationLimits: BigInt(0),
 			avatar: new ObjectId(avatar),
 			requests: [],
 			invitations: [],

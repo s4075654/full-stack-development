@@ -1,12 +1,13 @@
 import { initializeDefaultAvatar } from "./defaultAvatar.ts"
 import "dotenv/config"
-import { MongoClient } from "mongodb"
+import {MongoClient, ObjectId} from "mongodb"
 
 globalThis.g_oConnection = new MongoClient("mongodb://" + process.env.m_sDbHost + ":" + process.env.m_sDbPort)
 const g_coDb = await globalThis.g_oConnection.db(process.env.m_sDbName)
 
 import { readdir } from "fs/promises"
 import { setupGridFSBucket,getGridFSBucket } from "./gridfs.ts"
+import g_coBcrypt from "bcrypt";
 
 for (const l_csFileName of await readdir("backend/model")) {
 	const l_coMod = await import("../model/" + l_csFileName)
@@ -24,7 +25,30 @@ for (const l_csFileName of await readdir("backend/model")) {
 			console.log("Created " + l_csCollectionName + ".")
 	}
 }
+
 setupGridFSBucket(g_coDb)
+await g_coDb.collection("settings").updateOne({	_id: "global_settings" }, { $setOnInsert: {
+	_id: "global_settings",
+	eventLimit: 5,
+	invitationLimit: 10
+} }, { upsert: true })
+await g_coDb.collection("users").updateOne({ _id: ObjectId.createFromHexString("000000000000000000000000") }, { $setOnInsert: {
+	_id: ObjectId.createFromHexString("000000000000000000000000"),
+		username: "admin",
+		password: await g_coBcrypt.hash(
+			"AdminPassword1234$",
+			parseInt(process.env.m_saltRounds || "10") //  Ensure SALT_ROUNDS is numeric with default value
+		),
+		emailAddress: "admin@gmail.com", //  Matches schema
+		admin: true,
+		notifications: [],
+		organisedEvents: [],
+		avatar: null,
+		requests: [],
+		invitations: [],
+		joinedEvents: [],
+} }, { upsert: true })
+
 if ("m_sDev" in process.env) {
 	try {
 	  const tempBucket = getGridFSBucket();
