@@ -13,11 +13,12 @@ export default function CreateEventCard() {
     const [eventType, setEventType] = useState<boolean>(true);
     const [image, setImage] = useState<File | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null); // null = hasn't submitted yet
-
+    const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
     const settings = useAppSelector(state => state.globalSetting.settings);
     const userEvents = useAppSelector(state => state.ownedEvents.events);
+    const eventLimit = settings?.eventLimit || 0;
 
     const [showToast, setShowToast] = useState(false);
 
@@ -38,20 +39,21 @@ export default function CreateEventCard() {
     }
     }, [submitSuccess]);
 
+
     useEffect(() => {
-        dispatch(fetchGlobalSetting())
-        dispatch(fetchOwnedEvents())
-    }, [dispatch])
+        dispatch(fetchGlobalSetting());
+        dispatch(fetchOwnedEvents());
+    }, [dispatch]);
 
+    useEffect(() => {
+        const availableEvents = userEvents?.filter(
+            event => new Date(event.eventTime) > new Date()
+        ) || [];
+
+        setButtonDisabled(availableEvents.length >= eventLimit);
+    }, [userEvents, eventLimit]);
     // Check if settings and user events are loaded
-    const eventLimit = settings?.eventLimit || 0;
-    const userEventCount = userEvents?.length || 0;
 
-    // Compare the event count with the event limit
-    // In mongosh you can use the following command to bypass the event limit:
-
-    //db.settings.insertOne({  _id: "global_settings",  eventLimit: 100,  invitationLimit: 2})
-    const isButtonDisabled = userEventCount >= eventLimit;
 
     const uploadImageToServer = async (file: File) => {
         const formData = new FormData()
@@ -92,6 +94,7 @@ export default function CreateEventCard() {
                 setSubmitSuccess(false);
             } else {
                 setSubmitSuccess(true);
+                await dispatch(fetchOwnedEvents()); // Refresh events after successful creation
             }
         } catch (error) {
             console.log(error);
@@ -101,7 +104,7 @@ export default function CreateEventCard() {
 
     return (
         <>
-                    <style>{`
+            <style>{`
             .toast-animation {
                 animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 1s;
             }
@@ -177,9 +180,9 @@ export default function CreateEventCard() {
                     </select>
                     <button
                         type="submit"
-                        disabled={isButtonDisabled}
-                        className={`w-42 text-white py-2 rounded-xl ${isButtonDisabled ? 'bg-blue-200' : 'bg-blue-500 hover:bg-blue-600 transition duration-200 cursor-pointer'}`}>
-                        {isButtonDisabled ? 'Event Limit Reached' : 'Create Event'}
+                        disabled={buttonDisabled}
+                        className={`w-42 text-white py-2 rounded-xl ${buttonDisabled ? 'bg-blue-200' : 'bg-blue-500 hover:bg-blue-600 transition duration-200 cursor-pointer'}`}>
+                        {buttonDisabled ? 'Event Limit Reached' : 'Create Event'}
                     </button>
                 </form>
                 {/* Image Upload Section */}

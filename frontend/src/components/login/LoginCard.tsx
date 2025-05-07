@@ -76,7 +76,7 @@ export default function LoginCard() {
                     </button>
                 </div>
                     {message && (
-                        <h1 className="mt-4 text-xl font-bold text-red-600 bg-red-100 border border-red-400 rounded-xl p-4 shadow-md text-center">
+                        <h1 className="mt-4 text-xl font-bold text-red-600 p-4 text-center">
                             {errorMessage}
                         </h1>
                     )}
