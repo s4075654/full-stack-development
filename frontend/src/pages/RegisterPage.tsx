@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { validatePassword, PasswordValidation, validatePasswordMatch } from '../utils/passwordValidator';
 import { getInputStyles, ValidationState } from '../utils/validationStyles';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import AvatarUploader from '../components/AvatarUploader';
 
 interface FormData {
@@ -44,6 +44,8 @@ export default function RegisterPage() {
       avatar: DEFAULT_AVATAR_ID
     });
     const [avatarZoom, setAvatarZoom] = useState(1); // Add zoom state
+
+    const navigate = useNavigate();
 
  // Password validation handler
  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +114,7 @@ export default function RegisterPage() {
           return;
         }
     
-        window.location.href = '/login';
+        navigate("/login")
       } catch (error) {
         setErrorMessage("Network error. Please try again.");
         console.error('Registration error:', error);

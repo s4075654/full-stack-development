@@ -8,7 +8,6 @@ import MessageViewModal from '../MessageViewModal';
 import {useFetch} from "../../utils/customHooks.ts";
 
 
-
 interface NavbarProps {
   toggleSidebar: () => void;
 }
@@ -163,7 +162,6 @@ const NotificationsDropdown = () => {
     </div>
   );
 };
-
 
 // adding a trigger to navigate to the create event page
 

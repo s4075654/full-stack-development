@@ -1,8 +1,10 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 
-export const login = createAsyncThunk(
+export const login = createAsyncThunk<number,                                // return type (success)
+    { username: string; password: string }, // argument type
+    { rejectValue: number }>(
     "auth/login",
-    async ({username, password}: {username: string; password: string}) => {
+    async ({username, password}: {username: string; password: string}, thunkAPI) => {
             const response = await fetch("/log/in", {
                 method: "POST",
                 headers: {
@@ -12,10 +14,10 @@ export const login = createAsyncThunk(
                 credentials: "include",
             })
             if (response.status !== 200) {
-                throw new Error(response.statusText);
+		        return thunkAPI.rejectWithValue(response.status)
             }
 
-            return true
+            return response.status
     }
 )
 export const fetchCurrentUser = createAsyncThunk(
@@ -26,11 +28,12 @@ export const fetchCurrentUser = createAsyncThunk(
       return await res.json();
     }
   )
+
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
         isAuthenticated: false,
-        error: null,
+        error: null as number | null,
         user: null,
     },
     reducers: {
@@ -44,8 +47,9 @@ const authSlice = createSlice({
                 state.isAuthenticated = true
                 state.error = null
             })
-            .addCase(login.rejected, (state) => {
-                state.error = null
+            .addCase(login.rejected, (state, m_oAction) => {
+                state.error = m_oAction.payload ?? 400
+		        state.isAuthenticated = false
             })
             .addCase(fetchCurrentUser.fulfilled, (state, action) => {
                 state.user = action.payload;
