@@ -20,7 +20,9 @@ g_coRouter.get("/", async function (a_oRequest, a_oResponse) {
 });
 
 g_coRouter.put("/", g_coExpress.json(), async function (a_oRequest, a_oResponse) {
+    console.log(JSON.stringify(a_oRequest.body))
     const {eventLimit, invitationLimit} = a_oRequest.body
+    console.log(eventLimit)
     try {
         const res = await g_coSettings.findOneAndUpdate(
             { _id: "global_settings" },
