@@ -1,6 +1,8 @@
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import {useState} from "react";
 import {fetchHandler} from "../../utils/fetchHandler.ts";
+import {fetchGlobalSetting} from "../../redux/admin/globalSettingSlice.ts";
+import {useAppDispatch} from "../../hook/hooks.ts";
 
 interface SettingsCardProps {
     onClose: () => void;
@@ -11,10 +13,13 @@ const SettingsCard = ({ onClose }: SettingsCardProps) => {
     const [invitationLimit, setInvitationLimit] = useState<number>(1);
     const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null);
 
+    const dispatch = useAppDispatch();
+
     const handleSubmit = async () => {
         try {
             const res = await fetchHandler('/setting', {
                 method: "PUT",
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     eventLimit: eventLimit,
                     invitationLimit: invitationLimit,
@@ -30,6 +35,7 @@ const SettingsCard = ({ onClose }: SettingsCardProps) => {
             }
 
             setSubmitSuccess(true);
+            await dispatch(fetchGlobalSetting())
         } catch (error) {
             console.error("Error while updating settings:", error);
             setSubmitSuccess(false);
