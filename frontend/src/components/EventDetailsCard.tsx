@@ -63,10 +63,18 @@ export default function EventDetailsCard({
       />
       
       {statusMessage && (
-        <div className="bg-yellow-100 p-4 rounded-lg mb-4 border border-yellow-200">
-          <p className="text-yellow-800 text-center">{statusMessage}</p>
+        <div className={`p-4 rounded-lg mb-4 border ${
+        statusMessage.includes("rejected")
+          ? "bg-red-100 border-red-200 text-red-800"
+          : statusMessage.includes("pending approval")
+          ? "bg-yellow-100 border-yellow-200 text-yellow-800"
+          : statusMessage.includes("Congrate")
+          ? "bg-green-100 border-green-200 text-green-800"
+          : "bg-yellow-100 border-yellow-200 text-yellow-800"
+       }`}>
+          <p className="text-center">{statusMessage}</p>
         </div>
-      )}
+)}
 
       <div className="space-y-6">
         <h1 className="text-3xl font-bold text-gray-800">

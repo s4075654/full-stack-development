@@ -1,21 +1,32 @@
-import { Request } from '../dataTypes/type';
+import { Request, RequestStatus } from '../dataTypes/type';
+import { useEffect} from "react";
+
 
 interface RequestsModalProps {
   requests: Request[];
   show: boolean;
   onClose: () => void;
-  onRequestUpdate: (requestId: string, newState: "Accepted" | "Rejected") => void;
+  onRequestUpdate: (requestId: string, newState: RequestStatus) => void;
 }
 
 export default function RequestsModal({ requests, show, onClose, onRequestUpdate }: RequestsModalProps) {
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      }
+    }
+  }, [show]);
+  
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4" >
       <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold">Incoming Requests</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-lg text-gray-500 hover:text-gray-700">
             ×
           </button>
         </div>
@@ -31,13 +42,13 @@ export default function RequestsModal({ requests, show, onClose, onRequestUpdate
                 {request.state === "Unanswered" && (
                   <div className="flex gap-2">
                     <button
-                      onClick={() => onRequestUpdate(request._id, "Accepted")}
+                      onClick={() => onRequestUpdate(request._id, "Accepted" as RequestStatus)}
                       className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center gap-1"
                     >
                       ✓ Accept
                     </button>
                     <button
-                      onClick={() => onRequestUpdate(request._id, "Rejected")}
+                      onClick={() => onRequestUpdate(request._id, "Rejected" as RequestStatus)}
                       className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 flex items-center gap-1"
                     >
                       × Reject

@@ -1,22 +1,24 @@
 let timerID = null;
 
 function startProcessing() {
-    // Check notifications every 10 seconds
+    // Check notifications every 9 seconds
     timerID = setInterval(() => {
         fetch('/notification/process', {
             method: 'POST',
             credentials: 'include'
         })
-        .then(response => {
+        .then(async response => {
             if (response.ok) {
-                // Trigger UI update
-                self.postMessage('update');
+                const result = await response.json();
+                if (result.processed > 0) {
+                self.postMessage('update'); // Trigger UI update
+                }
             }
         })
         .catch(error => {
             self.postMessage({ status: 'error', error: error.message });
         });
-    }, 10000);
+    }, 9000);
 }
 
 self.onmessage = function(e) {
