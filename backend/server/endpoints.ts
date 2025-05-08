@@ -34,9 +34,7 @@ g_coApp.use("/notification", g_coAuth, g_coNotifRouter)
 import g_coUserRouter from "../queries/UserOps.ts"
 g_coApp.use("/user", g_coUserRouter)
 import g_coSettingsRouter from "../queries/SettingOps.ts"
-g_coApp.use("/setting", g_coAuth, g_coSettingsRouter)
-import g_coRSVPRouter from "../queries/RSVPOps.ts"
-g_coApp.use("/rsvp", g_coAuth, g_coRSVPRouter)
+g_coApp.use("/setting",g_coAuth, g_coSettingsRouter)
 
 import { join } from "path"
 

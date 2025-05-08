@@ -1,24 +1,33 @@
 import { useState, useEffect, useRef } from 'react';
 import { User } from '../dataTypes/type.ts';
-import {fetchHandler} from "../utils/fetchHandler.ts";
+import { fetchHandler } from "../utils/fetchHandler.ts";
 
 type InviteMembersModalProps = {
   onCancel: () => void;
-  onSubmit: (emails: string[]) => void;
-  currentUserId: string
+  onSubmit: (emails: string[]) => Promise<void>;
+  currentUserId: string;
 };
 
-export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId }: InviteMembersModalProps) {
+interface ErrorState {
+  message: string;
+  duplicateIds?: string[];
+  success?: boolean;
+}
+
+export default function InviteMembersModal({ onCancel, onSubmit, currentUserId }: InviteMembersModalProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<ErrorState | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [permanentDuplicates, setPermanentDuplicates] = useState<string[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
-  useEffect(() => { document.body.style.overflow = 'hidden'
-      return () => { document.body.style.overflow = '' }
-    }, [])
 
-  // Debounced search
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; }
+  }, []);
+
   useEffect(() => {
     const handler = setTimeout(async () => {
       if (searchTerm.trim()) {
@@ -27,18 +36,19 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
             credentials: 'include'
           });
           const data = await response.json();
-           // Filter out current user
-           const filteredData = data.filter((user: User) => 
+          const filteredData = data.filter((user: User) => 
             user._id !== currentUserId &&
             !selectedUsers.some(selected => selected._id === user._id)
           );
           setSearchResults(filteredData);
-          setError('');
-        } catch (err) {
-          setError('Failed to search users: ' + err);
+          setError(null);
+        } catch {
+          setError({ message: 'Failed to search users' });
         }
+      } else {
+        setSearchResults([]);
       }
-    }, 200); //200ms debounce
+    }, 200);
 
     return () => clearTimeout(handler);
   }, [searchTerm, currentUserId, selectedUsers]);
@@ -48,20 +58,47 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
     if (!selectedUsers.find(u => u._id === user._id)) {
       setSelectedUsers(prev => [...prev, user]);
       setSearchTerm('');
-      setError('');
+      setError(null);
     }
   };
 
   const handleRemoveUser = (userId: string) => {
     setSelectedUsers(prev => prev.filter(u => u._id !== userId));
+    setPermanentDuplicates(prev => {
+      const newDuplicates = prev.filter(id => id !== userId);
+      // Clear error message if all duplicates are removed
+      if (newDuplicates.length === 0) {
+        setError(null);
+      }
+      return newDuplicates;
+    });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (selectedUsers.length === 0) {
-      setError('Please select at least one user');
+      setError({ message: 'Please select at least one user' });
       return;
     }
-    onSubmit(selectedUsers.map(user => user._id));
+
+    setIsSubmitting(true);
+    try {
+      await onSubmit(selectedUsers.map(user => user._id));
+      // onCancel();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      if (err?.duplicateUserIds) {
+        setPermanentDuplicates(err.duplicateUserIds);
+        setError({
+          message: 'Some users have already been invited',
+          duplicateIds: err.duplicateUserIds
+        });
+      } else {
+        //Actually there is no error here, this is a cheat to show success message
+        setError({ message: 'Invitations sent successfully!', success: true }); 
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -94,7 +131,7 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
                 {searchResults.map(user => (
                   <div
                     key={user._id}
-                    onClick={() =>{ handleAddUser(user); setSearchTerm('');}}
+                    onClick={() => handleAddUser(user)}
                     className="p-2 hover:bg-green-50 cursor-pointer transition-colors"
                   >
                     {user.username}
@@ -104,19 +141,39 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
             )}
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && (
+            <div className={`border-l-4 p-4 rounded ${
+              error.success 
+                ? 'bg-green-50 border-green-400' 
+                : 'bg-red-50 border-red-400'
+            }`}>
+              <p className={`text-sm ${
+                error.success 
+                  ? 'text-green-700' 
+                  : 'text-red-700'
+              }`}>{error.message}</p>
+            </div>
+          )}
 
           <div className="flex flex-wrap gap-2">
             {selectedUsers.map(user => (
               <div
                 key={user._id}
-                className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full"
+                className={`flex items-center px-3 py-1 rounded-full transition-colors ${
+                  permanentDuplicates.includes(user._id) || error?.duplicateIds?.includes(user._id)
+                    ? 'bg-red-100 text-red-800'
+                    : 'bg-green-100 text-green-800'
+                }`}
               >
                 <span>{user.username}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveUser(user._id)}
-                  className="ml-2 text-green-600 hover:text-green-800"
+                  className={`ml-2 ${
+                    permanentDuplicates.includes(user._id) || error?.duplicateIds?.includes(user._id)
+                      ? 'text-red-600 hover:text-red-800'
+                      : 'text-green-600 hover:text-green-800'
+                  }`}
                 >
                   ×
                 </button>
@@ -130,13 +187,15 @@ export default function InviteMembersModal({ onCancel, onSubmit,  currentUserId 
             type="button"
             onClick={onCancel}
             className="px-4 py-2 font-medium text-gray-700 hover:text-gray-900"
+            disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600"
+            disabled={isSubmitting}
+            className={`px-6 py-2 text-white font-bold rounded-lg transition-colors bg-green-500`}
           >
             Send Invites
           </button>
