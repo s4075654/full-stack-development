@@ -144,5 +144,62 @@ g_coRouter.get("/my-requests", async function(a_oRequest, a_oResponse) {
     a_oResponse.status(g_codes("Server error")).json({ error: error.message })
   }
 })
+g_coRouter.get("/organizer-responses", async (a_oRequest, a_oResponse) => {
+    try {
+      const organizerId = a_oRequest.session["User ID"]
+      if (!organizerId) return a_oResponse.status(g_codes("Unauthorised")).json({ error: "Not logged in" })
+  
+      const events = await g_coEvents.find({ organiserID: new ObjectId(organizerId) }).toArray()
+      const eventIds = events.map(e => e._id)
+      const requests = await g_coRequests.find({
+        eventId: { $in: eventIds }
+      }).toArray()
+  
+      const enrichedRequests = await Promise.all(
+        requests.map(async (request) => {
+          const user = await g_coUsers.findOne(
+            { _id: new ObjectId(request.senderId) },
+            { projection: { username: 1 } }
+          )
+          const event = events.find(e => e._id.equals(request.eventId))
+          return {
+            _id: request._id,
+            type: "request",
+            eventName: event?.eventName || "",
+            username: user?.username || "",
+            status: request.state,
+            eventTime: event?.eventTime || new Date()
+          }
+        })
+      )
+  
+      a_oResponse.status(g_codes("Success")).json(enrichedRequests)
+    } catch (error) {
+      a_oResponse.status(g_codes("Server error")).json({ error: error.message })
+    }
+})
+g_coRouter.patch("/:id", g_coExpress.json(), async (a_oRequest, a_oResponse) => {
+  try {
+    const { state } = a_oRequest.body
+    const requestId = new ObjectId(a_oRequest.params.id)
+    
+    await g_coRequests.updateOne(
+      { _id: requestId },
+      { $set: { state } }
+    )
+    
+    if (state === "Accepted") {
+      const request = await g_coRequests.findOne({ _id: requestId })
+      await g_coEvents.updateOne(
+        { _id: new ObjectId(request.eventId) },
+        { $addToSet: { joinedUsers: new ObjectId(request.senderId) } }
+      )
+    }
+    
+    a_oResponse.sendStatus(g_codes("Success"))
+  } catch (error) {
+    a_oResponse.status(g_codes("Server error")).json({ error: error.message })
+  }
+})
 
 export default g_coRouter

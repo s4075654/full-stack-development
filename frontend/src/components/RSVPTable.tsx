@@ -16,10 +16,10 @@ interface ResponseItem {
 const RSVPTable = () => {
   const [responses, setResponses] = useState<ResponseItem[]>([]);
   
-  const { data: requestsData } = useFetch<any[]>('/rsvp/organizer-responses');
-  const { data: invitationsData } = useFetch<any[]>('/rsvp/user-invitations');
+  const { data: requestsData } = useFetch<any[]>('/request/organizer-responses');
+  const { data: invitationsData } = useFetch<any[]>('/invitation/user-invitations');
   const { data: sentRequestsData } = useFetch<any[]>('/request/my-requests');
-  const { data: sentInvitationsData } = useFetch<any[]>('/rsvp/sent-invitations');
+  const { data: sentInvitationsData } = useFetch<any[]>('/invitation/sent-invitations');
 
   useEffect(() => {
     if (requestsData && invitationsData && sentRequestsData && sentInvitationsData) {
@@ -50,11 +50,11 @@ const RSVPTable = () => {
   }, [requestsData, invitationsData, sentRequestsData, sentInvitationsData]);
   // Accept/Reject/Decline handler
   const handleResponse = async (id: string, type: ResponseItem['type'], newStatus: string) => {
-    // Only handle responses for received requests/invitations
     if (type !== 'request' && type !== 'invitation') return;
     
     try {
-      await fetchHandler(`/rsvp/${type}/${id}`, {
+      const endpoint = type === 'request' ? 'request' : 'invitation';
+      await fetchHandler(`/${endpoint}/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ state: newStatus })

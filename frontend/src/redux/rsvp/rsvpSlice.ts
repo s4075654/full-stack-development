@@ -45,7 +45,7 @@ export const fetchAllEventRequests = createAsyncThunk(
 export const fetchInvitationStatus = createAsyncThunk(
   'rsvp/fetchInvitationStatus',
   async ({ eventName }: { eventName: string }) => {
-    const response = await fetchHandler(`/rsvp/user-invitations`);
+    const response = await fetchHandler(`/invitation/user-invitations`);
     if (!response.ok) throw new Error('Failed to fetch invitation status');
     const invitations = await response.json();
     return invitations.find(
