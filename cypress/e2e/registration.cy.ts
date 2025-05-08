@@ -17,12 +17,6 @@ describe('Registration Page', () => {
 	});
 
 	it('registers successfully with valid data', () => {
-		// Mock the backend API for successful registration
-		cy.intercept('POST', 'http://localhost:58888/user', {
-			statusCode: 200,
-			body: { message: 'Registration successful' },
-		}).as('registerRequest');
-
 		// Fill the form with valid data
 		cy.get('input[name="username"]').type('newuser');
 		cy.get('input[name="email"]').type('newuser@example.com');
@@ -32,9 +26,6 @@ describe('Registration Page', () => {
 
 		// Submit the form
 		cy.get('button[type="submit"]').click();
-
-		// Wait for the mock request to finish
-		cy.wait('@registerRequest');
 
 		// Check if the user was redirected to the login page or another page after successful registration
 		cy.url().should('include', 'http://localhost:58888/login');
