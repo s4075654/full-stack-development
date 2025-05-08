@@ -37,7 +37,7 @@ export default function PublicEventPage() {
             <Navbar toggleSidebar={toggleSidebar} />
             <div className={`mt-20 transition-all duration-300 ${isSidebarOpen ? 'ml-72' : 'ml-8'}`}>
                 <h1 className={"font-bold text-3xl"}>Public Events</h1>
-                <div className={"flex flex-wrap gap-13 mt-8"}>
+                <div data-testid="event-card" className={"flex flex-wrap gap-13 mt-8"}>
                     {events.map(event => {
                         return (
                             <EventCard
