@@ -17,6 +17,10 @@
 		"multer": "latest"
 	},
 	"devDependencies": {
-		"@types/node": "^22.14.1"
+		"@types/jest": "^29.5.14",
+		"@types/node": "^22.14.1",
+		"cypress": "^14.3.3",
+		"start-server-and-test": "^2.0.11",
+		"typescript": "^5.8.3"
 	}
 }
