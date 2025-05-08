@@ -3,7 +3,7 @@ import {fetchHandler} from "../../utils/fetchHandler.ts";
 import {useAppDispatch, useAppSelector} from "../../hook/hooks.ts";
 import {fetchGlobalSetting} from "../../redux/admin/globalSettingSlice.ts";
 import {fetchOwnedEvents} from "../../redux/event/ownedEventsSlice.ts";
-
+import { formatDateForInput } from '../../utils/dateUtils';
 
 export default function CreateEventCard() {
     const [eventName, setEventName] = useState<string>('');
@@ -19,12 +19,6 @@ export default function CreateEventCard() {
     const userEvents = useAppSelector(state => state.ownedEvents.events);
 
     const [showToast, setShowToast] = useState(false);
-
-    const formatDateForInput = (date: Date) => {
-        const offset = date.getTimezoneOffset() * 60000;
-        const localISOTime = new Date(date.getTime() - offset).toISOString().slice(0, 16);
-        return localISOTime;
-      };
 
     useEffect(() => {
     if (submitSuccess !== null) {

@@ -12,13 +12,10 @@ export default function RSVPResponsePage() {
   return (
     <div className="h-screen flex flex-col">
       <Navbar toggleSidebar={toggleSidebar} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 pt-16"> 
         <Sidebar isOpen={isSidebarOpen} />
         <div className={`transition-all duration-300 w-full ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
-          <div className="flex flex-col items-center justify-center h-full">
-            <h1 className="font-bold text-3xl mb-6">RSVP Responses</h1>
-            <RSVPTable />
-          </div>
+          <RSVPTable />
         </div>
       </div>
     </div>

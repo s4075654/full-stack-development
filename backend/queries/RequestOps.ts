@@ -14,8 +14,8 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
     console.log("USER ID", a_oRequest.session["User ID"])
     const l_coSession = globalThis.g_oConnection.startSession()
     try {
-        const { eventId } = a_oRequest.body;
-        if (!eventId) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing eventId" });
+        const { eventId } = a_oRequest.body
+        if (!eventId) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing eventId" })
 
         const l_coEvent = await g_coEvents.findOne(
             { _id: ObjectId.createFromHexString(eventId) },
@@ -51,8 +51,8 @@ g_coRouter.post("/", g_coExpress.json(), async function(a_oRequest, a_oResponse)
 })
 g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
     try {
-	  const eventId = a_oRequest.query.eventId;
-	  if (!eventId) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing eventId" });
+	  const eventId = a_oRequest.query.eventId
+	  if (!eventId) return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing eventId" })
   
 	  a_oResponse.status(g_codes("Success")).json(a_oRequest.query.all ?
 		await g_coRequests.find(
@@ -70,9 +70,9 @@ g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
 	}
   })
   g_coRouter.put("/", g_coExpress.json(), async function(a_oRequest, a_oResponse) {
-    const { requestId, newState } = a_oRequest.body;
+    const { requestId, newState } = a_oRequest.body
     if (!requestId || !newState) {
-        return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing requestId or newState" });
+        return a_oResponse.status(g_codes("Invalid")).json({ error: "Missing requestId or newState" })
     }
     try {
         await g_coRequests.updateOne(
@@ -81,12 +81,12 @@ g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
         )
           // If accepted, add sender to joinedUsers of the event
           if (newState === "Accepted") {
-            const request = await g_coRequests.findOne({ _id: ObjectId.createFromHexString(requestId) });
+            const request = await g_coRequests.findOne({ _id: ObjectId.createFromHexString(requestId) })
             if (request && request.eventId && request.senderId) {
                 await g_coEvents.updateOne(
                     { _id: new ObjectId(request.eventId) },
                     { $addToSet: { joinedUsers: new ObjectId(request.senderId) } }
-                );
+                )
             }
         }
     } catch (a_oError) {
@@ -97,6 +97,52 @@ g_coRouter.get("/", async function(a_oRequest, a_oResponse) {
 })
 g_coRouter.delete("/", function(a_oRequest, a_oResponse) {
 	
+})
+//Get the requests sent by the user
+g_coRouter.get("/my-requests", async function(a_oRequest, a_oResponse) {
+  try {
+    const userId = a_oRequest.session["User ID"]
+    if (!userId) return a_oResponse.status(g_codes("Unauthorised")).json({ error: "Not logged in" })
+
+    // Get user's requests from users collection
+    const user = await g_coUsers.findOne(
+      { _id: new ObjectId(userId) },
+      { projection: { requests: 1 } }
+    )
+
+    if (!user?.requests) return a_oResponse.status(g_codes("Success")).json([])
+
+    // Get full request details
+    const requests = await g_coRequests.find({
+      _id: { $in: user.requests.map(id => new ObjectId(id)) }
+    }).toArray()
+
+    // Enrich with event and receiver details
+    const enrichedRequests = await Promise.all(
+      requests.map(async (request) => {
+        const event = await g_coEvents.findOne(
+          { _id: new ObjectId(request.eventId) },
+          { projection: { eventName: 1, eventTime: 1, organiserID: 1 } }
+        )
+        const organizer = await g_coUsers.findOne(
+          { _id: new ObjectId(request.receiverId) },
+          { projection: { username: 1 } }
+        )
+        return {
+          _id: request._id,
+          eventName: event?.eventName || "",
+          username: organizer?.username || "", // event owner's name
+          status: request.state,
+          eventTime: event?.eventTime
+        }
+      })
+    )
+
+    a_oResponse.status(g_codes("Success")).json(enrichedRequests)
+  } catch (error) {
+    console.error("Error fetching sent requests:", error)
+    a_oResponse.status(g_codes("Server error")).json({ error: error.message })
+  }
 })
 
 export default g_coRouter

@@ -7,6 +7,8 @@ const g_coRouter =  g_coExpress.Router()
 const g_coEvents = g_coDb.collection("events")
 const g_coRequests = g_coDb.collection("requests")
 const g_coInvitations = g_coDb.collection("invitations")
+const g_coUsers = g_coDb.collection("users")
+
 
 // Get all RSVP responses for organizer
 g_coRouter.get("/organizer-responses", async (a_oRequest, a_oResponse) => {
@@ -138,6 +140,49 @@ g_coRouter.patch("/invitation/:id",g_coExpress.json(), async (a_oRequest, a_oRes
     
     a_oResponse.sendStatus(g_codes("Success"))
   } catch (error) {
+    a_oResponse.status(g_codes("Server error")).json({ error: error.message })
+  }
+})
+//Inorder to get the invitations that one user has sent 
+// we need to look through events where the user is the organizer
+// and find all invitations they've sent
+g_coRouter.get("/sent-invitations", async (a_oRequest, a_oResponse) => {
+  try {
+    const organizerId = a_oRequest.session["User ID"]
+    if (!organizerId) return a_oResponse.status(g_codes("Unauthorised")).json({ error: "Not logged in" })
+
+    // Get all events organized by this user
+    const events = await g_coEvents.find(
+      { organiserID: new ObjectId(organizerId) },
+      { projection: { _id: 1, eventName: 1, eventTime: 1 } }
+    ).toArray()
+
+    // Get all invitations for these events
+    const invitations = await g_coInvitations.find({
+      eventId: { $in: events.map(e => e._id) }
+    }).toArray()
+
+    // Enrich with event and receiver details
+    const enrichedInvitations = await Promise.all(
+      invitations.map(async (invitation) => {
+        const event = events.find(e => e._id.equals(invitation.eventId))
+        const receiver = await g_coUsers.findOne(
+          { _id: new ObjectId(invitation.receiverId) },
+          { projection: { username: 1 } }
+        )
+        return {
+          _id: invitation._id,
+          eventName: event?.eventName || "",
+          username: receiver?.username || "", // This is the invitee's name
+          status: invitation.state,
+          eventTime: event?.eventTime
+        }
+      })
+    )
+
+    a_oResponse.status(g_codes("Success")).json(enrichedInvitations)
+  } catch (error) {
+    console.error("Error fetching sent invitations:", error)
     a_oResponse.status(g_codes("Server error")).json({ error: error.message })
   }
 })

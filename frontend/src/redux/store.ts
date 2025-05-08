@@ -8,6 +8,7 @@ import joinedEventReducer from "./event/joinedEventSlice.ts";
 import isAdminReducer from "./auth/isAdminSlice.ts";
 import globalSettingReducer from "./admin/globalSettingSlice.ts"
 import messageReducer from './message/messageSlice';
+import rsvpReducer from './rsvp/rsvpSlice';
 import eventsReducer from "./event/eventsSlice.ts";
 import usersReducer from "./user/usersSlice.ts"
 
@@ -24,6 +25,7 @@ export const store = configureStore({
         users: usersReducer,
         globalSetting: globalSettingReducer,
         messages: messageReducer,
+        rsvp: rsvpReducer,
     }
 });
 

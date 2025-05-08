@@ -47,6 +47,7 @@ g_coRouter.post("/reminder", g_coExpress.json(), async (a_oRequest, a_oResponse)
 g_coRouter.post("/process", async (a_oRequest, a_oResponse) => {
     try {
       const now = new Date()
+      let processedCount = 0
       const pendingNotifications = await g_coDb.collection("notifications")
         .find({ 
           sent: false,
@@ -83,9 +84,10 @@ g_coRouter.post("/process", async (a_oRequest, a_oResponse) => {
           { _id: notification._id },
           { $set: { sent: true } }
         )
+        processedCount++
       }
   
-      a_oResponse.sendStatus(g_codes("Success"))
+      a_oResponse.status(g_codes("Success")).json({ processed: processedCount })
     } catch (error) {
       a_oResponse.status(g_codes("Server error")).json({ error: error.message })
     }
@@ -128,5 +130,72 @@ g_coRouter.delete("/:id", async (a_oRequest, a_oResponse) => {
     a_oResponse.status(g_codes("Server error")).json({ error: error.message })
   }
 })
+
+// Inform users about event updates
+g_coRouter.post("/inform", g_coExpress.json(), async (req, res) => {
+  try {
+    const { eventId, message, option } = req.body
+    const eventObjectId = new ObjectId(eventId)
+    const event = await g_coDb.collection("events").findOne({ _id: eventObjectId })
+    
+    let recipientIds: ObjectId[] = []
+    
+    switch(option) {
+      case 'accepted-public':
+        recipientIds = event.joinedUsers
+        break
+      case 'accepted-private':
+        const acceptedInvites = await g_coDb.collection("invitations").find({
+          eventId: eventObjectId,
+          state: "Accepted"
+        }).toArray()
+        recipientIds = acceptedInvites.map(inv => inv.receiverId)
+        break
+      case 'pending-private':
+        const pendingInvites = await g_coDb.collection("invitations")
+          .aggregate([
+            { 
+              $match: {
+                eventId: eventObjectId,
+                state: "Pending"
+              }
+            },
+            {
+              $group: {
+                _id: "$receiverId"
+              }
+            }
+          ]).toArray();
+        
+        recipientIds = pendingInvites.map(inv => inv._id);
+        break
+      case 'all-private':
+        const allInvites = await g_coDb.collection("invitations").find({
+          eventId: eventObjectId
+        }).toArray()
+        recipientIds = allInvites.map(inv => inv.receiverId)
+        break
+    }
+
+    const notification = await g_coDb.collection("notifications").insertOne({
+      text: `New message from this event: ${message}`,
+      eventId: eventObjectId,
+      sendTime: new Date(),
+      reminder: false,
+      sent: true
+    });
+
+    // Update users' notifications arrays.
+    await g_coDb.collection("users").updateMany(
+      { _id: { $in: recipientIds } },
+      { $push: { notifications: notification.insertedId } }
+    );
+
+    res.status(200).json({ message: 'Notifications sent successfully' });
+  } catch (error) {
+    console.error('Error sending notifications:', error);
+    res.status(500).json({ error: 'Failed to send notifications' });
+  }
+});
 
 export default g_coRouter

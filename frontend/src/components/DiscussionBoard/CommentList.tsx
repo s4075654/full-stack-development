@@ -1,30 +1,52 @@
-import { useAppSelector } from "../../hook/hooks";
-import { useState } from "react";
-import Comment from "./Comment";
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import Comment from './Comment';
+import type { RootState } from '../../redux/store';
+import type { Message } from '../../dataTypes/type';
 
 interface CommentListProps {
   canInteract: boolean;
   isOwner: boolean;
+  messages: Message[];
 }
 
-export default function CommentList({ canInteract, isOwner }: CommentListProps) {
-  const messages = useAppSelector(state => state.messages.messages);
-  const rootComments = messages.filter(m => !m.parentMessageId);
-  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
-
-  return (
-    <div className="space-y-6">
-      {rootComments.map(comment => (
-        <Comment 
-          key={comment._id}
-          comment={comment}
-          allMessages={messages}
-          activeReplyId={activeReplyId}
-          onReplyClick={setActiveReplyId}
-          canInteract={canInteract}
-          isOwner={isOwner}
-        />
-      ))}
-    </div>
-  );
+interface CommentListState {
+  activeReplyId: string | null;
 }
+
+class CommentList extends Component<CommentListProps, CommentListState> {
+  state = {
+    activeReplyId: null
+  };
+
+  handleReplyClick = (commentId: string | null) => {
+    this.setState({ activeReplyId: commentId });
+  };
+
+  render() {
+    const { messages, canInteract, isOwner } = this.props;
+    const rootComments = messages.filter(m => !m.parentMessageId);
+
+    return (
+      <div className="space-y-6">
+        {rootComments.map(comment => (
+          <Comment 
+            key={comment._id}
+            comment={comment}
+            allMessages={messages}
+            activeReplyId={this.state.activeReplyId}
+            onReplyClick={this.handleReplyClick}
+            canInteract={canInteract}
+            isOwner={isOwner}
+          />
+        ))}
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = (state: RootState) => ({
+  messages: state.messages.messages
+});
+
+export default connect(mapStateToProps)(CommentList);

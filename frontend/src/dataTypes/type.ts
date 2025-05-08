@@ -96,4 +96,5 @@ export type Message = {
     sendTime: Date;
     eventId: string; 
     reminder: boolean;
-  }
+    eventName?: string; 
+}
