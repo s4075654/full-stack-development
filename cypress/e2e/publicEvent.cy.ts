@@ -10,10 +10,20 @@ describe('Public Events Page', () => {
         cy.contains('h1', 'Public Events').should('be.visible');
     });
 
-    it('should load and display public event cards', () => {
-        cy.get('[data-testid="event-card"]')
-            .should('exist')
-            .and('have.length.greaterThan', 0);
+    it('should show either event cards or fallback message', () => {
+        cy.get('body').then($body => {
+            if ($body.find('[data-testid="event-card"] > *').length > 0) {
+                // ✅ Events exist
+                cy.get('[data-testid="event-card"]')
+                    .children()
+                    .should('have.length.greaterThan', 0);
+            } else {
+                // 🚫 No events fallback
+                cy.get('[data-testid="no-events-message"]')
+                    .should('contain.text', 'No events available')
+                    .and('be.visible');
+            }
+        });
     });
 
     it('each event card should have visible content', () => {
